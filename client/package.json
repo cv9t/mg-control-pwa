@@ -8,17 +8,17 @@
     "build": "webpack --mode production",
     "lint": "eslint \"src/**/*.{tsx,js,jsx,ts}\" --fix",
     "format": "prettier --write \"src/**/*.{tsx,js,jsx,ts}\"",
-    "precommit": "lint-staged"
-  },
-  "lint-staged": {
-    "src/**/*.{js,jsx,ts,tsx}": [
-      "yarn precommit"
-    ]
+    "pre-commit": "yarn format && yarn lint"
   },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
     }
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx}": [
+      "yarn pre-commit"
+    ]
   },
   "dependencies": {
     "react": "^18.2.0",
