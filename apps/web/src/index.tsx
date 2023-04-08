@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 
-import App from "@/containers/App/App";
+import App from "@/containers/App";
 
 import "antd/dist/reset.css";
 

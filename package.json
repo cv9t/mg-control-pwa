@@ -1,0 +1,18 @@
+{
+  "name": "mg-control",
+  "private": true,
+  "version": "1.0.0",
+  "repository": "git@github.com:cv9t/mg-control.git",
+  "author": "Sviatoslav <sviatoslavnazin@gmail.com>",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev --parallel",
+    "build": "turbo run build",
+    "lint": "turbo run lint"
+  },
+  "devDependencies": {
+    "turbo": "^1.8.8"
+  }
+}
