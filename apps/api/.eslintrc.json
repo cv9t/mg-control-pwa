@@ -3,5 +3,5 @@
   "parserOptions": {
     "project": "./tsconfig.json"
   },
-  "extends": ["@mg-control/eslint-config-custom-react"]
+  "extends": ["@mg-control/eslint-config-custom-node"]
 }

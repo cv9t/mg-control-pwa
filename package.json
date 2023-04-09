@@ -4,15 +4,19 @@
   "version": "1.0.0",
   "repository": "git@github.com:cv9t/mg-control.git",
   "author": "Sviatoslav <sviatoslavnazin@gmail.com>",
+  "license": "MIT",
   "workspaces": [
-    "apps/*"
+    "apps/*",
+    "packages/*"
   ],
   "scripts": {
     "dev": "turbo run dev --parallel",
     "build": "turbo run build",
+    "format": "prettier --write \"**/*.{ts,tsx}\"",
     "lint": "turbo run lint"
   },
   "devDependencies": {
+    "prettier": "^2.8.7",
     "turbo": "^1.8.8"
   }
 }
