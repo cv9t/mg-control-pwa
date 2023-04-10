@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "lint": "npx eslint \"**/*.{tsx,ts}\" --fix"
+    "lint": "eslint \"**/*.{tsx,ts}\" --fix"
   },
   "dependencies": {
     "@ant-design/icons": "^5.0.1",
@@ -16,7 +16,7 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@mg-control/eslint-config-custom-react": "*",
+    "@mg-control/eslint-config-react": "*",
     "@mg-control/tsconfig": "*",
     "@types/antd": "^1.0.0",
     "@types/react": "^18.0.28",

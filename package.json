@@ -10,13 +10,18 @@
     "packages/*"
   ],
   "scripts": {
+    "prepare": "husky install",
     "dev": "turbo run dev --parallel",
     "build": "turbo run build",
-    "format": "prettier --write \"**/*.{ts,tsx}\"",
-    "lint": "turbo run lint"
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,js}\"",
+    "clean": "npm exec --workspaces -- shx rm -rf node_modules .turbo dist && shx rm -rf node_modules"
   },
   "devDependencies": {
+    "husky": "^8.0.3",
+    "lint-staged": "^13.2.1",
     "prettier": "^2.8.7",
+    "shx": "^0.3.4",
     "turbo": "^1.8.8"
   }
 }

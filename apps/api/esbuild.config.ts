@@ -2,10 +2,11 @@ import * as esbuild from "esbuild";
 import { rm } from "fs/promises";
 import path from "path";
 
-const resolveRoot = (...segments: string[]): string => path.resolve(__dirname, ...segments);
+const resolveRoot = (...segments: string[]): string =>
+  path.resolve(__dirname, ...segments);
 
-const cleanPlugin: esbuild.Plugin = {
-  name: "CleanPlugin",
+const clean: esbuild.Plugin = {
+  name: "Clean",
   setup(build) {
     build.onStart(async () => {
       try {
@@ -24,7 +25,7 @@ esbuild.build({
   bundle: true,
   minify: true,
   tsconfig: path.join(__dirname, "tsconfig.json"),
-  plugins: [cleanPlugin],
+  plugins: [clean],
   alias: {
     "~": "./src/*",
   },

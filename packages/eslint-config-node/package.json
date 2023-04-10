@@ -1,0 +1,13 @@
+{
+  "name": "@mg-control/eslint-config-node",
+  "private": true,
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "@mg-control/eslint-config-base": "*"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
