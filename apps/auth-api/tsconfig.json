@@ -1,0 +1,11 @@
+{
+  "extends": "@mg-control/tsconfig/express.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "outDir": "dist",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src", "esbuild.config.ts"]
+}
