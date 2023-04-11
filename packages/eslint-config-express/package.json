@@ -1,5 +1,5 @@
 {
-  "name": "@mg-control/eslint-config-node",
+  "name": "@mg-control/eslint-config-express",
   "private": true,
   "version": "1.0.0",
   "main": "index.js",

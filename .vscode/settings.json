@@ -1,7 +1,10 @@
 {
   "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
   // ------------------------ PRETTIER ------------------------
-  "prettier.printWidth": 120,
+  "prettier.printWidth": 140,
   "prettier.endOfLine": "auto",
   "prettier.singleQuote": false,
   "prettier.tabWidth": 2,
@@ -13,5 +16,5 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   },
-  "eslint.workingDirectories": ["./apps/api", "./apps/web"]
+  "eslint.workingDirectories": ["./apps/auth-api", "./apps/web", "./packages/types"]
 }

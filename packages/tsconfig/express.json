@@ -1,13 +1,11 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "display": "Node",
   "extends": "./base.json",
+  "display": "Node",
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
-    "lib": ["ESNext"],
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "lib": ["ESNext"]
   },
   "ts-node": {
     "compilerOptions": {

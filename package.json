@@ -14,8 +14,7 @@
     "dev": "turbo run dev --parallel",
     "build": "turbo run build",
     "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,js}\"",
-    "clean": "npm exec --workspaces -- shx rm -rf node_modules .turbo dist && shx rm -rf node_modules"
+    "clean": "npm exec --workspaces -- shx rm -rf node_modules .turbo .build-cache dist && shx rm -rf node_modules"
   },
   "devDependencies": {
     "husky": "^8.0.3",
