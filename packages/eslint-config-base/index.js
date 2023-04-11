@@ -11,6 +11,7 @@ module.exports = {
   plugins: ["simple-import-sort", "@typescript-eslint", "import", "prettier"],
   extends: ["airbnb-typescript/base", "plugin:@typescript-eslint/recommended", "plugin:import/typescript", "prettier"],
   rules: {
+    "func-names": ["error", "always"],
     "@typescript-eslint/explicit-member-accessibility": "error",
     "simple-import-sort/imports": "error",
     "simple-import-sort/exports": "error",
@@ -22,7 +23,6 @@ module.exports = {
     "@typescript-eslint/no-explicit-any": "warn",
     "object-shorthand": "error",
     "no-console": "warn",
-    "@typescript-eslint/explicit-function-return-type": "error",
     "@typescript-eslint/no-empty-function": "error",
     "prettier/prettier": [
       "error",

@@ -14,7 +14,8 @@
     "dev": "turbo run dev --parallel",
     "build": "turbo run build",
     "lint": "turbo run lint",
-    "clean": "npm exec --workspaces -- shx rm -rf node_modules .turbo .build-cache dist && shx rm -rf node_modules"
+    "clean": "npm exec --workspaces -- shx rm -rf node_modules .turbo dist && shx rm -rf node_modules",
+    "dev:auth-api": "yarn workspace @mg-control/auth-api run dev"
   },
   "devDependencies": {
     "husky": "^8.0.3",

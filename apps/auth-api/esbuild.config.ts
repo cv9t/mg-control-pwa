@@ -7,14 +7,18 @@ const resolveRoot = (...segments: string[]): string => path.resolve(__dirname, .
 const clean: Plugin = {
   name: "Clean",
   // eslint-disable-next-line @typescript-eslint/no-shadow
-  setup(build) {
+  setup: (build) => {
     build.onStart(async () => {
       try {
         const { outdir } = build.initialOptions;
         if (outdir) {
           await rm(outdir, { recursive: true });
         }
-      } catch (e) {}
+      } catch (err) {
+        if (err instanceof Error) {
+          console.log(err.message);
+        }
+      }
     });
   },
 };

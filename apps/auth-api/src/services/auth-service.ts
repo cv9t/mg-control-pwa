@@ -4,17 +4,14 @@ import bcrypt from "bcrypt";
 import tokenService from "./token-service";
 
 import UserDto from "@/dtos/user-dto";
+import ApiError from "@/exceptions/api-error";
 import UserModel from "@/models/user-model";
 
 class AuthService {
-  public async activate({ email, password, activationCode }: ActivationRequestData): Promise<
-    ReturnType<typeof tokenService.generateTokens> & {
-      user: UserDto;
-    }
-  > {
+  public async activate({ email, password, activationCode }: ActivationRequestData) {
     const userData = await UserModel.findOne({ activationCode });
     if (!userData) {
-      throw new Error(`Такого кода активации ${activationCode} не зарегистрировано`);
+      throw ApiError.BadRequest(`Такого кода активации ${activationCode} не зарегистрировано`);
     }
 
     const hashPassword = await bcrypt.hash(password, 3);
@@ -34,6 +31,4 @@ class AuthService {
   }
 }
 
-const authService = new AuthService();
-
-export default authService;
+export default new AuthService();

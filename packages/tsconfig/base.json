@@ -15,7 +15,9 @@
     "preserveWatchOutput": true,
     "skipLibCheck": true,
     "strict": true,
-    "noImplicitAny": true
+    "noImplicitAny": true,
+    "useDefineForClassFields": true,
+    "experimentalDecorators": true
   },
   "exclude": ["node_modules"]
 }
