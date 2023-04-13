@@ -5,7 +5,7 @@ export interface IUser extends Document {
   email: string;
   password: string;
   isActivated: boolean;
-  activationCode: string;
+  activateCode: string;
 }
 
 const UserSchema = new Schema<IUser>({
@@ -13,7 +13,9 @@ const UserSchema = new Schema<IUser>({
   email: { type: String, unique: true, required: true },
   password: { type: String, required: true },
   isActivated: { type: Boolean, required: true },
-  activationCode: { type: String, unique: true, required: true },
+  activateCode: { type: String, unique: true, required: true },
 });
 
-export default model<IUser>("User", UserSchema);
+const TokenModel = model<IUser>("User", UserSchema);
+
+export default TokenModel;

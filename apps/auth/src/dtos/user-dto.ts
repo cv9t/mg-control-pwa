@@ -1,6 +1,6 @@
 import { IUser } from "@/models/user-model";
 
-export default class UserDto {
+class UserDto {
   public id: string;
 
   public email: string;
@@ -13,3 +13,5 @@ export default class UserDto {
     this.isActivated = model.isActivated;
   }
 }
+
+export default UserDto;

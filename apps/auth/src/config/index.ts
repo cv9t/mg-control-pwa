@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-export default {
+const config = {
   PORT: process.env.PORT ?? "",
   DB_HOST: process.env.DB_HOST ?? "",
   DB_PORT: process.env.DB_PORT ?? "",
@@ -11,4 +11,6 @@ export default {
   DB_PASSWORD: process.env.DB_PASSWORD ?? "",
   JWT_ACCESS_SECRET_KEY: process.env.JWT_ACCESS_SECRET_KEY ?? "",
   JWT_REFRESH_SECRET_KEY: process.env.JWT_REFRESH_SECRET_KEY ?? "",
-} as const;
+};
+
+export default config;

@@ -3,8 +3,8 @@ export type LoginRequestData = {
   password: string;
 };
 
-export type ActivationRequestData = {
-  activationCode: string;
+export type ActivateRequestData = {
+  activateCode: string;
   email: string;
   password: string;
 };
