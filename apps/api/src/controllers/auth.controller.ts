@@ -2,10 +2,11 @@ import { Request, Response } from "express";
 import { ActivateBody, LoginBody } from "@mg-control/types";
 
 import authService from "@/services/auth.service";
-import { routeHandler } from "@/utils/error.utils";
+import { Bind, RouteHandler } from "@/utils/class.utils";
 
 class AuthController {
-  @routeHandler
+  @Bind
+  @RouteHandler
   public async activate(req: Request, res: Response) {
     const body: ActivateBody = req.body;
     const data = await authService.activate(body);
@@ -13,7 +14,8 @@ class AuthController {
     res.status(201).json(data);
   }
 
-  @routeHandler
+  @Bind
+  @RouteHandler
   public async login(req: Request, res: Response) {
     const body: LoginBody = req.body;
     const data = await authService.login(body);
@@ -21,7 +23,8 @@ class AuthController {
     res.status(200).json(data);
   }
 
-  @routeHandler
+  @Bind
+  @RouteHandler
   public async logout(req: Request, res: Response) {
     const { refreshToken } = req.cookies;
     const token = await authService.logout(refreshToken);
@@ -29,7 +32,8 @@ class AuthController {
     res.status(200).json(token);
   }
 
-  @routeHandler
+  @Bind
+  @RouteHandler
   public async refresh(req: Request, res: Response) {
     const { refreshToken } = req.cookies;
     const data = await authService.refresh(refreshToken);

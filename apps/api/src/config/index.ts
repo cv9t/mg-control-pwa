@@ -12,6 +12,7 @@ const config = {
   JWT_ACCESS_SECRET_KEY: process.env.JWT_ACCESS_SECRET_KEY ?? "",
   JWT_REFRESH_SECRET_KEY: process.env.JWT_REFRESH_SECRET_KEY ?? "",
   MQTT_BROKER_URL: process.env.MQTT_BROKER_URL ?? "",
+  MQTT_PRIMARY_TOPIC: process.env.MQTT_PRIMARY_TOPIC ?? "",
 };
 
 export default config;

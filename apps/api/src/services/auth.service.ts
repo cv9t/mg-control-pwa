@@ -2,13 +2,15 @@ import { ActivateBody, LoginBody } from "@mg-control/types";
 
 import UserDto from "@/dtos/user.dto";
 import ApiError from "@/exceptions/api.error";
-import { hashPassword } from "@/utils/password.utils";
+import { Bind } from "@/utils/class.utils";
+import { hashPassword, isPassValid } from "@/utils/password.utils";
 
 import deviceService from "./device.service";
 import tokenService from "./token.service";
 import userService from "./user.service";
 
 class AuthService {
+  @Bind
   public async activate({ email, password, activateCode }: ActivateBody) {
     const device = await deviceService.findDeviceByActivateCode(activateCode);
     if (!device) {
@@ -41,13 +43,14 @@ class AuthService {
     };
   }
 
+  @Bind
   public async login({ email, password }: LoginBody) {
     const user = await userService.findUserByEmail(email);
     if (!user) {
       throw ApiError.BadRequest(`Пользователя с таким email ${email} не существует`);
     }
 
-    if (!user.isPassValid(password)) {
+    if (!isPassValid(password, user.password)) {
       throw ApiError.BadRequest("Неправильный пароль");
     }
 
@@ -61,10 +64,12 @@ class AuthService {
     };
   }
 
+  @Bind
   public async logout(refreshToken: string) {
     return tokenService.removeToken(refreshToken);
   }
 
+  @Bind
   public async refresh(refreshToken: string) {
     if (!refreshToken) {
       throw ApiError.Unauthorized();

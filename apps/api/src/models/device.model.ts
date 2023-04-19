@@ -10,7 +10,6 @@ export type DeviceData = {
 export interface IDevice extends DeviceData, Document {}
 
 const DeviceSchema = new Schema<IDevice>({
-  deviceId: { type: String, required: true },
   isActivated: { type: Boolean },
   activateCode: { type: String, required: true },
 });

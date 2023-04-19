@@ -15,9 +15,7 @@ const clean: Plugin = {
           await rm(outdir, { recursive: true });
         }
       } catch (err) {
-        if (err instanceof Error) {
-          console.log(err.message);
-        }
+        console.log(err);
       }
     });
   },

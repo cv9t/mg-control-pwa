@@ -1,11 +1,11 @@
 import { Router } from "express";
 
 import authRouter from "./auth.router";
-import deviceRouter from "./device.router";
+import sseRouter from "./sse.router";
 
 const router = Router();
 
 router.use("/auth", authRouter);
-router.use("/device", deviceRouter);
+router.use("/sse", sseRouter);
 
 export default router;

@@ -29,9 +29,7 @@ const startServer = async () => {
       console.log(`Сервер запущен на порте ${config.PORT}`);
     });
   } catch (err) {
-    if (err instanceof Error) {
-      console.log(err.message);
-    }
+    console.log(err);
   }
 };
 
