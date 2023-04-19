@@ -1,4 +1,4 @@
-import { ByEmail } from "./byEmail";
+import ByEmail from "./by-email";
 
 const Login = {
   ByEmail,

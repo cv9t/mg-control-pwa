@@ -15,7 +15,7 @@
     "build": "turbo run build",
     "lint": "turbo run lint",
     "clean": "npm exec --workspaces -- shx rm -rf node_modules .turbo dist && shx rm -rf node_modules",
-    "dev:auth": "yarn workspace @mg-control/auth run dev",
+    "dev:api": "yarn workspace @mg-control/api run dev",
     "dev:web": "yarn workspace @mg-control/web run dev"
   },
   "devDependencies": {
@@ -23,6 +23,6 @@
     "lint-staged": "^13.2.1",
     "prettier": "^2.8.7",
     "shx": "^0.3.4",
-    "turbo": "^1.8.8"
+    "turbo": "^1.9.1"
   }
 }

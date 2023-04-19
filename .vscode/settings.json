@@ -16,5 +16,5 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   },
-  "eslint.workingDirectories": ["./apps/auth", "./apps/web", "./packages/types"]
+  "eslint.workingDirectories": ["./apps/api", "./apps/web", "./packages/types"]
 }
