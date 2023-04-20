@@ -1,7 +1,6 @@
 import mqtt, { MqttClient } from "mqtt";
 
-import config from "@/config";
-import { Bind } from "@/utils/class.utils";
+import { env } from "@/config";
 
 type MqttSubscription = {
   topic: string;
@@ -16,8 +15,8 @@ class MqttService {
   private subscriptions: MqttSubscription[];
 
   public constructor() {
-    this.client = mqtt.connect(config.MQTT_BROKER_URL);
-    this.primaryTopic = config.MQTT_PRIMARY_TOPIC;
+    this.client = mqtt.connect(env.MQTT_BROKER_URL);
+    this.primaryTopic = env.MQTT_PRIMARY_TOPIC;
     this.subscriptions = [];
 
     this.client.on("connect", () => {
@@ -34,13 +33,11 @@ class MqttService {
     });
   }
 
-  @Bind
   public subscribe(topic: string, onMessage: MqttSubscription["onMessage"]) {
     this.client.subscribe(this.primaryTopic.concat(topic));
     this.subscriptions.push({ topic, onMessage });
   }
 
-  @Bind
   public unsubscribe(topic: string) {
     const matchingSubscriptionIndex = this.subscriptions.findIndex((subscription) => subscription.topic === topic);
     if (matchingSubscriptionIndex >= 0) {

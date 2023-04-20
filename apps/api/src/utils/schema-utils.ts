@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { ObjectSchema } from "joi";
 
-import ApiError from "@/exceptions/api.error";
+import ApiError from "@/exceptions/api-error";
 
 export const validateSchema =
   <T>(schema: ObjectSchema<T>) =>

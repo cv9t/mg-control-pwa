@@ -1,11 +1,10 @@
 import { Response } from "express";
 
-import sseService from "@/services/sse.service";
+import sseService from "@/services/sse-service";
 import { AuthenticatedRequest } from "@/types";
-import { Bind, RouteHandler } from "@/utils/class.utils";
+import { RouteHandler } from "@/utils/class-utils";
 
 class SseController {
-  @Bind
   @RouteHandler
   public async connectUser(req: AuthenticatedRequest, res: Response) {
     res.setHeader("Cache-Control", "no-cache");

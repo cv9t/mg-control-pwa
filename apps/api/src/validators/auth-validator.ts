@@ -1,7 +1,7 @@
 import { ActivateBody, LoginBody } from "@mg-control/types";
 import Joi from "joi";
 
-import { validateRequest } from "@/utils/schema.utils";
+import { validateRequest } from "@/utils/schema-utils";
 
 export const ActivateBodySchema = Joi.object<ActivateBody>({
   activateCode: Joi.string().required(),

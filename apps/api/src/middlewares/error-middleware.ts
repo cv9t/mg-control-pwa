@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-import ApiError from "@/exceptions/api.error";
+import ApiError from "@/exceptions/api-error";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const errorMiddleware = (err: Error, _req: Request, res: Response, _next: NextFunction) => {

@@ -1,7 +1,7 @@
 import { Router } from "express";
 
-import authRouter from "./auth.router";
-import sseRouter from "./sse.router";
+import authRouter from "./auth-router";
+import sseRouter from "./sse-router";
 
 const router = Router();
 

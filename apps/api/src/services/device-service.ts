@@ -1,21 +1,19 @@
 import { DeviceSensorData } from "@mg-control/types";
 
-import ValidationError from "@/exceptions/validation.error";
-import DeviceModel, { DeviceData } from "@/models/device.model";
-import { Bind } from "@/utils/class.utils";
-import { validateDeviceSensorData } from "@/validators/device.validator";
+import ValidationError from "@/exceptions/validation-error";
+import DeviceModel, { DeviceData } from "@/models/device-model";
+import { Bind } from "@/utils/class-utils";
+import { validateDeviceSensorData } from "@/validators/device-validator";
 
-import mqttService from "./mqtt.service";
-import sseService from "./sse.service";
-import userService from "./user.service";
+import mqttService from "./mqtt-service";
+import sseService from "./sse-service";
+import userService from "./user-service";
 
 class DeviceService {
-  @Bind
   public subscribeToDevice(deviceId: string) {
     mqttService.subscribe(`/devices/${deviceId}/#`, this.handleMqttMessage(deviceId));
   }
 
-  @Bind
   public unsubscribeFromDevice(deviceId: string) {
     mqttService.unsubscribe(`/devices/${deviceId}/#`);
   }
@@ -37,7 +35,6 @@ class DeviceService {
     };
   }
 
-  @Bind
   private async handleSensorDataTopicMessage(deviceId: string, message: string) {
     const sensorData: DeviceSensorData = JSON.parse(message);
     const { error } = validateDeviceSensorData(sensorData);
@@ -51,12 +48,10 @@ class DeviceService {
     }
   }
 
-  @Bind
   public async findDeviceByActivateCode(activateCode: string) {
     return DeviceModel.findOne({ activateCode });
   }
 
-  @Bind
   public async updateDevice(id: string, data: Partial<DeviceData>) {
     const device = await DeviceModel.findById(id);
     if (!device) {

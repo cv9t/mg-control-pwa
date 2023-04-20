@@ -13,6 +13,7 @@
   "dependencies": {
     "@ant-design/icons": "^5.0.1",
     "antd": "^5.4.0",
+    "axios": "^1.3.6",
     "compose-function": "^3.0.3",
     "effector": "^22.8.0",
     "effector-react": "^22.5.1",

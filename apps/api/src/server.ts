@@ -3,8 +3,8 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import mongoose from "mongoose";
 
-import errorMiddleware from "./middlewares/error.middleware";
-import config from "./config";
+import errorMiddleware from "./middlewares/error-middleware";
+import { env } from "./config";
 import router from "./router";
 
 const app = express();
@@ -17,20 +17,20 @@ app.use("/api/v1", router);
 
 app.use(errorMiddleware);
 
-const startServer = async () => {
+const startServer = async (port: string) => {
   try {
-    await mongoose.connect(`mongodb://${config.DB_HOST}:${config.DB_PORT}/${config.DB_NAME}`, {
+    await mongoose.connect(`mongodb://${env.DB_HOST}:${env.DB_PORT}/${env.DB_NAME}`, {
       auth: {
-        username: config.DB_USERNAME,
-        password: config.DB_PASSWORD,
+        username: env.DB_USERNAME,
+        password: env.DB_PASSWORD,
       },
     });
-    app.listen(config.PORT, () => {
-      console.log(`Сервер запущен на порте ${config.PORT}`);
+    app.listen(port, () => {
+      console.log(`Сервер запущен на порте ${port}`);
     });
   } catch (err) {
     console.log(err);
   }
 };
 
-startServer();
+startServer(env.PORT);

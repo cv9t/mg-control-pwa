@@ -1,7 +1,7 @@
 import { Router } from "express";
 
-import sseController from "@/controllers/sse.controller";
-import authMiddleware from "@/middlewares/auth.middleware";
+import sseController from "@/controllers/sse-controller";
+import authMiddleware from "@/middlewares/auth-middleware";
 
 const sseRouter = Router();
 

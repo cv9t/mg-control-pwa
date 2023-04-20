@@ -1,10 +1,10 @@
 import { Response } from "express";
 
-import UserDto from "@/dtos/user.dto";
-import ApiError from "@/exceptions/api.error";
-import { Bind } from "@/utils/class.utils";
+import UserDto from "@/dtos/user-dto";
+import ApiError from "@/exceptions/api-error";
+import { Bind } from "@/utils/class-utils";
 
-import deviceService from "./device.service";
+import deviceService from "./device-service";
 
 class SseService {
   private users: Map<string, Response>;
@@ -13,7 +13,6 @@ class SseService {
     this.users = new Map();
   }
 
-  @Bind
   public async addUser(user: UserDto | undefined, res: Response) {
     if (!user) {
       throw ApiError.Unauthorized();
@@ -35,12 +34,10 @@ class SseService {
     });
   }
 
-  @Bind
   public removeUser(userId: string) {
     this.users.delete(userId);
   }
 
-  @Bind
   public sendMessageToUser(userId: string, message: string) {
     const user = this.users.get(userId);
     if (user) {
