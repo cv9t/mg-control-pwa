@@ -2,7 +2,6 @@ import { Response } from "express";
 
 import UserDto from "@/dtos/user-dto";
 import ApiError from "@/exceptions/api-error";
-import { Bind } from "@/utils/class-utils";
 
 import deviceService from "./device-service";
 
@@ -22,8 +21,7 @@ class SseService {
     }
 
     this.users.set(user.id, res);
-
-    deviceService.subscribeToDevice(user.deviceId);
+    deviceService.subscribeToDevice(user.id, user.deviceId);
 
     res.on("close", () => {
       if (user.deviceId) {

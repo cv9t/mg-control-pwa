@@ -24,6 +24,7 @@
   "devDependencies": {
     "@mg-control/eslint-config-react": "*",
     "@mg-control/tsconfig": "*",
+    "@mg-control/types": "*",
     "@types/antd": "^1.0.0",
     "@types/compose-function": "^0.0.30",
     "@types/react": "^18.0.28",

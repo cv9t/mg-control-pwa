@@ -1,6 +1,6 @@
 import { Layout } from "antd";
 
-import { Login } from "@/features/auth";
+import { LoginForm } from "@/features/auth";
 import { dom } from "@/shared/lib";
 import { Content } from "@/shared/ui";
 
@@ -10,7 +10,7 @@ const LoginPage = () => {
   return (
     <Layout>
       <Content.Center>
-        <Login.ByEmail />
+        <LoginForm />
       </Content.Center>
     </Layout>
   );

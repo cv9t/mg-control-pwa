@@ -21,8 +21,8 @@ export const RouteHandler = (_target: any, _key: string, descriptor: PropertyDes
   descriptor.value = async function decorator(...args: [Request, Response, NextFunction]) {
     try {
       await originalMethod.apply(this, args);
-    } catch (err) {
-      args[2](err);
+    } catch (error) {
+      args[2](error);
     }
   };
   return descriptor;

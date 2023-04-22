@@ -7,11 +7,10 @@ import { validateDeviceSensorData } from "@/validators/device-validator";
 
 import mqttService from "./mqtt-service";
 import sseService from "./sse-service";
-import userService from "./user-service";
 
 class DeviceService {
-  public subscribeToDevice(deviceId: string) {
-    mqttService.subscribe(`/devices/${deviceId}/#`, this.handleMqttMessage(deviceId));
+  public subscribeToDevice(userId: string, deviceId: string) {
+    mqttService.subscribe(`/devices/${deviceId}/#`, this.handleMqttMessage(userId, deviceId));
   }
 
   public unsubscribeFromDevice(deviceId: string) {
@@ -19,33 +18,29 @@ class DeviceService {
   }
 
   @Bind
-  private handleMqttMessage(deviceId: string) {
-    return async (topic: string, message: string) => {
+  private handleMqttMessage(userId: string, deviceId: string) {
+    return (topic: string, message: string) => {
       try {
         const room = topic.split("/").pop() ?? "";
-        if (room === "sensorData") {
-          await this.handleSensorDataTopicMessage(deviceId, message);
+        if (room === "sensor-data") {
+          this.handleSensorDataTopicMessage(userId, message);
         }
-      } catch (err) {
-        if (err instanceof ValidationError) {
-          console.log(`Ошибка при валидации данных от ${deviceId}: ${err.message}`);
+      } catch (error) {
+        if (error instanceof ValidationError) {
+          console.log(`Ошибка при валидации данных от ${deviceId}: ${error.message}`);
         }
-        console.log(err);
+        console.log(error);
       }
     };
   }
 
-  private async handleSensorDataTopicMessage(deviceId: string, message: string) {
+  private handleSensorDataTopicMessage(userId: string, message: string) {
     const sensorData: DeviceSensorData = JSON.parse(message);
     const { error } = validateDeviceSensorData(sensorData);
     if (error) {
       throw new ValidationError(error.message);
     }
-
-    const user = await userService.findUserByDeviceId(deviceId);
-    if (user) {
-      sseService.sendMessageToUser(user.id, JSON.stringify(sensorData));
-    }
+    sseService.sendMessageToUser(userId, JSON.stringify(sensorData));
   }
 
   public async findDeviceByActivateCode(activateCode: string) {

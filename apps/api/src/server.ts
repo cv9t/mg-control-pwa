@@ -11,7 +11,7 @@ const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors());
+app.use(cors({ origin: "*", credentials: true }));
 
 app.use("/api/v1", router);
 
@@ -28,8 +28,8 @@ const startServer = async (port: string) => {
     app.listen(port, () => {
       console.log(`Сервер запущен на порте ${port}`);
     });
-  } catch (err) {
-    console.log(err);
+  } catch (error) {
+    console.log(error);
   }
 };
 

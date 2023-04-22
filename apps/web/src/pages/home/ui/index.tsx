@@ -18,9 +18,9 @@ const HomePage = () => {
         <Typography.Text className={styles.text}>
           <b>MicroGreen Box</b> - автоматизированное устройство, позволяющее быстро вырастить любую микрозелень!
         </Typography.Text>
-        <Space>
+        <Space size="middle">
           <Button type="primary" onClick={() => navigate("/activate")}>
-            Активировать Box
+            Активировать устройство
           </Button>
           <Button onClick={() => navigate("/login")}>Войти</Button>
         </Space>

@@ -1,94 +1,44 @@
-import { ActivateBody, LoginBody } from "@mg-control/types";
+import { LoginRequestData } from "@mg-control/types";
 
 import UserDto from "@/dtos/user-dto";
 import ApiError from "@/exceptions/api-error";
-import { hashPassword, isPassValid } from "@/utils/password-utils";
+import { isPassValid } from "@/utils/password-utils";
 
-import deviceService from "./device-service";
 import tokenService from "./token-service";
 import userService from "./user-service";
 
 class AuthService {
-  public async activate({ email, password, activateCode }: ActivateBody) {
-    const device = await deviceService.findDeviceByActivateCode(activateCode);
-    if (!device) {
-      throw ApiError.BadRequest(`Такого кода активации ${activateCode} не существует`);
-    }
-    if (device.isActivated) {
-      throw ApiError.BadRequest(`Код активации ${activateCode} уже использован`);
-    }
-
-    const existingUser = await userService.findUserByEmail(email);
-    if (existingUser) {
-      throw ApiError.BadRequest(`Пользователь с таким email ${email} уже есть`);
-    }
-
-    const user = await userService.createUser({
-      device: device.id,
-      email,
-      password: hashPassword(password),
-    });
-
-    await deviceService.updateDevice(device.id, { isActivated: true });
-
-    const userDto = new UserDto(user);
-    const tokens = tokenService.generateTokens({ ...userDto });
-    await tokenService.saveToken(userDto.id, tokens.refreshToken);
-
-    return {
-      ...tokens,
-      user: userDto,
-    };
-  }
-
-  public async login({ email, password }: LoginBody) {
+  public async login({ email, password }: LoginRequestData) {
     const user = await userService.findUserByEmail(email);
-    if (!user) {
-      throw ApiError.BadRequest(`Пользователя с таким email ${email} не существует`);
+    if (!user || !isPassValid(password, user.password)) {
+      throw ApiError.Unauthorized("Неверный адрес электронной почты или пароль");
     }
 
-    if (!isPassValid(password, user.password)) {
-      throw ApiError.BadRequest("Неправильный пароль");
-    }
+    const tokens = tokenService.generateTokens({ ...new UserDto(user) });
+    await tokenService.saveToken(user.id, tokens.refreshToken);
 
-    const userDto = new UserDto(user);
-    const tokens = tokenService.generateTokens({ ...userDto });
-    await tokenService.saveToken(userDto.id, tokens.refreshToken);
-
-    return {
-      ...tokens,
-      user: userDto,
-    };
+    return tokens;
   }
 
-  public async logout(refreshToken: string) {
-    return tokenService.removeToken(refreshToken);
-  }
-
-  public async refresh(refreshToken: string) {
+  public async refreshToken(refreshToken: string) {
     if (!refreshToken) {
-      throw ApiError.Unauthorized();
+      throw ApiError.Unauthorized("Не удалось найти refresh token");
     }
 
     const payload = tokenService.verifyRefreshToken<UserDto>(refreshToken);
-    const token = await tokenService.findToken(refreshToken);
-    if (!payload || !token) {
-      throw ApiError.Unauthorized();
+    const existingRefreshToken = await tokenService.findToken(refreshToken);
+    if (!payload || !existingRefreshToken) {
+      throw ApiError.Unauthorized("Неверный refresh token");
     }
 
     const user = await userService.findUserById(payload.id);
     if (!user) {
-      throw ApiError.BadRequest(`Пользователя с таким id ${payload.id} не существует`);
+      throw ApiError.Unauthorized("Не удалось найти пользователя");
     }
 
-    const userDto = new UserDto(user);
-    const tokens = tokenService.generateTokens({ ...userDto });
-    await tokenService.saveToken(userDto.id, tokens.refreshToken);
-
-    return {
-      ...tokens,
-      user: userDto,
-    };
+    const tokens = tokenService.generateTokens({ ...new UserDto(user) });
+    await tokenService.saveToken(user.id, tokens.refreshToken);
+    return tokens;
   }
 }
 

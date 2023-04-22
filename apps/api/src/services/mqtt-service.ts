@@ -4,7 +4,7 @@ import { env } from "@/config";
 
 type MqttSubscription = {
   topic: string;
-  onMessage: (topic: string, message: string) => Promise<void>;
+  onMessage: (topic: string, message: string) => void;
 };
 
 class MqttService {
@@ -23,12 +23,12 @@ class MqttService {
       console.log("MQTT подключено");
     });
 
-    this.client.on("message", async (topic, message) => {
+    this.client.on("message", (topic, message) => {
       const matchingSubscription = this.subscriptions.find((subscription) =>
         topic.startsWith(this.primaryTopic.concat(subscription.topic).replace("#", ""))
       );
       if (matchingSubscription) {
-        await matchingSubscription.onMessage(topic, message.toString());
+        matchingSubscription.onMessage(topic, message.toString());
       }
     });
   }

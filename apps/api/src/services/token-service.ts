@@ -8,7 +8,7 @@ type JWTPayload = string | object | Buffer;
 class TokenService {
   public generateTokens<T extends JWTPayload>(payload: T) {
     const accessToken = jwt.sign(payload, env.JWT_ACCESS_SECRET_KEY, {
-      expiresIn: "30m",
+      expiresIn: "5m",
     });
     const refreshToken = jwt.sign(payload, env.JWT_REFRESH_SECRET_KEY, {
       expiresIn: "30d",
@@ -33,7 +33,7 @@ class TokenService {
   }
 
   public async saveToken(userId: string, refreshToken: string) {
-    const existingToken = await TokenModel.findOne({ userId });
+    const existingToken = await TokenModel.findOne({ user: userId });
     if (existingToken) {
       existingToken.refreshToken = refreshToken;
       return existingToken.save();
