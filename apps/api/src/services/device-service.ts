@@ -1,7 +1,7 @@
 import { DeviceSensorData } from "@mg-control/types";
 
 import ValidationError from "@/exceptions/validation-error";
-import DeviceModel, { DeviceData } from "@/models/device-model";
+import DeviceModel from "@/models/device-model";
 import { Bind } from "@/utils/class-utils";
 import { validateDeviceSensorData } from "@/validators/device-validator";
 
@@ -43,17 +43,8 @@ class DeviceService {
     sseService.sendMessageToUser(userId, JSON.stringify(sensorData));
   }
 
-  public async findDeviceByActivateCode(activateCode: string) {
+  public findDeviceByActivateCode(activateCode: string) {
     return DeviceModel.findOne({ activateCode });
-  }
-
-  public async updateDevice(id: string, data: Partial<DeviceData>) {
-    const device = await DeviceModel.findById(id);
-    if (!device) {
-      return null;
-    }
-    Object.assign(device, data);
-    return device.save();
   }
 }
 

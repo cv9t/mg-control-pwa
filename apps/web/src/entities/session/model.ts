@@ -32,6 +32,8 @@ checkAuthFx.doneData.watch(({ accessToken }) => {
 checkAuthFx.fail.watch(({ error }) => {
   if (error.kind === "unauthorized") {
     localStorage.removeItem(MG_CONTROL_ACCESS_TOKEN);
+    alert.error("Пользователь не авторизован");
+    return;
   }
   alert.error(error.message);
 });

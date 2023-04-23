@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button, Col, Form, Input, Row, Space, Typography } from "antd";
 
 import { routes } from "@/shared/config";
@@ -27,14 +27,7 @@ const LoginForm = () => {
         </Typography.Title>
       </Col>
       <Col span={24}>
-        <Form
-          validateTrigger="onSubmit"
-          layout="vertical"
-          requiredMark={false}
-          initialValues={{ remember: true }}
-          autoComplete="off"
-          onFinish={handleFinish}
-        >
+        <Form validateTrigger="onSubmit" layout="vertical" initialValues={{ remember: true }} autoComplete="off" onFinish={handleFinish}>
           {errorMessage && (
             <div style={{ marginBottom: 12 }}>
               <Typography.Text type="danger">{errorMessage}</Typography.Text>
@@ -51,17 +44,17 @@ const LoginForm = () => {
               { required: true, message: "Введите адрес электронной почты!" },
             ]}
           >
-            <Input placeholder="example@example.com" />
+            <Input placeholder="Введите адрес электронной почты" />
           </Form.Item>
           <Form.Item label="Пароль" name="password" rules={[{ required: true, message: "Введите пароль!" }]}>
-            <Input.Password placeholder="example123" />
+            <Input.Password placeholder="Введите пароль" />
           </Form.Item>
           <Form.Item>
             <Space style={{ width: "100%", justifyContent: "space-between" }}>
               <Button loading={isLoading} type="primary" htmlType="submit">
                 Войти
               </Button>
-              <Typography.Link href="/activate">Активировать устройство?</Typography.Link>
+              <Link to={routes.ACTIVATE}>Активировать устройство?</Link>
             </Space>
           </Form.Item>
         </Form>

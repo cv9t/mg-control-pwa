@@ -7,9 +7,9 @@ import { types } from "@/shared/api";
 import { MG_CONTROL_ACCESS_TOKEN } from "@/shared/config";
 import { alert } from "@/shared/lib";
 
-import api from "./api";
+import loginFormApi from "./api";
 
-export const loginFx = createEffect<LoginRequestData, types.AuthResponse, types.ApiError>((credentials) => api.login(credentials));
+export const loginFx = createEffect<LoginRequestData, types.AuthResponse, types.ApiError>((credentials) => loginFormApi.login(credentials));
 
 const $errorMessage = createStore<string | null>(null).on(loginFx.failData, (_, { message, kind }) => {
   if (kind === "unauthorized") {

@@ -4,13 +4,12 @@ import authService from "@/services/auth-service";
 import { RouteHandler } from "@/utils/class-utils";
 
 class AuthController {
-  // @RouteHandler
-  // public async activate(req: Request, res: Response) {
-  //   const body: ActivateRequestData = req.body;
-  //   const data = await authService.activate(body);
-  //   res.cookie("refreshToken", data.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true });
-  //   res.status(201).json(data);
-  // }
+  @RouteHandler
+  public async activate(req: Request, res: Response) {
+    const { accessToken, refreshToken } = await authService.activate(req.body);
+    res.cookie("refreshToken", refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true });
+    res.status(201).json({ accessToken });
+  }
 
   @RouteHandler
   public async login(req: Request, res: Response) {

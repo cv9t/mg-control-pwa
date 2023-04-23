@@ -3,8 +3,8 @@ class ApiError extends Error {
     super(message);
   }
 
-  public static Unauthorized(message = "", errors: string[] = []) {
-    return new ApiError(401, message || "Пользователь не авторизован", errors);
+  public static Unauthorized(message = "Пользователь не авторизован", errors: string[] = []) {
+    return new ApiError(401, message, errors);
   }
 
   public static BadRequest(message: string, errors: string[] = []) {
