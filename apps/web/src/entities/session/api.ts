@@ -1,10 +1,8 @@
 import { http } from "@/shared/api";
 import { AuthResponse } from "@/shared/api/types";
 
-const refreshToken = () => http.client.get<AuthResponse>("auth/refresh-token");
-
-const api = {
-  refreshToken,
+const sessionApi = {
+  refreshToken: () => http.client.get<AuthResponse>("auth/refresh-token"),
 };
 
-export default api;
+export default sessionApi;

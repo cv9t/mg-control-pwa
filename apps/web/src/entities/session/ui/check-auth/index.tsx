@@ -1,7 +1,6 @@
-import { ReactNode, useEffect, useState } from "react";
-import { Spin } from "antd";
+import { ReactNode } from "react";
 
-import { MG_CONTROL_ACCESS_TOKEN } from "@/shared/config";
+import { Loader } from "@/shared/ui";
 
 import { sessionModel } from "../..";
 
@@ -10,16 +9,10 @@ type CheckAuthProps = {
 };
 
 const CheckAuth = ({ children }: CheckAuthProps) => {
-  const [authChecked, setAuthChecked] = useState(() => !localStorage.getItem(MG_CONTROL_ACCESS_TOKEN));
-
-  useEffect(() => {
-    if (!authChecked) {
-      sessionModel.checkAuthFx().finally(() => setAuthChecked(true));
-    }
-  }, []);
+  const { authChecked } = sessionModel.useAuthCheck();
 
   if (!authChecked) {
-    return <Spin delay={300} className="overlay" size="large" />;
+    return <Loader className="overlay" />;
   }
 
   return <>{children}</>;

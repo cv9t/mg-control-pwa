@@ -9,7 +9,7 @@ const AuthLayout = () => (
   <AuthGuard>
     <Layout style={{ minHeight: "100vh" }}>
       <Header />
-      <Layout.Content style={{ flex: 1, paddingTop: 16 }}>
+      <Layout.Content style={{ display: "flex", flex: 1, paddingTop: 16 }}>
         <Outlet />
       </Layout.Content>
     </Layout>

@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Button, Form, Input, Space, Typography } from "antd";
 
 import { routes } from "@/shared/config";
@@ -13,14 +13,12 @@ type FormValues = {
 };
 
 const ActivateForm = () => {
+  const { errorMessage, isLoading, activate } = activateFormModel.useActivateForm();
+
   const [form] = Form.useForm();
 
-  const navigate = useNavigate();
-
-  const { errorMessage, isLoading } = activateFormModel.useActivateForm();
-
   const handleFinish = ({ email, password, activateCode }: FormValues) => {
-    activateFormModel.activateFx({ email, password, activateCode }).then(() => navigate(routes.DASHBOARD));
+    activate({ email, password, activateCode });
   };
 
   return (

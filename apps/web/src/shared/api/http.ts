@@ -2,6 +2,8 @@ import axios, { AxiosRequestConfig, InternalAxiosRequestConfig } from "axios";
 
 import { env, MG_CONTROL_ACCESS_TOKEN, UNEXPECTED_ERROR } from "@/shared/config";
 
+import { alert } from "../lib";
+
 import { ApiError, ApiErrorKind, ErrorResponse } from "./types";
 
 const getErrorKind = (status: number): ApiErrorKind => {
@@ -38,14 +40,26 @@ const handleRequest = (config: InternalAxiosRequestConfig) => {
   return config;
 };
 
+const handleError = (error: ErrorResponse) => {
+  const apiError = getApiError(error);
+  if (apiError.kind === "unauthorized") {
+    localStorage.removeItem(MG_CONTROL_ACCESS_TOKEN);
+    if (error.config?._error_alert) {
+      alert.error(error.message);
+    }
+  }
+  return apiError;
+};
+
 const axiosInstance = axios.create({
   withCredentials: true,
   baseURL: `${env.BACKEND_URL}/api/v1`,
+  _error_alert: true,
 });
 
 axiosInstance.interceptors.response.use(
   (response) => response,
-  (error: ErrorResponse) => Promise.reject(getApiError(error))
+  (error: ErrorResponse) => Promise.reject(handleError(error))
 );
 
 axiosInstance.interceptors.request.use(handleRequest);

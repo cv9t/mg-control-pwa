@@ -24,7 +24,7 @@ const authMiddleware = (req: AuthenticatedRequest, _res: Response, next: NextFun
 
     req.user = payload;
     next();
-  } catch (e) {
+  } catch {
     next(ApiError.Unauthorized());
   }
 };

@@ -8,7 +8,7 @@ type JWTPayload = string | object | Buffer;
 class TokenService {
   public generateTokens<T extends JWTPayload>(payload: T) {
     const accessToken = jwt.sign(payload, env.JWT_ACCESS_SECRET_KEY, {
-      expiresIn: "5m",
+      expiresIn: "15m",
     });
     const refreshToken = jwt.sign(payload, env.JWT_REFRESH_SECRET_KEY, {
       expiresIn: "30d",

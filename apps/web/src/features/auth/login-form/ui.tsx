@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Button, Form, Input, Space, Typography } from "antd";
 
 import { routes } from "@/shared/config";
@@ -11,12 +11,10 @@ type FormValues = {
 };
 
 const LoginForm = () => {
-  const navigate = useNavigate();
-
-  const { errorMessage, isLoading } = loginFormModel.useLoginForm();
+  const { errorMessage, isLoading, login } = loginFormModel.useLoginForm();
 
   const handleFinish = ({ email, password }: FormValues) => {
-    loginFormModel.loginFx({ email, password }).then(() => navigate(routes.DASHBOARD));
+    login({ email, password });
   };
 
   return (
