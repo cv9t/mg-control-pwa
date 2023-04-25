@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 
 import authService from "@/services/auth-service";
+import { AuthenticatedRequest } from "@/types";
 import { RouteHandler } from "@/utils/class-utils";
 
 class AuthController {
@@ -18,16 +19,15 @@ class AuthController {
     res.status(200).json({ accessToken });
   }
 
-  // @RouteHandler
-  // public async logout(req: Request, res: Response) {
-  //   const { refreshToken } = req.cookies;
-  //   const token = await authService.logout(refreshToken);
-  //   res.clearCookie("refreshToken");
-  //   res.status(200).json(token);
-  // }
+  @RouteHandler
+  public async logout(req: AuthenticatedRequest, res: Response) {
+    const result = await authService.logout(req.cookies.refreshToken);
+    res.clearCookie("refreshToken");
+    res.status(200).json(result);
+  }
 
   @RouteHandler
-  public async refreshToken(req: Request, res: Response) {
+  public async refreshToken(req: AuthenticatedRequest, res: Response) {
     const { accessToken, refreshToken } = await authService.refreshToken(req.cookies.refreshToken);
     res.cookie("refreshToken", refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true });
     res.status(200).json({ accessToken });

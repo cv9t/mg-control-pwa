@@ -1,9 +1,14 @@
-import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { ReactNode } from "react";
+import { Navigate, useLocation } from "react-router-dom";
 
 import { sessionModel } from "@/entities/session";
 import { routes } from "@/shared/config";
 
-const GuestGuard = () => {
+type GuestGuardProps = {
+  children: ReactNode;
+};
+
+const GuestGuard = ({ children }: GuestGuardProps) => {
   const location = useLocation();
 
   const { isAuth } = sessionModel.useSession();
@@ -12,7 +17,7 @@ const GuestGuard = () => {
     return <Navigate to={routes.DASHBOARD} state={{ from: location }} replace />;
   }
 
-  return <Outlet />;
+  return <>{children}</>;
 };
 
 export default GuestGuard;

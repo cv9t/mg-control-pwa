@@ -13,11 +13,8 @@ class SseService {
   }
 
   public async addUser(user: UserDto | undefined, res: Response) {
-    if (!user) {
+    if (!user || !user.deviceId) {
       throw ApiError.Unauthorized();
-    }
-    if (!user.deviceId) {
-      throw ApiError.BadRequest(`У пользователя нет устройства`);
     }
 
     this.users.set(user.id, res);

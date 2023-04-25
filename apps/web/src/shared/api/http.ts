@@ -45,19 +45,7 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.response.use(
   (response) => response,
-  (error: ErrorResponse) =>
-    // const originalRequest = error.config;
-    // // @ts-ignore
-    // if (error.response?.status === 401 && originalRequest && error.config._isRetry) {
-    //   // @ts-ignore
-    //   originalRequest._isRetry = true;
-    //   try {
-    //     const response = await axiosInstance.get<AuthResponse>("auth/refresh-token");
-    //     localStorage.setItem(MG_CONTROL_ACCESS_TOKEN, response.data.accessToken);
-    //     return await axiosInstance.request(originalRequest);
-    //   } catch {}
-    // }
-    Promise.reject(getApiError(error))
+  (error: ErrorResponse) => Promise.reject(getApiError(error))
 );
 
 axiosInstance.interceptors.request.use(handleRequest);

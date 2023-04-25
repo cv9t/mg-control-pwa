@@ -50,6 +50,10 @@ class AuthService {
     return tokens;
   }
 
+  public logout(refreshToken: string) {
+    return tokenService.removeToken(refreshToken);
+  }
+
   public async refreshToken(refreshToken: string) {
     if (!refreshToken) {
       throw ApiError.Unauthorized("Не удалось найти refresh token");

@@ -4,8 +4,6 @@ import { Button, Layout, Space, Typography } from "antd";
 import { dom } from "@/shared/lib";
 import { Content } from "@/shared/ui";
 
-import styles from "./styles.module.scss";
-
 const HomePage = () => {
   dom.useTitle("MG Control | Home");
 
@@ -13,9 +11,13 @@ const HomePage = () => {
 
   return (
     <Layout>
-      <Content.Center className={styles.content}>
+      <Content.Center
+        style={{
+          gap: "0.25em",
+        }}
+      >
         <Typography.Title level={4}>Выращивайте микрозелень без усилий в домашних условиях 🌱</Typography.Title>
-        <Typography.Text className={styles.text}>
+        <Typography.Text style={{ marginBottom: "0.8em" }}>
           <b>MicroGreen Box</b> - автоматизированное устройство, позволяющее быстро вырастить любую микрозелень!
         </Typography.Text>
         <Space size="middle">
