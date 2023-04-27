@@ -1,0 +1,14 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  &Content {
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
+.progress {
+  margin: 0;
+}

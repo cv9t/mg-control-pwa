@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig, InternalAxiosRequestConfig } from "axios";
 
-import { env, MG_CONTROL_ACCESS_TOKEN, UNEXPECTED_ERROR } from "@/shared/config";
+import { api, env, plugs } from "@/shared/config";
 
 import { alert } from "../lib";
 
@@ -29,11 +29,11 @@ const getApiError = (error: ErrorResponse): ApiError => {
     const kind = getErrorKind(status);
     return { status, message, kind };
   }
-  return { status: 500, message: UNEXPECTED_ERROR, kind: "unknown" };
+  return { status: 500, message: plugs.UNEXPECTED_ERROR, kind: "unknown" };
 };
 
 const handleRequest = (config: InternalAxiosRequestConfig) => {
-  const token = localStorage.getItem(MG_CONTROL_ACCESS_TOKEN);
+  const token = localStorage.getItem(api.MG_CONTROL_ACCESS_TOKEN);
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -43,7 +43,7 @@ const handleRequest = (config: InternalAxiosRequestConfig) => {
 const handleError = (error: ErrorResponse) => {
   const apiError = getApiError(error);
   if (apiError.kind === "unauthorized") {
-    localStorage.removeItem(MG_CONTROL_ACCESS_TOKEN);
+    localStorage.removeItem(api.MG_CONTROL_ACCESS_TOKEN);
     if (error.config?._error_alert) {
       alert.error(error.message);
     }

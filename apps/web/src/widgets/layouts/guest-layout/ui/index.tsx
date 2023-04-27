@@ -4,10 +4,12 @@ import { Layout } from "antd";
 import { GuestGuard } from "@/entities/session";
 import { Content } from "@/shared/ui";
 
+import styles from "./styles.module.scss";
+
 const GuestLayout = () => (
   <GuestGuard>
-    <Layout>
-      <Content.Center style={{ minHeight: "100vh" }}>
+    <Layout className={styles.root}>
+      <Content.Center className={styles.rootContent}>
         <Outlet />
       </Content.Center>
     </Layout>

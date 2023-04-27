@@ -3,7 +3,9 @@ import { Button, Form, Input, Space, Typography } from "antd";
 
 import { routes } from "@/shared/config";
 
-import * as loginFormModel from "./model";
+import * as loginFormModel from "../model";
+
+import styles from "./styles.module.scss";
 
 type FormValues = {
   email: string;
@@ -20,7 +22,7 @@ const LoginForm = () => {
   return (
     <Form validateTrigger="onSubmit" layout="vertical" initialValues={{ remember: true }} autoComplete="off" onFinish={handleFinish}>
       {errorMessage && (
-        <div style={{ marginBottom: 12 }}>
+        <div className={styles.errorContainer}>
           <Typography.Text type="danger">{errorMessage}</Typography.Text>
         </div>
       )}
@@ -41,7 +43,7 @@ const LoginForm = () => {
         <Input.Password placeholder="Введите пароль" />
       </Form.Item>
       <Form.Item>
-        <Space style={{ width: "100%", justifyContent: "space-between" }}>
+        <Space className={styles.buttonContainer}>
           <Button loading={isLoading} type="primary" htmlType="submit">
             Войти
           </Button>

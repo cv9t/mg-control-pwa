@@ -18,7 +18,7 @@ const DashboardPage = () => {
     <div>
       <Row gutter={[16, 16]}>
         <Col span={24}>
-          <Chart.Liquid percent={sensorData.liquid} />
+          <Chart.Liquid percent={sensorData.liquid} width={240} height={240} />
         </Col>
 
         <Col md={{ span: 12 }} xs={{ span: 24 }}>

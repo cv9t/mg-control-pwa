@@ -1,0 +1,10 @@
+.root {
+  &Content {
+    display: flex;
+    gap: 32px;
+  }
+
+  &Col {
+    flex: 1;
+  }
+}

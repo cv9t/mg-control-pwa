@@ -1,18 +1,19 @@
+import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { createEffect } from "effector";
 import { useStore } from "effector-react";
 
 import { sessionModel } from "@/entities/session";
 import { types } from "@/shared/api";
-import { MG_CONTROL_ACCESS_TOKEN, routes } from "@/shared/config";
+import { api, routes } from "@/shared/config";
 import { alert } from "@/shared/lib";
 
-import logoutButtonApi from "./api";
+import * as logoutButtonApi from "./api";
 
 export const logoutFx = createEffect<void, unknown, types.ApiError>(() => logoutButtonApi.logout());
 
 logoutFx.done.watch(() => {
-  localStorage.removeItem(MG_CONTROL_ACCESS_TOKEN);
+  localStorage.removeItem(api.MG_CONTROL_ACCESS_TOKEN);
   sessionModel.setAuth(false);
 });
 
@@ -25,5 +26,7 @@ export const useLogoutButton = () => {
 
   const navigate = useNavigate();
 
-  return { isLoading, logout: () => logoutFx().then(() => navigate(routes.LOGIN)) } as const;
+  const logout = useCallback(() => logoutFx().then(() => navigate(routes.LOGIN)), []);
+
+  return { isLoading, logout } as const;
 };

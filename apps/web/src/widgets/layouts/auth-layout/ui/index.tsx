@@ -5,11 +5,13 @@ import { AuthGuard } from "@/entities/session";
 
 import Header from "./header";
 
+import styles from "./styles.module.scss";
+
 const AuthLayout = () => (
   <AuthGuard>
-    <Layout style={{ minHeight: "100vh" }}>
+    <Layout className={styles.root}>
       <Header />
-      <Layout.Content style={{ position: "relative", paddingTop: 16, paddingBottom: 16 }}>
+      <Layout.Content className={styles.rootContent}>
         <Outlet />
       </Layout.Content>
     </Layout>

@@ -3,7 +3,9 @@ import { Button, Form, Input, Space, Typography } from "antd";
 
 import { routes } from "@/shared/config";
 
-import * as activateFormModel from "./model";
+import * as activateFormModel from "../model";
+
+import styles from "./styles.module.scss";
 
 type FormValues = {
   activateCode: string;
@@ -24,14 +26,14 @@ const ActivateForm = () => {
   return (
     <Form
       form={form}
-      validateTrigger="onSubmit"
       layout="vertical"
-      initialValues={{ remember: true }}
       autoComplete="off"
+      validateTrigger="onSubmit"
+      initialValues={{ remember: true }}
       onFinish={handleFinish}
     >
       {errorMessage && (
-        <div style={{ marginBottom: 12 }}>
+        <div className={styles.errorContainer}>
           <Typography.Text type="danger">{errorMessage}</Typography.Text>
         </div>
       )}
@@ -77,7 +79,7 @@ const ActivateForm = () => {
         <Input.Password placeholder="Введите повторно пароль" onPaste={(e) => e.preventDefault()} />
       </Form.Item>
       <Form.Item>
-        <Space style={{ width: "100%", justifyContent: "space-between" }}>
+        <Space className={styles.buttonContainer}>
           <Button loading={isLoading} type="primary" htmlType="submit">
             Активировать
           </Button>

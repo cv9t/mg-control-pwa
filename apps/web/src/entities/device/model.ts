@@ -2,7 +2,7 @@ import { DeviceSensorData } from "@mg-control/types";
 import { createEvent, createStore } from "effector";
 import { useStore } from "effector-react";
 
-import { env, MG_CONTROL_ACCESS_TOKEN, UNEXPECTED_ERROR } from "@/shared/config";
+import { api, env, plugs } from "@/shared/config";
 import { alert, hooks } from "@/shared/lib";
 
 type DeviceStore = {
@@ -21,14 +21,14 @@ export const useDeviceConnect = () => {
   hooks.useSse(`${env.BACKEND_URL}/api/v1/sse/connect`, {
     eventSourceOptions: {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem(MG_CONTROL_ACCESS_TOKEN)}`,
+        Authorization: `Bearer ${localStorage.getItem(api.MG_CONTROL_ACCESS_TOKEN)}`,
       },
     },
     onMessage: (event) => {
       const sensorData = JSON.parse(event.data) as DeviceSensorData;
       setSensorData(sensorData);
     },
-    onError: () => alert.error(UNEXPECTED_ERROR),
+    onError: () => alert.error(plugs.UNEXPECTED_ERROR),
   });
 };
 

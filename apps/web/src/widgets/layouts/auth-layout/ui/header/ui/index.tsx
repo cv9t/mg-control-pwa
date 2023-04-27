@@ -1,12 +1,15 @@
 import { GithubFilled } from "@ant-design/icons";
 import { Button, Layout, Space, Typography } from "antd";
+import clsx from "clsx";
 
 import { LogoutButton } from "@/features/auth";
 
+import styles from "./styles.module.scss";
+
 const Header = () => (
-  <Layout.Header style={{ display: "flex", backgroundColor: "transparent", padding: 0 }}>
-    <div className="ant-layout-content" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-      <Typography.Title level={4} style={{ marginBottom: 0 }}>
+  <Layout.Header className={styles.root}>
+    <div className={clsx("ant-layout-content", styles.rootContent)}>
+      <Typography.Title className={styles.title} level={4}>
         MicroGreen | Control
       </Typography.Title>
       <Space size={32}>

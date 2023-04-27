@@ -1,0 +1,15 @@
+.root {
+  display: flex;
+  padding: 0;
+  background-color: transparent;
+
+  &Content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.title {
+  margin-bottom: 0;
+}

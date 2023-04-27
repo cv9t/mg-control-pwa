@@ -1,4 +1,6 @@
-import { Progress, Typography } from "antd";
+import { Progress, ProgressProps, Typography } from "antd";
+
+import styles from "./styles.module.scss";
 
 export type RoundProps = {
   value: number;
@@ -6,14 +8,18 @@ export type RoundProps = {
   maxValue?: number;
 };
 
+const config: Partial<ProgressProps> = {
+  type: "dashboard",
+  strokeLinecap: "butt",
+  strokeColor: "var(--color-primary)",
+};
+
 const Round = ({ value, maxValue = 100, format }: RoundProps) => (
   <Progress
-    strokeLinecap="butt"
-    type="dashboard"
+    {...config}
     percent={(value / maxValue) * 100}
-    strokeColor="var(--color-primary)"
     format={() => (
-      <Typography.Title level={3} style={{ margin: 0 }}>
+      <Typography.Title className={styles.title} level={3}>
         {format?.(value) ?? value}
       </Typography.Title>
     )}

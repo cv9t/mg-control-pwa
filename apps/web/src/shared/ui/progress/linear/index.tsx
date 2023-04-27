@@ -1,4 +1,6 @@
-import { Progress, Typography } from "antd";
+import { Progress, ProgressProps, Typography } from "antd";
+
+import styles from "./styles.module.scss";
 
 export type LinearProps = {
   value: number;
@@ -7,16 +9,16 @@ export type LinearProps = {
   maxValue?: number;
 };
 
+const config: Partial<ProgressProps> = {
+  strokeLinecap: "butt",
+  showInfo: false,
+  strokeColor: "var(--color-primary)",
+};
+
 const Linear = ({ value, label, format, maxValue = 100 }: LinearProps) => (
-  <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
-    <Progress
-      percent={(value / maxValue) * 100}
-      strokeLinecap="butt"
-      showInfo={false}
-      strokeColor="var(--color-primary)"
-      style={{ margin: 0 }}
-    />
-    <div style={{ display: "flex", justifyContent: "space-between" }}>
+  <div className={styles.root}>
+    <Progress {...config} className={styles.progress} percent={(value / maxValue) * 100} />
+    <div className={styles.rootContent}>
       <Typography.Text>{label}</Typography.Text>
       <Typography.Text>{format?.(value) ?? value}</Typography.Text>
     </div>

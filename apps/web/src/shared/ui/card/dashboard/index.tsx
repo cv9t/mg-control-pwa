@@ -2,6 +2,8 @@ import { Card } from "antd";
 
 import { Progress } from "../..";
 
+import styles from "./styles.module.scss";
+
 export type MainIndicator = Progress.RoundProps;
 
 export type Indicator = Progress.LinearProps;
@@ -13,10 +15,10 @@ type DashboardProps = {
 };
 
 const Dashboard = ({ title, mainIndicator, indicators }: DashboardProps) => (
-  <Card title={title} bordered={false}>
-    <div style={{ display: "flex", gap: 32 }}>
+  <Card className={styles.root} title={title} bordered={false}>
+    <div className={styles.rootContent}>
       <Progress.Round {...mainIndicator} />
-      <div style={{ flex: 1 }}>
+      <div className={styles.rootCol}>
         {indicators.map((indicator, index) => (
           <Progress.Linear key={index} {...indicator} />
         ))}
