@@ -1,7 +1,1 @@
-import Center from "./center";
-
-const Content = {
-  Center,
-};
-
-export default Content;
+export { default as Center } from "./center/";

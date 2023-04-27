@@ -12,7 +12,7 @@ const CheckAuth = ({ children }: CheckAuthProps) => {
   const { authChecked } = sessionModel.useAuthCheck();
 
   if (!authChecked) {
-    return <Loader className="overlay" />;
+    return <Loader.Spin className="overlay" />;
   }
 
   return <>{children}</>;

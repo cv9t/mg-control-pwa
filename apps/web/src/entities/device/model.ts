@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { DeviceSensorData } from "@mg-control/types";
 import { createEvent, createStore } from "effector";
 import { useStore } from "effector-react";
@@ -19,8 +18,6 @@ const setSensorData = createEvent<DeviceSensorData>();
 const $deviceStore = createStore(initialState).on(setSensorData, (state, sensorData) => ({ ...state, sensorData }));
 
 export const useDeviceConnect = () => {
-  const [isConnected, setIsConnected] = useState(false);
-
   hooks.useSse(`${env.BACKEND_URL}/api/v1/sse/connect`, {
     eventSourceOptions: {
       headers: {
@@ -30,12 +27,9 @@ export const useDeviceConnect = () => {
     onMessage: (event) => {
       const sensorData = JSON.parse(event.data) as DeviceSensorData;
       setSensorData(sensorData);
-      setIsConnected(true);
     },
     onError: () => alert.error(UNEXPECTED_ERROR),
   });
-
-  return { isConnected } as const;
 };
 
 export const useDeviceStore = () => useStore($deviceStore);

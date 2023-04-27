@@ -4,7 +4,7 @@ import { Button, Layout, Space, Typography } from "antd";
 import { LogoutButton } from "@/features/auth";
 
 const Header = () => (
-  <Layout.Header style={{ display: "flex", backgroundColor: "transparent" }}>
+  <Layout.Header style={{ display: "flex", backgroundColor: "transparent", padding: 0 }}>
     <div className="ant-layout-content" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
       <Typography.Title level={4} style={{ marginBottom: 0 }}>
         MicroGreen | Control

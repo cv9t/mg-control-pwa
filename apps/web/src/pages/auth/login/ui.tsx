@@ -4,7 +4,7 @@ import { LoginForm } from "@/features/auth";
 import { dom } from "@/shared/lib";
 
 const LoginPage = () => {
-  dom.useTitle("MG Control | Login");
+  dom.useTitle("MG Control | Вход");
 
   return (
     <Row justify="center" align="middle" gutter={[0, 8]} style={{ maxWidth: 320, width: "100%" }}>

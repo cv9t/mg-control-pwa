@@ -6,7 +6,7 @@ import { Loader } from "@/shared/ui";
 const withRouter = (WrapperComponent: () => ReactNode) => () =>
   (
     <BrowserRouter>
-      <Suspense fallback={<Loader className="overlay" />}>{WrapperComponent()}</Suspense>
+      <Suspense fallback={<Loader.Spin className="overlay" />}>{WrapperComponent()}</Suspense>
     </BrowserRouter>
   );
 
