@@ -1,8 +1,8 @@
 import axios, { AxiosRequestConfig, InternalAxiosRequestConfig } from "axios";
 
-import { api, env, plugs } from "@/shared/config";
+import { env, plugs } from "@/shared/config";
 
-import { alert } from "../lib";
+import { alert, helpers } from "../lib";
 
 import { ApiError, ApiErrorKind, ErrorResponse } from "./types";
 
@@ -33,7 +33,7 @@ const getApiError = (error: ErrorResponse): ApiError => {
 };
 
 const handleRequest = (config: InternalAxiosRequestConfig) => {
-  const token = localStorage.getItem(api.MG_CONTROL_ACCESS_TOKEN);
+  const token = helpers.getAccessToken();
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -43,7 +43,7 @@ const handleRequest = (config: InternalAxiosRequestConfig) => {
 const handleError = (error: ErrorResponse) => {
   const apiError = getApiError(error);
   if (apiError.kind === "unauthorized") {
-    localStorage.removeItem(api.MG_CONTROL_ACCESS_TOKEN);
+    helpers.removeAccessToken();
     if (error.config?._error_alert) {
       alert.error(error.message);
     }

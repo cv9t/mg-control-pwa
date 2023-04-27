@@ -6,8 +6,8 @@ import { useStore } from "effector-react";
 
 import { sessionModel } from "@/entities/session";
 import { types } from "@/shared/api";
-import { api, routes } from "@/shared/config";
-import { alert } from "@/shared/lib";
+import { routes } from "@/shared/config";
+import { alert, helpers } from "@/shared/lib";
 
 import * as loginFormApi from "./api";
 
@@ -24,7 +24,7 @@ const $errorMessage = createStore<string | null>(null)
   .on(loginFx.done, () => null);
 
 loginFx.doneData.watch(({ accessToken }) => {
-  localStorage.setItem(api.MG_CONTROL_ACCESS_TOKEN, accessToken);
+  helpers.setAccessToken(accessToken);
   sessionModel.setAuth(true);
 });
 
