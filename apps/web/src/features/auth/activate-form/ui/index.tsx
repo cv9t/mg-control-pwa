@@ -1,4 +1,6 @@
-import { Link } from "react-router-dom";
+import { useCallback } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { ActivateRequestData } from "@mg-control/types";
 import { Button, Form, Input, Space, Typography } from "antd";
 
 import { routes } from "@/shared/config";
@@ -14,8 +16,24 @@ type FormValues = {
   repeatPassword: string;
 };
 
+export const useActivateForm = () => {
+  const store = activateFormModel.useStore();
+
+  const navigate = useNavigate();
+
+  const activate = useCallback(
+    (credentials: ActivateRequestData) => activateFormModel.activateFx(credentials).then(() => navigate(routes.DASHBOARD)),
+    []
+  );
+
+  return {
+    ...store,
+    activate,
+  };
+};
+
 const ActivateForm = () => {
-  const { errorMessage, isLoading, activate } = activateFormModel.useActivateForm();
+  const { errorMessage, isLoading, activate } = useActivateForm();
 
   const [form] = Form.useForm();
 

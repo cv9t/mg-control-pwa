@@ -1,4 +1,6 @@
-import { Link } from "react-router-dom";
+import { useCallback } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { LoginRequestData } from "@mg-control/types";
 import { Button, Form, Input, Space, Typography } from "antd";
 
 import { routes } from "@/shared/config";
@@ -12,8 +14,24 @@ type FormValues = {
   password: string;
 };
 
+const useLoginForm = () => {
+  const store = loginFormModel.useStore();
+
+  const navigate = useNavigate();
+
+  const login = useCallback(
+    (credentials: LoginRequestData) => loginFormModel.loginFx(credentials).then(() => navigate(routes.DASHBOARD)),
+    []
+  );
+
+  return {
+    ...store,
+    login,
+  };
+};
+
 const LoginForm = () => {
-  const { errorMessage, isLoading, login } = loginFormModel.useLoginForm();
+  const { errorMessage, isLoading, login } = useLoginForm();
 
   const handleFinish = ({ email, password }: FormValues) => {
     login({ email, password });

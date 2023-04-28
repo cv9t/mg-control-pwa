@@ -11,7 +11,7 @@ type GuestGuardProps = {
 const GuestGuard = ({ children }: GuestGuardProps) => {
   const location = useLocation();
 
-  const { isAuth } = sessionModel.useSessionStore();
+  const { isAuth } = sessionModel.useStore();
 
   if (isAuth) {
     return <Navigate to={routes.DASHBOARD} state={{ from: location }} replace />;

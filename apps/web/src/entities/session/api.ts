@@ -1,4 +1,3 @@
-import { http } from "@/shared/api";
-import { AuthResponse } from "@/shared/api/types";
+import { http, types } from "@/shared/api";
 
-export const refreshToken = () => http.client.get<AuthResponse>("auth/refresh-token");
+export const refreshToken = () => http.client.get<types.AuthResponse>("auth/refresh-token");

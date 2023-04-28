@@ -7,8 +7,7 @@ import { Card, Chart, Loader } from "@/shared/ui";
 const DashboardPage = () => {
   dom.useTitle("MG Control | Панель");
 
-  const { sensorData } = deviceModel.useDeviceStore();
-  deviceModel.useDeviceConnect();
+  const { sensorData } = deviceModel.useStore();
 
   if (!sensorData) {
     return <Loader.Spin className="overlay" />;
@@ -20,7 +19,6 @@ const DashboardPage = () => {
         <Col span={24}>
           <Chart.Liquid percent={sensorData.liquid} width={240} height={240} />
         </Col>
-
         <Col md={{ span: 12 }} xs={{ span: 24 }}>
           <Card.Dashboard
             title="Воздух"

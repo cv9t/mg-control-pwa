@@ -1,12 +1,9 @@
-import { useCallback } from "react";
-import { useNavigate } from "react-router-dom";
 import { ActivateRequestData } from "@mg-control/types";
 import { createEffect, createStore } from "effector";
-import { useStore } from "effector-react";
+import * as effector from "effector-react";
 
 import { sessionModel } from "@/entities/session";
 import { types } from "@/shared/api";
-import { routes } from "@/shared/config";
 import { alert, helpers } from "@/shared/lib";
 
 import * as activateFormApi from "./api";
@@ -30,17 +27,8 @@ activateFx.doneData.watch(({ accessToken }) => {
   sessionModel.setAuth(true);
 });
 
-export const useActivateForm = () => {
-  const errorMessage = useStore($errorMessage);
-  const isLoading = useStore(activateFx.pending);
-
-  const navigate = useNavigate();
-
-  const activate = useCallback((credentials: ActivateRequestData) => activateFx(credentials).then(() => navigate(routes.DASHBOARD)), []);
-
-  return {
-    errorMessage,
-    isLoading,
-    activate,
-  } as const;
+export const useStore = () => {
+  const errorMessage = effector.useStore($errorMessage);
+  const isLoading = effector.useStore(activateFx.pending);
+  return { errorMessage, isLoading };
 };

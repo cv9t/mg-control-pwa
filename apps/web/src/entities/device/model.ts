@@ -1,6 +1,6 @@
 import { DeviceSensorData } from "@mg-control/types";
 import { createEvent, createStore } from "effector";
-import { useStore } from "effector-react";
+import * as effector from "effector-react";
 
 import { env, plugs } from "@/shared/config";
 import { alert, helpers, hooks } from "@/shared/lib";
@@ -32,4 +32,4 @@ export const useDeviceConnect = () => {
   });
 };
 
-export const useDeviceStore = () => useStore($deviceStore);
+export const useStore = () => effector.useStore($deviceStore);

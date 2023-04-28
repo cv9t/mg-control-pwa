@@ -25,7 +25,7 @@ const getErrorKind = (status: number): ApiErrorKind => {
 const getApiError = (error: ErrorResponse): ApiError => {
   if (error.response) {
     const status = error.response.status;
-    const message = error.response.data.message;
+    const message = error.response.data.message ?? plugs.UNEXPECTED_ERROR;
     const kind = getErrorKind(status);
     return { status, message, kind };
   }
@@ -44,11 +44,11 @@ const handleError = (error: ErrorResponse) => {
   const apiError = getApiError(error);
   if (apiError.kind === "unauthorized") {
     helpers.removeAccessToken();
-    if (error.config?._error_alert) {
-      alert.error(error.message);
-    }
   }
-  return apiError;
+  if (error.config?._error_alert) {
+    alert.error(apiError.message);
+  }
+  return Promise.reject(apiError);
 };
 
 const axiosInstance = axios.create({
@@ -59,7 +59,7 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.response.use(
   (response) => response,
-  (error: ErrorResponse) => Promise.reject(handleError(error))
+  (error: ErrorResponse) => handleError(error)
 );
 
 axiosInstance.interceptors.request.use(handleRequest);

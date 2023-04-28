@@ -1,12 +1,9 @@
-import { useCallback } from "react";
-import { useNavigate } from "react-router-dom";
 import { LoginRequestData } from "@mg-control/types";
 import { createEffect, createStore } from "effector";
-import { useStore } from "effector-react";
+import * as effector from "effector-react";
 
 import { sessionModel } from "@/entities/session";
 import { types } from "@/shared/api";
-import { routes } from "@/shared/config";
 import { alert, helpers } from "@/shared/lib";
 
 import * as loginFormApi from "./api";
@@ -28,17 +25,11 @@ loginFx.doneData.watch(({ accessToken }) => {
   sessionModel.setAuth(true);
 });
 
-export const useLoginForm = () => {
-  const errorMessage = useStore($errorMessage);
-  const isLoading = useStore(loginFx.pending);
-
-  const navigate = useNavigate();
-
-  const login = useCallback((credentials: LoginRequestData) => loginFx(credentials).then(() => navigate(routes.DASHBOARD)), []);
-
+export const useStore = () => {
+  const errorMessage = effector.useStore($errorMessage);
+  const isLoading = effector.useStore(loginFx.pending);
   return {
     errorMessage,
     isLoading,
-    login,
-  } as const;
+  };
 };

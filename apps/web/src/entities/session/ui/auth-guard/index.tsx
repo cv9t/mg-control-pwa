@@ -11,7 +11,7 @@ type AuthGuardProps = {
 const AuthGuard = ({ children }: AuthGuardProps) => {
   const location = useLocation();
 
-  const { isAuth } = sessionModel.useSessionStore();
+  const { isAuth } = sessionModel.useStore();
 
   if (isAuth) {
     return <>{children}</>;
