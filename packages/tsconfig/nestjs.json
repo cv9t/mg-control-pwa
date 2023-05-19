@@ -5,7 +5,9 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
-    "lib": ["ESNext"]
+    "lib": ["ESNext"],
+    "strictPropertyInitialization": false,
+    "emitDecoratorMetadata": true
   },
   "ts-node": {
     "compilerOptions": {

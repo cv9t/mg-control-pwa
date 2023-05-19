@@ -10,8 +10,7 @@ export const DB_NAME = process.env.DB_NAME ?? "";
 export const DB_USERNAME = process.env.DB_USERNAME ?? "";
 export const DB_PASSWORD = process.env.DB_PASSWORD ?? "";
 
-export const JWT_ACCESS_SECRET_KEY = process.env.JWT_ACCESS_SECRET_KEY ?? "";
-export const JWT_REFRESH_SECRET_KEY = process.env.JWT_REFRESH_SECRET_KEY ?? "";
+export const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY ?? "";
 
 export const MQTT_BROKER_URL = process.env.MQTT_BROKER_URL ?? "";
 export const MQTT_PRIMARY_TOPIC = process.env.MQTT_PRIMARY_TOPIC ?? "";

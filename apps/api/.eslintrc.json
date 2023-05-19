@@ -3,5 +3,5 @@
   "parserOptions": {
     "project": "./tsconfig.json"
   },
-  "extends": ["@mg-control/eslint-config-express"]
+  "extends": ["@mg-control/eslint-config-nestjs"]
 }

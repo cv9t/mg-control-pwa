@@ -1,13 +1,11 @@
 /* eslint-disable func-names */
 import { Document, model, Schema } from "mongoose";
 
-export type DeviceData = {
+export interface IDevice extends Document {
   deviceId: string;
   isActivated?: boolean;
   activateCode: string;
-};
-
-export interface IDevice extends DeviceData, Document {}
+}
 
 const DeviceSchema = new Schema<IDevice>({
   isActivated: { type: Boolean },

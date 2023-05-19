@@ -23,7 +23,7 @@ const clean: Plugin = {
 
 build({
   platform: "node",
-  entryPoints: [resolveRoot("src/server.ts")],
+  entryPoints: [resolveRoot("src/main.ts")],
   outdir: resolveRoot("dist"),
   bundle: true,
   minify: true,
