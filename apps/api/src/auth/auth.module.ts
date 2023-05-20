@@ -1,23 +1,18 @@
 import { Module } from "@nestjs/common";
 import { JwtModule } from "@nestjs/jwt";
 
-import { env } from "@/config";
-import { UserModule } from "@/user/user.module";
+import DeviceModule from "@/device/device.module";
+import UserModule from "@/user/user.module";
 
-import { AuthController } from "./auth.controller";
-import { AuthService } from "./auth.service";
+import JwtAuthStrategy from "./strategies/jwt-auth.strategy";
+import JwtRefreshStrategy from "./strategies/jwt-refresh.strategy";
+import AuthController from "./auth.controller";
+import AuthService from "./auth.service";
 
 @Module({
-  imports: [
-    UserModule,
-    JwtModule.register({
-      global: true,
-      secret: env.JWT_SECRET_KEY,
-      signOptions: { expiresIn: "60s" },
-    }),
-  ],
+  imports: [UserModule, DeviceModule, JwtModule.register({})],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, JwtAuthStrategy, JwtRefreshStrategy],
   exports: [AuthService],
 })
-export class AuthModule {}
+export default class AuthModule {}

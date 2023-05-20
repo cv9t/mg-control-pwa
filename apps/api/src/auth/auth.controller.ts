@@ -1,17 +1,41 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, UseGuards } from "@nestjs/common";
 
-import { Public } from "./decorators/public.decorator";
-import { SignInDto } from "./dtos/sign-in.dto";
-import { AuthService } from "./auth.service";
+import LoginDto from "./dtos/login.dto";
+import RegisterDto from "./dtos/register.dto";
+import JwtAuthGuard from "./guards/jwt-auth.guard";
+import JwtRefreshGuard from "./guards/jwt-refresh.guard";
+import { type IAuthRequest } from "./interfaces/auth-request.interface";
+import { type IRefreshRequest } from "./interfaces/refresh-request.interface";
+import AuthService from "./auth.service";
 
 @Controller("auth")
-export class AuthController {
-  public constructor(private authService: AuthService) {}
+export default class AuthController {
+  public constructor(private readonly authService: AuthService) {}
 
-  @Public()
+  @Post("register")
+  public register(@Body() registerDto: RegisterDto) {
+    return this.authService.register(registerDto);
+  }
+
   @HttpCode(HttpStatus.OK)
-  @Post("signIn")
-  public signIn(@Body() signInDto: SignInDto) {
-    return this.authService.signIn(signInDto.email, signInDto.password);
+  @Post("login")
+  public login(@Body() loginDto: LoginDto) {
+    return this.authService.login(loginDto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @Post("logout")
+  public logout(@Req() req: IAuthRequest) {
+    const userId = req.user.sub;
+    this.authService.logout(userId);
+  }
+
+  @UseGuards(JwtRefreshGuard)
+  @Get("refresh")
+  public refreshTokens(@Req() req: IRefreshRequest) {
+    const userId = req.user.sub;
+    const refreshToken = req.user.refreshToken;
+    return this.authService.refreshTokens(userId, refreshToken);
   }
 }

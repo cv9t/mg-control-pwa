@@ -1,16 +1,42 @@
-import dotenv from "dotenv";
+import { Injectable } from "@nestjs/common";
+import { Type } from "class-transformer";
+import { IsNumber, IsString, ValidateNested } from "class-validator";
 
-dotenv.config();
+export class DbConfig {
+  @IsString()
+  public readonly host: string;
 
-export const PORT = process.env.PORT ?? "";
+  @IsNumber()
+  public readonly port: number;
 
-export const DB_HOST = process.env.DB_HOST ?? "";
-export const DB_PORT = process.env.DB_PORT ?? "";
-export const DB_NAME = process.env.DB_NAME ?? "";
-export const DB_USERNAME = process.env.DB_USERNAME ?? "";
-export const DB_PASSWORD = process.env.DB_PASSWORD ?? "";
+  @IsString()
+  public readonly name: string;
 
-export const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY ?? "";
+  @IsString()
+  public readonly username: string;
 
-export const MQTT_BROKER_URL = process.env.MQTT_BROKER_URL ?? "";
-export const MQTT_PRIMARY_TOPIC = process.env.MQTT_PRIMARY_TOPIC ?? "";
+  @IsString()
+  public readonly password: string;
+}
+
+export class JwtConfig {
+  @IsString()
+  public readonly access_secret: string;
+
+  @IsString()
+  public readonly refresh_secret: string;
+}
+
+@Injectable()
+export class Config {
+  @IsNumber()
+  public readonly port: number;
+
+  @Type(() => DbConfig)
+  @ValidateNested()
+  public readonly db: DbConfig;
+
+  @Type(() => JwtConfig)
+  @ValidateNested()
+  public readonly jwt: JwtConfig;
+}

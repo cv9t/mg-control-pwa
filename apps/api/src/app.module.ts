@@ -1,20 +1,34 @@
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
+import { fileLoader, TypedConfigModule } from "nest-typed-config";
 
-import { AuthModule } from "./auth/auth.module";
-import { UserModule } from "./user/user.module";
+import AuthModule from "./auth/auth.module";
+import DeviceModule from "./device/device.module";
+import UserModule from "./user/user.module";
 import { env } from "./config";
 
 @Module({
   imports: [
-    MongooseModule.forRoot(`mongodb://${env.DB_HOST}:${env.DB_PORT}/${env.DB_NAME}`, {
-      auth: {
-        username: env.DB_USERNAME,
-        password: env.DB_PASSWORD,
-      },
+    TypedConfigModule.forRoot({
+      schema: env.Config,
+      load: fileLoader(),
     }),
+
+    MongooseModule.forRootAsync({
+      imports: [TypedConfigModule],
+      useFactory: async (config: env.Config) => ({
+        uri: `mongodb://${config.db.host}:${config.db.port}/${config.db.name}`,
+        auth: {
+          username: config.db.username,
+          password: config.db.password,
+        },
+      }),
+      inject: [env.Config],
+    }),
+
     AuthModule,
     UserModule,
+    DeviceModule,
   ],
 })
-export class AppModule {}
+export default class AppModule {}
