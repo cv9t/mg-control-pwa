@@ -1,9 +1,9 @@
-import { Controller, MessageEvent, Req, Res, Sse, UseGuards } from "@nestjs/common";
+import { Controller, MessageEvent, Res, Sse, UseGuards } from "@nestjs/common";
 import { type Response } from "express";
 import { Observable } from "rxjs";
 
+import { User } from "@/auth/decorators/user.decorator";
 import { JwtAuthGuard } from "@/auth/guards/jwt-auth.guard";
-import { type AuthRequest } from "@/auth/interfaces/auth-request.interface";
 
 import { DeviceService } from "./device.service";
 
@@ -13,7 +13,7 @@ export class DeviceController {
   public constructor(private readonly deviceService: DeviceService) {}
 
   @Sse("sensor-data")
-  public sendSensorData(@Req() req: AuthRequest, @Res() res: Response): Observable<MessageEvent> {
-    return this.deviceService.sendSensorData(res, req.user.deviceId);
+  public sendSensorData(@User("deviceId") deviceId: string, @Res() res: Response): Observable<MessageEvent> {
+    return this.deviceService.sendSensorData(res, deviceId);
   }
 }

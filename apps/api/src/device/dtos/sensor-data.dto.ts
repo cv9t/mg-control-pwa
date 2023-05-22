@@ -1,7 +1,7 @@
 import { Type } from "class-transformer";
 import { IsNumber, ValidateNested } from "class-validator";
 
-class Air {
+export class AirDto {
   @IsNumber()
   public readonly humidity: number;
 
@@ -9,7 +9,7 @@ class Air {
   public readonly temp: number;
 }
 
-class Soil {
+export class SoilDto {
   @IsNumber()
   public readonly moisture: number;
 
@@ -18,13 +18,13 @@ class Soil {
 }
 
 export class SensorDataDto {
-  @Type(() => Air)
+  @Type(() => AirDto)
   @ValidateNested()
-  public readonly air: Air;
+  public readonly air: AirDto;
 
-  @Type(() => Soil)
+  @Type(() => SoilDto)
   @ValidateNested()
-  public readonly soil: Soil;
+  public readonly soil: SoilDto;
 
   @IsNumber()
   public readonly liquid: number;

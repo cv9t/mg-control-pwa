@@ -8,7 +8,7 @@ export class Device {
   @Prop()
   public isActivated: boolean;
 
-  @Prop()
+  @Prop({ required: true, unique: true })
   public activateCode: string;
 }
 

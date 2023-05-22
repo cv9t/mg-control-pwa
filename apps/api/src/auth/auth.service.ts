@@ -1,22 +1,24 @@
-import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, ForbiddenException, Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 
 import { env } from "@/config";
 import { DeviceService } from "@/device/device.service";
+import { TokenService } from "@/token/token.service";
 import { UserService } from "@/user/user.service";
 
 import { LoginDto } from "./dtos/login.dto";
 import { RegisterDto } from "./dtos/register.dto";
 import { hashData, verifyHashedData } from "./helpers/crypto.helpers";
-import { JwtPayload } from "./interfaces/jwt-payload";
+import { JwtPayload } from "./interfaces/jwt-payload.interface";
 
 @Injectable()
 export class AuthService {
   public constructor(
+    private readonly config: env.Config,
+    private readonly jwtService: JwtService,
     private readonly userService: UserService,
     private readonly deviceService: DeviceService,
-    private readonly jwtService: JwtService,
-    private readonly config: env.Config
+    private readonly tokenService: TokenService
   ) {}
 
   public async register(registerDto: RegisterDto) {
@@ -34,15 +36,14 @@ export class AuthService {
     }
 
     const user = await this.userService.create({
-      device: device.id,
+      device: device._id,
       email: registerDto.email,
       password: hashData(registerDto.password),
-      refresh_token: null,
     });
-
-    const tokens = await this.getTokens({ deviceId: user.device, sub: user.id });
-    await this.updateRefreshToken(user.id, tokens.refreshToken);
     await this.deviceService.update(device.id, { isActivated: true });
+
+    const tokens = await this.generateTokens({ deviceId: device.id, sub: user.id });
+    await this.tokenService.save({ user: user._id, refreshToken: tokens.refreshToken });
     return tokens;
   }
 
@@ -51,50 +52,53 @@ export class AuthService {
     if (!user) {
       throw new BadRequestException("User does not exist");
     }
-    if (!verifyHashedData(loginDto.password, user.password)) {
+
+    const passwordMatches = verifyHashedData(loginDto.password, user.password);
+    if (!passwordMatches) {
       throw new BadRequestException("Password is incorrect");
     }
 
-    const tokens = await this.getTokens({ deviceId: user.device, sub: user.id });
-    await this.updateRefreshToken(user.id, tokens.refreshToken);
+    const tokens = await this.generateTokens({ deviceId: user.device.toString(), sub: user.id });
+    await this.tokenService.save({ user: user._id, refreshToken: tokens.refreshToken });
     return tokens;
   }
 
-  public async logout(userId: string) {
-    return this.userService.update(userId, { refresh_token: null });
+  public async logout(refreshToken: string) {
+    return this.tokenService.remove(refreshToken);
   }
 
   public async refreshTokens(userId: string, refreshToken: string) {
     const user = await this.userService.findById(userId);
-    if (!user || !user.refresh_token) {
-      throw new UnauthorizedException();
-    }
-    if (!verifyHashedData(refreshToken, user.refresh_token)) {
-      throw new UnauthorizedException();
+    if (!user) {
+      throw new ForbiddenException("Access Denied");
     }
 
-    const tokens = await this.getTokens({ deviceId: user.device, sub: user.id });
-    await this.updateRefreshToken(user.id, tokens.refreshToken);
+    const existingRefreshToken = await this.tokenService.findByRefreshToken(refreshToken);
+    if (!existingRefreshToken) {
+      throw new ForbiddenException("Access Denied");
+    }
+
+    const tokens = await this.generateTokens({ deviceId: user.device.toString(), sub: user.id });
+    await this.tokenService.save({ user: user._id, refreshToken: tokens.refreshToken });
     return tokens;
   }
 
-  private async updateRefreshToken(userId: string, refreshToken: string) {
-    const hashedRefreshToken = hashData(refreshToken);
-    await this.userService.update(userId, {
-      refresh_token: hashedRefreshToken,
-    });
-  }
-
-  private async getTokens(payload: JwtPayload) {
+  private async generateTokens(payload: JwtPayload) {
     const [accessToken, refreshToken] = await Promise.all([
-      this.jwtService.signAsync(payload, {
-        secret: this.config.jwt.access_secret,
-        expiresIn: "15m",
-      }),
-      this.jwtService.signAsync(payload, {
-        secret: this.config.jwt.refresh_secret,
-        expiresIn: "7d",
-      }),
+      this.jwtService.signAsync(
+        { ...payload },
+        {
+          secret: this.config.jwt.access_secret,
+          expiresIn: "15m",
+        }
+      ),
+      this.jwtService.signAsync(
+        { ...payload },
+        {
+          secret: this.config.jwt.refresh_secret,
+          expiresIn: "7d",
+        }
+      ),
     ]);
     return {
       accessToken,

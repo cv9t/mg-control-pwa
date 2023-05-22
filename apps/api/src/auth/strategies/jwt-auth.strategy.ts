@@ -4,8 +4,8 @@ import { ExtractJwt, Strategy } from "passport-jwt";
 
 import { env } from "@/config";
 
-import { JwtPayload } from "../interfaces/jwt-payload";
-import { RequestPayload } from "../interfaces/request-payload.interface";
+import { AuthUser } from "../interfaces/auth-user.interface";
+import { JwtPayload } from "../interfaces/jwt-payload.interface";
 
 @Injectable()
 export class JwtAuthStrategy extends PassportStrategy(Strategy, "jwt") {
@@ -16,7 +16,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, "jwt") {
     });
   }
 
-  public validate(payload: JwtPayload): RequestPayload {
-    return { userId: payload.sub, deviceId: payload.deviceId };
+  public validate(payload: JwtPayload): AuthUser {
+    return { id: payload.sub, deviceId: payload.deviceId };
   }
 }

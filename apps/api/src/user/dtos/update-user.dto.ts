@@ -1,9 +1,5 @@
-export class UpdateUserDto {
-  public readonly device?: string;
+import { PartialType } from "@nestjs/mapped-types";
 
-  public readonly email?: string;
+import { CreateUserDto } from "./create-user.dto";
 
-  public readonly password?: string;
-
-  public readonly refresh_token?: string | null;
-}
+export class UpdateUserDto extends PartialType(CreateUserDto) {}
