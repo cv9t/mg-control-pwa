@@ -1,7 +1,7 @@
 import { Request } from "express";
 
-import { ITokenPayload } from "./token-payload.interface";
+import { RequestPayload } from "./request-payload.interface";
 
-export interface IAuthRequest extends Request {
-  user: ITokenPayload;
+export interface AuthRequest extends Request {
+  user: RequestPayload;
 }

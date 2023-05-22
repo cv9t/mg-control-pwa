@@ -1,41 +1,50 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, Res, UseGuards } from "@nestjs/common";
+import { type Response } from "express";
 
-import LoginDto from "./dtos/login.dto";
-import RegisterDto from "./dtos/register.dto";
-import JwtAuthGuard from "./guards/jwt-auth.guard";
-import JwtRefreshGuard from "./guards/jwt-refresh.guard";
-import { type IAuthRequest } from "./interfaces/auth-request.interface";
-import { type IRefreshRequest } from "./interfaces/refresh-request.interface";
-import AuthService from "./auth.service";
+import { JwtAuthGuard } from "@/auth/guards/jwt-auth.guard";
+
+import { LoginDto } from "./dtos/login.dto";
+import { RegisterDto } from "./dtos/register.dto";
+import { JwtRefreshGuard } from "./guards/jwt-refresh.guard";
+import { type AuthRequest } from "./interfaces/auth-request.interface";
+import { type RefreshRequest } from "./interfaces/refresh-request.interface";
+import { AuthService } from "./auth.service";
 
 @Controller("auth")
-export default class AuthController {
+export class AuthController {
   public constructor(private readonly authService: AuthService) {}
 
   @Post("register")
-  public register(@Body() registerDto: RegisterDto) {
-    return this.authService.register(registerDto);
+  public async register(@Body() registerDto: RegisterDto, @Res({ passthrough: true }) res: Response) {
+    const { accessToken, refreshToken } = await this.authService.register(registerDto);
+    res.cookie("refreshToken", refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true });
+    return { accessToken };
   }
 
   @HttpCode(HttpStatus.OK)
   @Post("login")
-  public login(@Body() loginDto: LoginDto) {
-    return this.authService.login(loginDto);
+  public async login(@Body() loginDto: LoginDto, @Res({ passthrough: true }) res: Response) {
+    const { accessToken, refreshToken } = await this.authService.login(loginDto);
+    res.cookie("refreshToken", refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true });
+    return { accessToken };
   }
 
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   @Post("logout")
-  public logout(@Req() req: IAuthRequest) {
-    const userId = req.user.sub;
-    this.authService.logout(userId);
+  public logout(@Req() req: AuthRequest, @Res() res: Response) {
+    res.clearCookie("refreshToken");
+    this.authService.logout(req.user.userId);
   }
 
   @UseGuards(JwtRefreshGuard)
   @Get("refresh")
-  public refreshTokens(@Req() req: IRefreshRequest) {
-    const userId = req.user.sub;
-    const refreshToken = req.user.refreshToken;
-    return this.authService.refreshTokens(userId, refreshToken);
+  public async refreshTokens(@Req() req: RefreshRequest, @Res({ passthrough: true }) res: Response) {
+    const { accessToken, refreshToken: updatedRefreshToken } = await this.authService.refreshTokens(
+      req.user.userId,
+      req.cookies.refreshToken
+    );
+    res.cookie("refreshToken", updatedRefreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true });
+    return { accessToken };
   }
 }

@@ -27,6 +27,14 @@ export class JwtConfig {
   public readonly refresh_secret: string;
 }
 
+export class MqttConfig {
+  @IsString()
+  public readonly broker_url: string;
+
+  @IsString()
+  public readonly primary_topic: string;
+}
+
 @Injectable()
 export class Config {
   @IsNumber()
@@ -39,4 +47,8 @@ export class Config {
   @Type(() => JwtConfig)
   @ValidateNested()
   public readonly jwt: JwtConfig;
+
+  @Type(() => MqttConfig)
+  @ValidateNested()
+  public readonly mqtt: MqttConfig;
 }

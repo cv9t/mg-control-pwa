@@ -4,10 +4,11 @@ import { ExtractJwt, Strategy } from "passport-jwt";
 
 import { env } from "@/config";
 
-import { ITokenPayload } from "../interfaces/token-payload.interface";
+import { JwtPayload } from "../interfaces/jwt-payload";
+import { RequestPayload } from "../interfaces/request-payload.interface";
 
 @Injectable()
-export default class JwtAuthStrategy extends PassportStrategy(Strategy, "jwt") {
+export class JwtAuthStrategy extends PassportStrategy(Strategy, "jwt") {
   public constructor(private readonly config: env.Config) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -15,7 +16,7 @@ export default class JwtAuthStrategy extends PassportStrategy(Strategy, "jwt") {
     });
   }
 
-  public validate(payload: ITokenPayload) {
-    return payload;
+  public validate(payload: JwtPayload): RequestPayload {
+    return { userId: payload.sub, deviceId: payload.deviceId };
   }
 }

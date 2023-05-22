@@ -1,14 +1,24 @@
+import { LoggerModule } from "nestjs-pino";
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { fileLoader, TypedConfigModule } from "nest-typed-config";
+import pino from "pino";
 
-import AuthModule from "./auth/auth.module";
-import DeviceModule from "./device/device.module";
-import UserModule from "./user/user.module";
+import { AuthModule } from "./auth/auth.module";
+import { DeviceModule } from "./device/device.module";
 import { env } from "./config";
 
 @Module({
   imports: [
+    LoggerModule.forRoot({
+      pinoHttp: {
+        stream: pino.destination({
+          dest: "./app.log",
+          sync: false,
+        }),
+      },
+    }),
+
     TypedConfigModule.forRoot({
       schema: env.Config,
       load: fileLoader(),
@@ -27,8 +37,7 @@ import { env } from "./config";
     }),
 
     AuthModule,
-    UserModule,
     DeviceModule,
   ],
 })
-export default class AppModule {}
+export class AppModule {}

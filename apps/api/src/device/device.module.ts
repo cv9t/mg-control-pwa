@@ -1,12 +1,17 @@
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 
+import { MqttModule } from "@/mqtt/mqtt.module";
+import { SseModule } from "@/sse/sse.module";
+
 import { Device, DeviceSchema } from "./schemas/device.schema";
-import DeviceService from "./device.service";
+import { DeviceController } from "./device.controller";
+import { DeviceService } from "./device.service";
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: Device.name, schema: DeviceSchema }])],
+  imports: [MongooseModule.forFeature([{ name: Device.name, schema: DeviceSchema }]), MqttModule, SseModule],
+  controllers: [DeviceController],
   providers: [DeviceService],
   exports: [DeviceService],
 })
-export default class DeviceModule {}
+export class DeviceModule {}

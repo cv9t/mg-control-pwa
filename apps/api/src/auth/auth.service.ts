@@ -2,15 +2,16 @@ import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/
 import { JwtService } from "@nestjs/jwt";
 
 import { env } from "@/config";
-import DeviceService from "@/device/device.service";
-import UserService from "@/user/user.service";
+import { DeviceService } from "@/device/device.service";
+import { UserService } from "@/user/user.service";
 
-import LoginDto from "./dtos/login.dto";
-import RegisterDto from "./dtos/register.dto";
-import { hashData, verifyHash } from "./helpers";
+import { LoginDto } from "./dtos/login.dto";
+import { RegisterDto } from "./dtos/register.dto";
+import { hashData, verifyHashedData } from "./helpers/crypto.helpers";
+import { JwtPayload } from "./interfaces/jwt-payload";
 
 @Injectable()
-export default class AuthService {
+export class AuthService {
   public constructor(
     private readonly userService: UserService,
     private readonly deviceService: DeviceService,
@@ -26,17 +27,20 @@ export default class AuthService {
     if (device.isActivated) {
       throw new BadRequestException("Device already activated");
     }
+
     const existingUser = await this.userService.findByEmail(registerDto.email);
     if (existingUser) {
       throw new BadRequestException("User already exists");
     }
+
     const user = await this.userService.create({
       device: device.id,
       email: registerDto.email,
       password: hashData(registerDto.password),
       refresh_token: null,
     });
-    const tokens = await this.getTokens(user.id, user.email);
+
+    const tokens = await this.getTokens({ deviceId: user.device, sub: user.id });
     await this.updateRefreshToken(user.id, tokens.refreshToken);
     await this.deviceService.update(device.id, { isActivated: true });
     return tokens;
@@ -47,10 +51,11 @@ export default class AuthService {
     if (!user) {
       throw new BadRequestException("User does not exist");
     }
-    if (!verifyHash(loginDto.password, user.password)) {
+    if (!verifyHashedData(loginDto.password, user.password)) {
       throw new BadRequestException("Password is incorrect");
     }
-    const tokens = await this.getTokens(user.id, user.email);
+
+    const tokens = await this.getTokens({ deviceId: user.device, sub: user.id });
     await this.updateRefreshToken(user.id, tokens.refreshToken);
     return tokens;
   }
@@ -64,10 +69,11 @@ export default class AuthService {
     if (!user || !user.refresh_token) {
       throw new UnauthorizedException();
     }
-    if (!verifyHash(refreshToken, user.refresh_token)) {
+    if (!verifyHashedData(refreshToken, user.refresh_token)) {
       throw new UnauthorizedException();
     }
-    const tokens = await this.getTokens(user.id, user.email);
+
+    const tokens = await this.getTokens({ deviceId: user.device, sub: user.id });
     await this.updateRefreshToken(user.id, tokens.refreshToken);
     return tokens;
   }
@@ -79,28 +85,16 @@ export default class AuthService {
     });
   }
 
-  private async getTokens(userId: string, email: string) {
+  private async getTokens(payload: JwtPayload) {
     const [accessToken, refreshToken] = await Promise.all([
-      this.jwtService.signAsync(
-        {
-          sub: userId,
-          email,
-        },
-        {
-          secret: this.config.jwt.access_secret,
-          expiresIn: "15m",
-        }
-      ),
-      this.jwtService.signAsync(
-        {
-          sub: userId,
-          email,
-        },
-        {
-          secret: this.config.jwt.refresh_secret,
-          expiresIn: "7d",
-        }
-      ),
+      this.jwtService.signAsync(payload, {
+        secret: this.config.jwt.access_secret,
+        expiresIn: "15m",
+      }),
+      this.jwtService.signAsync(payload, {
+        secret: this.config.jwt.refresh_secret,
+        expiresIn: "7d",
+      }),
     ]);
     return {
       accessToken,

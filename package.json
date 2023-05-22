@@ -14,7 +14,7 @@
     "dev": "turbo run dev --parallel",
     "build": "turbo run build",
     "lint": "turbo run lint",
-    "clean": "npm exec --workspaces -- shx rm -rf node_modules .turbo dist && shx rm -rf node_modules",
+    "clean": "npm exec --workspaces -- shx rm -rf node_modules .turbo dist *.log && shx rm -rf node_modules",
     "dev:api": "yarn workspace @mg-control/api run dev",
     "dev:web": "yarn workspace @mg-control/web run dev"
   },

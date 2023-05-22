@@ -1,4 +1,4 @@
-export default class UpdateUserDto {
+export class UpdateUserDto {
   public readonly device?: string;
 
   public readonly email?: string;

@@ -1,7 +1,7 @@
-import { ITokenPayload } from "./token-payload.interface";
+import { Request } from "express";
 
-export interface IRefreshRequest {
-  user: ITokenPayload & {
-    refreshToken: string;
-  };
+import { RequestPayload } from "./request-payload.interface";
+
+export interface RefreshRequest extends Request {
+  user: RequestPayload;
 }
