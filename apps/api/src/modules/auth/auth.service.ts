@@ -2,9 +2,9 @@ import { BadRequestException, ForbiddenException, Injectable } from "@nestjs/com
 import { JwtService } from "@nestjs/jwt";
 
 import { env } from "@/config";
-import { DeviceService } from "@/device/device.service";
-import { TokenService } from "@/token/token.service";
-import { UserService } from "@/user/user.service";
+import { DeviceService } from "@/modules/device/device.service";
+import { TokenService } from "@/modules/token/token.service";
+import { UserService } from "@/modules/user/user.service";
 
 import { LoginDto } from "./dtos/login.dto";
 import { RegisterDto } from "./dtos/register.dto";

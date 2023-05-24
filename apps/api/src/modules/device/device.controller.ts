@@ -2,8 +2,8 @@ import { Controller, MessageEvent, Res, Sse, UseGuards } from "@nestjs/common";
 import { type Response } from "express";
 import { Observable } from "rxjs";
 
-import { User } from "@/auth/decorators/user.decorator";
-import { JwtAuthGuard } from "@/auth/guards/jwt-auth.guard";
+import { User } from "@/modules/auth/decorators/user.decorator";
+import { JwtAuthGuard } from "@/modules/auth/guards/jwt-auth.guard";
 
 import { DeviceService } from "./device.service";
 

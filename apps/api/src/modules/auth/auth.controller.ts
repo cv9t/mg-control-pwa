@@ -1,12 +1,11 @@
 import { Body, Controller, Get, HttpCode, HttpStatus, Post, Res, UseGuards } from "@nestjs/common";
 import { type Response } from "express";
 
-import { JwtAuthGuard } from "@/auth/guards/jwt-auth.guard";
-import { Cookies } from "@/common/decorators/cookies.decorator";
-
+import { Cookies } from "./decorators/cookies.decorator";
 import { User } from "./decorators/user.decorator";
 import { LoginDto } from "./dtos/login.dto";
 import { RegisterDto } from "./dtos/register.dto";
+import { JwtAuthGuard } from "./guards/jwt-auth.guard";
 import { JwtRefreshGuard } from "./guards/jwt-refresh.guard";
 import { AuthService } from "./auth.service";
 

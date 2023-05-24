@@ -7,8 +7,8 @@ import { Response } from "express";
 import { Model } from "mongoose";
 import { Observable } from "rxjs";
 
-import { MqttService } from "@/mqtt/mqtt.service";
-import { SseService } from "@/sse/sse.service";
+import { MqttService } from "@/modules/mqtt/mqtt.service";
+import { SseService } from "@/modules/sse/sse.service";
 
 import { SensorDataDto } from "./dtos/sensor-data.dto";
 import { UpdateDeviceDto } from "./dtos/update-device.dto";
@@ -24,12 +24,14 @@ export class DeviceService {
   ) {}
 
   public sendSensorData(res: Response, deviceId: string): Observable<MessageEvent> {
+    const topic = `/devices/${deviceId}/sensor-data`;
+    this.mqttService.subscribe(topic, this.handleSensorDataMessage(deviceId));
+    this.logger.info(`Device ${deviceId} connected`);
     res.on("close", () => {
+      this.mqttService.unsubscribe(topic);
       this.sseService.disconnect(deviceId);
       this.logger.info(`Device ${deviceId} disconnected`);
     });
-    this.mqttService.subscribe(`/devices/${deviceId}/sensor-data`, this.handleSensorDataMessage(deviceId));
-    this.logger.info(`Device ${deviceId} connected`);
     return this.sseService.connect(deviceId);
   }
 

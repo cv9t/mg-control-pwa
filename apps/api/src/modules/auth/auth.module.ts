@@ -1,9 +1,9 @@
 import { Module } from "@nestjs/common";
 import { JwtModule } from "@nestjs/jwt";
 
-import { DeviceModule } from "@/device/device.module";
-import { TokenModule } from "@/token/token.module";
-import { UserModule } from "@/user/user.module";
+import { DeviceModule } from "@/modules/device/device.module";
+import { TokenModule } from "@/modules/token/token.module";
+import { UserModule } from "@/modules/user/user.module";
 
 import { JwtAuthStrategy } from "./strategies/jwt-auth.strategy";
 import { JwtRefreshStrategy } from "./strategies/jwt-refresh.strategy";

@@ -4,8 +4,9 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { fileLoader, TypedConfigModule } from "nest-typed-config";
 import pino from "pino";
 
-import { AuthModule } from "./auth/auth.module";
-import { DeviceModule } from "./device/device.module";
+import { AuthModule } from "@/modules/auth/auth.module";
+import { DeviceModule } from "@/modules/device/device.module";
+
 import { env } from "./config";
 
 @Module({
