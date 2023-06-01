@@ -24,6 +24,12 @@ module.exports = {
     "object-shorthand": "error",
     "no-console": "warn",
     "@typescript-eslint/no-empty-function": "error",
+    "@typescript-eslint/explicit-function-return-type": [
+      "error",
+      {
+        allowExpressions: true,
+      },
+    ],
     "prettier/prettier": [
       "error",
       {

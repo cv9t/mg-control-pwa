@@ -1,6 +1,7 @@
 import { BadRequestException, ForbiddenException, Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 
+import { DeleteResult } from "@/common/types";
 import { env } from "@/config";
 import { DeviceService } from "@/modules/device/device.service";
 import { TokenService } from "@/modules/token/token.service";
@@ -10,6 +11,7 @@ import { LoginDto } from "./dtos/login.dto";
 import { RegisterDto } from "./dtos/register.dto";
 import { hashData, verifyHashedData } from "./helpers/crypto.helpers";
 import { JwtPayload } from "./interfaces/jwt-payload.interface";
+import { GeneratedTokens } from "./auth.types";
 
 @Injectable()
 export class AuthService {
@@ -21,7 +23,7 @@ export class AuthService {
     private readonly tokenService: TokenService
   ) {}
 
-  public async register(registerDto: RegisterDto) {
+  public async register(registerDto: RegisterDto): Promise<GeneratedTokens> {
     const device = await this.deviceService.findByActivateCode(registerDto.activateCode);
     if (!device) {
       throw new BadRequestException("Activate code is not valid");
@@ -47,7 +49,7 @@ export class AuthService {
     return tokens;
   }
 
-  public async login(loginDto: LoginDto) {
+  public async login(loginDto: LoginDto): Promise<GeneratedTokens> {
     const user = await this.userService.findByEmail(loginDto.email);
     if (!user) {
       throw new BadRequestException("User does not exist");
@@ -63,11 +65,11 @@ export class AuthService {
     return tokens;
   }
 
-  public async logout(refreshToken: string) {
+  public async logout(refreshToken: string): Promise<DeleteResult> {
     return this.tokenService.remove(refreshToken);
   }
 
-  public async refreshTokens(userId: string, refreshToken: string) {
+  public async refreshTokens(userId: string, refreshToken: string): Promise<GeneratedTokens> {
     const user = await this.userService.findById(userId);
     if (!user) {
       throw new ForbiddenException("Access Denied");
@@ -83,7 +85,7 @@ export class AuthService {
     return tokens;
   }
 
-  private async generateTokens(payload: JwtPayload) {
+  private async generateTokens(payload: JwtPayload): Promise<GeneratedTokens> {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(
         { ...payload },

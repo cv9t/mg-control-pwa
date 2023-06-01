@@ -11,11 +11,11 @@ export class SseService {
     return connectionSubject.asObservable();
   }
 
-  public disconnect(key: string) {
+  public disconnect(key: string): void {
     this.connections.delete(key);
   }
 
-  public sendEvent(key: string, event: MessageEvent) {
+  public sendEvent(key: string, event: MessageEvent): void {
     this.connections.get(key)?.next(event);
   }
 }

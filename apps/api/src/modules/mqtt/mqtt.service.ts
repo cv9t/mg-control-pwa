@@ -16,7 +16,7 @@ export class MqttService implements OnModuleInit {
 
   public constructor(@InjectPinoLogger(MqttService.name) private readonly logger: PinoLogger, private readonly config: env.Config) {}
 
-  public onModuleInit() {
+  public onModuleInit(): void {
     this.client = mqtt.connect(this.config.mqtt.broker_url);
     this.primaryTopic = this.config.mqtt.primary_topic;
 
@@ -46,12 +46,12 @@ export class MqttService implements OnModuleInit {
     });
   }
 
-  public subscribe(topic: MqttSubscription["topic"], onMessage: MqttSubscription["onMessage"]) {
+  public subscribe(topic: MqttSubscription["topic"], onMessage: MqttSubscription["onMessage"]): void {
     this.client.subscribe(this.createTopic(topic));
     this.subscriptions.push({ topic, onMessage });
   }
 
-  public unsubscribe(topic: string) {
+  public unsubscribe(topic: string): void {
     const matchingSubscriptionIndex = this.subscriptions.findIndex((subscription) => subscription.topic === topic);
     if (matchingSubscriptionIndex >= 0) {
       this.client.unsubscribe(this.createTopic(topic));
@@ -59,7 +59,7 @@ export class MqttService implements OnModuleInit {
     }
   }
 
-  private createTopic(topic: string) {
+  private createTopic(topic: string): string {
     return this.primaryTopic.concat(topic);
   }
 }

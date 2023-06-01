@@ -2,6 +2,8 @@ import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 
+import { DeleteResult, Nullable } from "@/common/types";
+
 import { SaveTokenDto } from "./dtos/save-token.dto";
 import { Token, TokenDocument } from "./schemas/token.schema";
 
@@ -18,11 +20,11 @@ export class TokenService {
     return this.tokenModel.create(saveTokenDto);
   }
 
-  public async findByRefreshToken(refreshToken: string): Promise<TokenDocument | null> {
+  public async findByRefreshToken(refreshToken: string): Promise<Nullable<TokenDocument>> {
     return this.tokenModel.findOne({ refreshToken });
   }
 
-  public async remove(refreshToken: string) {
+  public async remove(refreshToken: string): Promise<DeleteResult> {
     return this.tokenModel.deleteOne({ refreshToken });
   }
 }

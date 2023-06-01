@@ -37,7 +37,6 @@
   "devDependencies": {
     "@mg-control/eslint-config-nestjs": "*",
     "@mg-control/tsconfig": "*",
-    "@mg-control/types": "*",
     "@types/cookie-parser": "^1.4.3",
     "@types/cors": "^2.8.13",
     "@types/express": "^4.17.17",

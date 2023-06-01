@@ -7,6 +7,7 @@ import { Response } from "express";
 import { Model } from "mongoose";
 import { Observable } from "rxjs";
 
+import { Nullable } from "@/common/types";
 import { MqttService } from "@/modules/mqtt/mqtt.service";
 import { SseService } from "@/modules/sse/sse.service";
 
@@ -37,7 +38,7 @@ export class DeviceService {
 
   @Bind()
   private handleSensorDataMessage(deviceId: string) {
-    return (topic: string, message: string) => {
+    return (topic: string, message: string): void => {
       try {
         const room = topic.split("/").pop() ?? "";
         if (room === "sensor-data") {
@@ -52,7 +53,7 @@ export class DeviceService {
     };
   }
 
-  private validateSensorDataMessage(message: string) {
+  private validateSensorDataMessage(message: string): void {
     const sensorData = plainToClass(SensorDataDto, JSON.parse(message));
     const errors = validateSync(sensorData);
     if (errors.length > 0) {
@@ -60,11 +61,11 @@ export class DeviceService {
     }
   }
 
-  public async findByActivateCode(activateCode: string): Promise<DeviceDocument | null> {
+  public async findByActivateCode(activateCode: string): Promise<Nullable<DeviceDocument>> {
     return this.deviceModel.findOne({ activateCode });
   }
 
-  public async update(id: string, updateDeviceDto: UpdateDeviceDto): Promise<DeviceDocument | null> {
+  public async update(id: string, updateDeviceDto: UpdateDeviceDto): Promise<Nullable<DeviceDocument>> {
     return this.deviceModel.findByIdAndUpdate(id, updateDeviceDto, { new: true });
   }
 }

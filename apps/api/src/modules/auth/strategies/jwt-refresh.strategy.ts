@@ -3,6 +3,7 @@ import { PassportStrategy } from "@nestjs/passport";
 import { type Request } from "express";
 import { Strategy } from "passport-jwt";
 
+import { Nullable } from "@/common/types";
 import { env } from "@/config";
 
 import { AuthUser } from "../interfaces/auth-user.interface";
@@ -18,7 +19,7 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, "jwt-refresh"
     });
   }
 
-  private static extractJwt(req: Request): string | null {
+  private static extractJwt(req: Request): Nullable<string> {
     if (req.cookies && req.cookies.refreshToken) {
       return req.cookies.refreshToken;
     }

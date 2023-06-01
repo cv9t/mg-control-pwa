@@ -6,7 +6,7 @@ import cookieParser from "cookie-parser";
 import { AppModule } from "./app.module";
 import { env } from "./config";
 
-async function bootstrap() {
+async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule, { bufferLogs: true });
   const config = app.get(env.Config);
 
