@@ -1,8 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
+
+import { Nullable } from "@mg-control/types";
 import { Model } from "mongoose";
 
-import { DeleteResult, Nullable } from "@/common/types";
+import { DeleteResult } from "@/common/types";
 
 import { SaveTokenDto } from "./dtos/save-token.dto";
 import { Token, TokenDocument } from "./schemas/token.schema";

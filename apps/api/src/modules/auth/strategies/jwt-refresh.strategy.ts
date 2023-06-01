@@ -1,9 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
+
+import { Nullable } from "@mg-control/types";
 import { type Request } from "express";
 import { Strategy } from "passport-jwt";
 
-import { Nullable } from "@/common/types";
 import { env } from "@/config";
 
 import { AuthUser } from "../interfaces/auth-user.interface";

@@ -1,0 +1,4 @@
+{
+  "extends": "@mg-control/tsconfig/base.json",
+  "include": ["**/*.ts"]
+}

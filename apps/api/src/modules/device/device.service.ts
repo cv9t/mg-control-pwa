@@ -1,13 +1,14 @@
-import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
 import { BadRequestException, Bind, Injectable, MessageEvent } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
+
+import { Nullable } from "@mg-control/types";
 import { plainToClass } from "class-transformer";
 import { validateSync } from "class-validator";
 import { Response } from "express";
 import { Model } from "mongoose";
+import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
 import { Observable } from "rxjs";
 
-import { Nullable } from "@/common/types";
 import { MqttService } from "@/modules/mqtt/mqtt.service";
 import { SseService } from "@/modules/sse/sse.service";
 

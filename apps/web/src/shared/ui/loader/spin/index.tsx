@@ -5,6 +5,4 @@ const config: Partial<SpinProps> = {
   size: "large",
 };
 
-const Spin = (props: SpinProps) => <AntdSpin {...config} {...props} />;
-
-export default Spin;
+export const Spin = (props: SpinProps): JSX.Element | null => <AntdSpin {...config} {...props} />;

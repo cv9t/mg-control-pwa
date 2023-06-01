@@ -1,7 +1,8 @@
-import { LoggerModule } from "nestjs-pino";
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
+
 import { fileLoader, TypedConfigModule } from "nest-typed-config";
+import { LoggerModule } from "nestjs-pino";
 import pino from "pino";
 
 import { AuthModule } from "@/modules/auth/auth.module";

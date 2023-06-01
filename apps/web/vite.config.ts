@@ -1,14 +1,18 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import react from "@vitejs/plugin-react-swc";
 import dotenv from "dotenv";
 import path from "path";
-import { defineConfig } from "vite";
+import swc from "unplugin-swc";
+import { defineConfig, UserConfigExport } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 
-const envFile = process.env.NODE_ENV === "production" ? ".env.prod" : ".env.dev";
-const result = dotenv.config({ path: envFile });
+const additionalEnvPath = process.env.NODE_ENV === "production" ? ".env.prod" : ".env.dev";
+const additionalEnv = dotenv.config({ path: additionalEnvPath }).parsed;
 
-export default () => {
-  const env = result.parsed ?? {};
+export default (): UserConfigExport => {
+  const mainEnv = dotenv.config().parsed;
+  const mergedEnv = { ...mainEnv, ...additionalEnv };
+
   return defineConfig({
     server: {
       port: 5050,
@@ -17,9 +21,17 @@ export default () => {
       port: 5051,
     },
     define: {
-      "process.env": JSON.stringify(env),
+      "process.env": JSON.stringify(mergedEnv),
     },
     plugins: [
+      swc.vite({
+        jsc: {
+          experimental: {
+            // @ts-ignore
+            plugins: ["@effector/swc-plugin"],
+          },
+        },
+      }),
       react(),
       VitePWA({
         registerType: "autoUpdate",

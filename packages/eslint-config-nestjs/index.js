@@ -8,15 +8,11 @@ module.exports = {
           "error",
           {
             groups: [
-              // Packages `react` related packages come first.
-              ["^nestjs", "^@?\\w"],
-              // Internal packages.
+              ["^@nestjs"],
+              ["^@?\\w"],
               ["^@(/.*|$)"],
-              // Side effect imports.
               ["^\\u0000"],
-              // Parent imports. Put `..` last.
               ["^\\.\\.(?!/?$)", "^\\.\\./?$"],
-              // Other relative imports. Put same-folder imports and `.` last.
               ["^\\./(?=.*/)(?!/?$)", "^\\.(?!/?$)", "^\\./?$"],
             ],
           },

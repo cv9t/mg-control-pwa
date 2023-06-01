@@ -1,6 +1,7 @@
-import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
 import { Injectable, OnModuleInit } from "@nestjs/common";
+
 import mqtt, { MqttClient } from "mqtt";
+import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
 
 import { env } from "@/config";
 

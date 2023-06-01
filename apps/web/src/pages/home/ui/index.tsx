@@ -1,14 +1,13 @@
-import { useNavigate } from "react-router-dom";
 import { Button, Space, Typography } from "antd";
 
 import { dom } from "@/shared/lib";
 
+import { goActivatePressed } from "../model";
+
 import styles from "./styles.module.scss";
 
-const HomePage = () => {
+export const HomePage = (): JSX.Element | null => {
   dom.useTitle("MG Control | Главная");
-
-  const navigate = useNavigate();
 
   return (
     <div className={styles.root}>
@@ -17,13 +16,10 @@ const HomePage = () => {
         <b>MicroGreen Box</b> - автоматизированное устройство, позволяющее быстро вырастить любую микрозелень!
       </Typography.Text>
       <Space>
-        <Button type="primary" onClick={() => navigate("/activate")}>
+        <Button type="primary" onClick={goActivatePressed}>
           Активировать устройство
         </Button>
-        <Button onClick={() => navigate("/login")}>Войти</Button>
       </Space>
     </div>
   );
 };
-
-export default HomePage;
