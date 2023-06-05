@@ -11,7 +11,7 @@
   "prettier.useTabs": false,
   "prettier.trailingComma": "es5",
   "editor.tabSize": 2,
-  // ------------------------ PRETTIER ------------------------
+  // ----------------------------------------------------------
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true

@@ -1,17 +1,17 @@
 {
-  "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "./base.json",
+  "$schema": "https://json.schemastore.org/tsconfig",
   "display": "React",
   "compilerOptions": {
-    "target": "ESNext",
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "module": "ESNext",
+    "jsx": "react-jsx",
+    "target": "es2015",
+    "lib": ["es2020", "dom"],
+    "module": "esnext",
     "allowJs": true,
     "declaration": false,
     "declarationMap": false,
     "incremental": true,
     "noEmit": true,
-    "resolveJsonModule": true,
-    "jsx": "react-jsx"
+    "resolveJsonModule": true
   }
 }

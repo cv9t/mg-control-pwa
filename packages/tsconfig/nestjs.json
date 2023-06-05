@@ -1,13 +1,14 @@
 {
-  "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "./base.json",
-  "display": "Node",
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "NestJs",
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
-    "lib": ["ESNext"],
+    "target": "es2015",
+    "lib": ["es2020"],
+    "module": "esnext",
     "strictPropertyInitialization": false,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true
   },
   "ts-node": {
     "compilerOptions": {

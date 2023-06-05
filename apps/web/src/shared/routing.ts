@@ -8,7 +8,9 @@ export const routes = {
   home: createRoute(),
   activate: createRoute(),
 };
+
 export const controls = createRouterControls();
+
 export const router = createHistoryRouter({
   routes: [
     {

@@ -6,6 +6,7 @@
   "license": "MIT",
   "devDependencies": {
     "@mg-control/eslint-config-base": "*",
+    "eslint-plugin-effector": "^0.10.5",
     "eslint-plugin-jsx-a11y": "^6.7.1"
   },
   "publishConfig": {

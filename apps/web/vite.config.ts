@@ -24,15 +24,14 @@ export default (): UserConfigExport => {
       "process.env": JSON.stringify(mergedEnv),
     },
     plugins: [
+      react(),
       swc.vite({
         jsc: {
           experimental: {
-            // @ts-ignore
-            plugins: ["@effector/swc-plugin"],
+            plugins: [["@effector/swc-plugin", {}]],
           },
         },
       }),
-      react(),
       VitePWA({
         registerType: "autoUpdate",
         workbox: {

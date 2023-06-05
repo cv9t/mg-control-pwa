@@ -1633,13 +1633,6 @@
   resolved "https://registry.yarnpkg.com/@tsconfig/node16/-/node16-1.0.3.tgz#472eaab5f15c1ffdd7f8628bd4c4f753995ec79e"
   integrity sha512-yOlFc+7UtL/89t2ZhjPvvB/DeAr3r+Dq58IgzsFkOAvVC6NMJXmCGjbptdXdR9qsX7pKcTL+s87FtYREi2dEEQ==
 
-"@types/antd@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@types/antd/-/antd-1.0.0.tgz#f04e2a84efd9ea937366cd3dfbada5d3c949471d"
-  integrity sha512-wnRh+S6vPMahsuSN6lFJQzNXuhUKr9JKic1L/NMdIChsuu9Fc+mDyF7H17eFPQlgpLVdT0DyYIgB1di8DA9AuQ==
-  dependencies:
-    antd "*"
-
 "@types/body-parser@*":
   version "1.19.2"
   resolved "https://registry.yarnpkg.com/@types/body-parser/-/body-parser-1.19.2.tgz#aea2059e28b7658639081347ac4fab3de166e6f0"
@@ -2035,7 +2028,7 @@ ansi-styles@^6.0.0:
   resolved "https://registry.yarnpkg.com/ansi-styles/-/ansi-styles-6.2.1.tgz#0e62320cf99c21afff3b3012192546aacbfb05c5"
   integrity sha512-bN798gFfQX+viw3R7yrGWRqnrN2oRkEkUjjl4JNn4E8GxxbjtG3FbrEIIY3l8/hrwUwIeCZvi4QuOTP4MErVug==
 
-antd@*, antd@^5.4.0:
+antd@^5.4.0:
   version "5.4.0"
   resolved "https://registry.yarnpkg.com/antd/-/antd-5.4.0.tgz#e6e2b469b551a0bc58435f3a353e97372e98125c"
   integrity sha512-eWCNFUGMuuHu2wufbq7yzPzwSesO2Our0AnCjCkom646wHw2TOUhfS58FeUSlV/Hhjb+ZLEvdy/mC+vJUb+EXg==
@@ -3201,6 +3194,13 @@ eslint-module-utils@^2.7.4:
   integrity sha512-j4GT+rqzCoRKHwURX7pddtIPGySnX9Si/cgMI5ztrcqOPtk5dDEeZ34CQVPphnqkJytlc97Vuk05Um2mJ3gEQA==
   dependencies:
     debug "^3.2.7"
+
+eslint-plugin-effector@^0.10.5:
+  version "0.10.5"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-effector/-/eslint-plugin-effector-0.10.5.tgz#bbc28b6b0d976fa73965004f4c5ba55ead00cd3a"
+  integrity sha512-aM8V/aMfMoKNOUZx2I4iuGd+2bJFVVA1mZMR+88F88LoePuqIobiS2xhLmS9p053jJatzhz5T3iQ9qL5p5X1QQ==
+  dependencies:
+    prettier "^2.3.2"
 
 eslint-plugin-import@^2.27.5:
   version "2.27.5"
@@ -5108,6 +5108,11 @@ prettier-linter-helpers@^1.0.0:
   integrity sha512-GbK2cP9nraSSUF9N2XwUwqfzlAFlMNYYl+ShE/V+H8a9uNl/oUqB1w2EL54Jh0OlyRSd8RfWYJ3coVS4TROP2w==
   dependencies:
     fast-diff "^1.1.2"
+
+prettier@^2.3.2:
+  version "2.8.8"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.8.8.tgz#e8c5d7e98a4305ffe3de2e1fc4aca1a71c28b1da"
+  integrity sha512-tdN8qQGvNjw4CHbY+XXk0JgCXn9QiF21a55rBe5LJAU+kDyC4WQn4+awm2Xfk2lQMk5fKup9XgzTZtGkjBdP9Q==
 
 prettier@^2.8.7:
   version "2.8.7"

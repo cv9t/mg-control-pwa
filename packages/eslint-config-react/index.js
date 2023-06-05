@@ -1,6 +1,6 @@
 module.exports = {
-  plugins: ["jsx-a11y"],
-  extends: ["@mg-control/eslint-config-base", "plugin:jsx-a11y/recommended"],
+  plugins: ["jsx-a11y", "effector"],
+  extends: ["@mg-control/eslint-config-base", "plugin:jsx-a11y/recommended", "plugin:effector/recommended", "plugin:effector/react"],
   overrides: [
     {
       files: ["*.ts", "*.tsx"],
