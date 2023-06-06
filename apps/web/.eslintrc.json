@@ -1,6 +1,7 @@
 {
   "extends": ["plugin:@nx/react", "../../.eslintrc.json"],
   "ignorePatterns": ["!**/*"],
+  "plugins": ["effector"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
@@ -8,7 +9,29 @@
     },
     {
       "files": ["*.ts", "*.tsx"],
-      "rules": {}
+      "extends": ["airbnb", "airbnb-typescript", "plugin:effector/react"],
+      "parserOptions": {
+        "project": ["apps/web/tsconfig.*?.json"]
+      },
+      "rules": {
+        "react/react-in-jsx-scope": "off",
+
+        "simple-import-sort/imports": [
+          "error",
+          {
+            "groups": [
+              ["^react"],
+              ["^effector"],
+              ["^@?\\w"],
+              ["^@mg-control"],
+              ["^\\u0000"],
+              ["^\\.\\.(?!/?$)", "^\\.\\./?$"],
+              ["^\\./(?=.*/)(?!/?$)", "^\\.(?!/?$)", "^\\./?$"],
+              ["^.+\\.?(css|scss)$"]
+            ]
+          }
+        ]
+      }
     },
     {
       "files": ["*.js", "*.jsx"],
