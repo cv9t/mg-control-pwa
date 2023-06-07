@@ -36,12 +36,16 @@
             "allowExpressions": true
           }
         ],
+        "@typescript-eslint/indent": "off",
 
         "max-classes-per-file": "off",
         "linebreak-style": "off",
         "object-curly-newline": "off",
         "class-methods-use-this": "off",
-        "import/no-extraneous-dependencies": "off"
+        "import/no-extraneous-dependencies": "off",
+        "implicit-arrow-linebreak": "off",
+        "function-paren-newline": "off",
+        "no-underscore-dangle": "off"
       }
     },
     {

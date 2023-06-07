@@ -5,6 +5,8 @@ import { fileLoader, TypedConfigModule } from 'nest-typed-config';
 import { LoggerModule } from 'nestjs-pino';
 
 import { env } from '../config';
+import { AuthModule } from '../modules/auth/auth.module';
+import { DeviceModule } from '../modules/device/device.module';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -33,6 +35,8 @@ import { AppService } from './app.service';
         },
       }),
     }),
+    AuthModule,
+    DeviceModule,
   ],
   controllers: [AppController],
   providers: [AppService],

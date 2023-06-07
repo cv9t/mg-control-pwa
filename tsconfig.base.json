@@ -16,7 +16,8 @@
     "baseUrl": ".",
     "paths": {
       "@mg-control/shared/types": ["libs/shared/types/src/index.ts"],
-      "@mg-control/web/*": ["apps/web/src/*"]
+      "@mg-control/web/*": ["apps/web/src/*"],
+      "@mg-control/api/*": ["apps/api/src/*"]
     }
   },
   "exclude": ["node_modules", "tmp"]
