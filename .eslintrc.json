@@ -37,7 +37,11 @@
           }
         ],
 
-        "max-classes-per-file": "off"
+        "max-classes-per-file": "off",
+        "linebreak-style": "off",
+        "object-curly-newline": "off",
+        "class-methods-use-this": "off",
+        "import/no-extraneous-dependencies": "off"
       }
     },
     {

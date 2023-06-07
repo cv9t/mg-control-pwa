@@ -11,7 +11,22 @@
       "parserOptions": {
         "project": ["apps/api/tsconfig.*?.json"]
       },
-      "rules": {}
+      "rules": {
+        "simple-import-sort/imports": [
+          "error",
+          {
+            "groups": [
+              ["^@nestjs"],
+              ["^@?\\w"],
+              ["^@mg-control"],
+              ["^\\u0000"],
+              ["^\\.\\.(?!/?$)", "^\\.\\./?$"],
+              ["^\\./(?=.*/)(?!/?$)", "^\\.(?!/?$)", "^\\./?$"],
+              ["^.+\\.?(css|scss)$"]
+            ]
+          }
+        ]
+      }
     },
     {
       "files": ["*.js", "*.jsx"],

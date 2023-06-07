@@ -1,7 +1,7 @@
 {
   "extends": ["plugin:@nx/react", "../../.eslintrc.json"],
   "ignorePatterns": ["!**/*"],
-  "plugins": ["effector"],
+  "plugins": ["effector", "simple-import-sort"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
@@ -15,7 +15,13 @@
       },
       "rules": {
         "react/react-in-jsx-scope": "off",
+        "react/require-default-props": "off",
+        "react/jsx-props-no-spreading": "off",
+        "react/jsx-one-expression-per-line": "off",
+        "react/jsx-no-useless-fragment": "off",
 
+        "import/prefer-default-export": "off",
+        "import/no-extraneous-dependencies": "off",
         "simple-import-sort/imports": [
           "error",
           {
@@ -30,7 +36,12 @@
               ["^.+\\.?(css|scss)$"]
             ]
           }
-        ]
+        ],
+
+        "max-classes-per-file": "off",
+        "linebreak-style": "off",
+        "object-curly-newline": "off",
+        "class-methods-use-this": "off"
       }
     },
     {
