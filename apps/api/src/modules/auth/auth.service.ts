@@ -7,8 +7,8 @@ import { DeviceService } from '@mg-control/api/modules/device/device.service';
 import { TokenService } from '@mg-control/api/modules/token/token.service';
 import { UserService } from '@mg-control/api/modules/user/user.service';
 
-import { LoginDto } from './dtos/login.dto';
-import { RegisterDto } from './dtos/register.dto';
+import { ActivationDto } from './dtos/activation.dto';
+import { SignInDto } from './dtos/sign-in.dto';
 import { hashData, verifyHashedData } from './helpers/crypto.helpers';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { GeneratedTokens } from './types';
@@ -23,24 +23,24 @@ export class AuthService {
     private readonly tokenService: TokenService,
   ) {}
 
-  public async register(registerDto: RegisterDto): Promise<GeneratedTokens> {
-    const device = await this.deviceService.findByActivateCode(registerDto.activateCode);
+  public async activate(activationDto: ActivationDto): Promise<GeneratedTokens> {
+    const device = await this.deviceService.findByActivationCode(activationDto.activationCode);
     if (!device) {
-      throw new BadRequestException('Activate code is not valid');
+      throw new BadRequestException('Activation code is not valid');
     }
     if (device.isActivated) {
       throw new BadRequestException('Device already activated');
     }
 
-    const existingUser = await this.userService.findByEmail(registerDto.email);
+    const existingUser = await this.userService.findByEmail(activationDto.email);
     if (existingUser) {
       throw new BadRequestException('User already exists');
     }
 
     const user = await this.userService.create({
       device: device._id,
-      email: registerDto.email,
-      password: hashData(registerDto.password),
+      email: activationDto.email,
+      password: hashData(activationDto.password),
     });
     await this.deviceService.update(device.id, { isActivated: true });
 
@@ -49,13 +49,13 @@ export class AuthService {
     return tokens;
   }
 
-  public async login(loginDto: LoginDto): Promise<GeneratedTokens> {
-    const user = await this.userService.findByEmail(loginDto.email);
+  public async signIn(signInDto: SignInDto): Promise<GeneratedTokens> {
+    const user = await this.userService.findByEmail(signInDto.email);
     if (!user) {
       throw new BadRequestException('User does not exist');
     }
 
-    const passwordMatches = verifyHashedData(loginDto.password, user.password);
+    const passwordMatches = verifyHashedData(signInDto.password, user.password);
     if (!passwordMatches) {
       throw new BadRequestException('Password is incorrect');
     }

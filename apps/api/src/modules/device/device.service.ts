@@ -61,8 +61,8 @@ export class DeviceService {
     }
   }
 
-  public async findByActivateCode(activateCode: string): Promise<DeviceDocument | null> {
-    return this.deviceModel.findOne({ activateCode });
+  public async findByActivationCode(activationCode: string): Promise<DeviceDocument | null> {
+    return this.deviceModel.findOne({ activationCode });
   }
 
   public async update(

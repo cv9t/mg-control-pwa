@@ -1,10 +1,17 @@
+import { useUnit } from 'effector-react';
+
 import { Button, Space, Typography } from 'antd';
 
-import { dom } from '@mg-control/web/shared/lib';
+import { useTitle } from '@mg-control/web/shared/lib';
 import { View } from '@mg-control/web/shared/types';
 
-export function HomePageView(): View {
-  dom.useTitle('MG Control | Home');
+import { $$homePageModel } from './model';
+
+export function HomePage(): View {
+  useTitle('MG Control | Home');
+
+  const { goActivationPressed, goSignInPressed } = useUnit($$homePageModel);
+
   return (
     <div
       style={{
@@ -24,8 +31,10 @@ export function HomePageView(): View {
         microgreen!
       </Typography.Text>
       <Space>
-        <Button type="primary">Activate device</Button>
-        <Button>Sign In</Button>
+        <Button type="primary" onClick={goActivationPressed}>
+          Activate device
+        </Button>
+        <Button onClick={goSignInPressed}>Sign In</Button>
       </Space>
     </div>
   );

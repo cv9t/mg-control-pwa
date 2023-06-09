@@ -3,26 +3,31 @@ import { sample } from 'effector';
 import { createHistoryRouter, createRoute, createRouterControls } from 'atomic-router';
 import { createBrowserHistory } from 'history';
 
-import { appStarted } from './config/init';
+import { appStarted } from './config';
 
 export const routes = {
   home: createRoute(),
   auth: {
-    login: createRoute(),
+    activation: createRoute(),
+    signIn: createRoute(),
   },
 };
 
 export const controls = createRouterControls();
 
-export const router = createHistoryRouter({
+export const Router = createHistoryRouter({
   routes: [
     {
       path: '/',
       route: routes.home,
     },
     {
+      path: '/activation',
+      route: routes.auth.activation,
+    },
+    {
       path: '/login',
-      route: routes.auth.login,
+      route: routes.auth.signIn,
     },
   ],
   controls,
@@ -31,5 +36,5 @@ export const router = createHistoryRouter({
 sample({
   clock: appStarted,
   fn: () => createBrowserHistory(),
-  target: router.setHistory,
+  target: Router.setHistory,
 });

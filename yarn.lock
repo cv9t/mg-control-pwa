@@ -1234,11 +1234,6 @@
     debug "^3.1.0"
     lodash.once "^4.1.1"
 
-"@effector/reflect@^8.3.1":
-  version "8.3.1"
-  resolved "https://registry.yarnpkg.com/@effector/reflect/-/reflect-8.3.1.tgz#4e32912b69738bb4ecdcd86b71db2294f55e71b1"
-  integrity sha512-RjDTBkb8smdgFMViid7R4YYjRtYwYooAAQ2F8T0fYMCfDntPtYC2e1Nd17tDKxC6HuKVuqk5CzlkQovV3QPo6A==
-
 "@emotion/hash@^0.8.0":
   version "0.8.0"
   resolved "https://registry.yarnpkg.com/@emotion/hash/-/hash-0.8.0.tgz#bbbff68978fefdbe68ccb533bc8cbe1d1afb5413"
@@ -5370,6 +5365,11 @@ ee-first@1.1.1:
   resolved "https://registry.yarnpkg.com/ee-first/-/ee-first-1.1.1.tgz#590c61156b0ae2f4f0255732a158b266bc56b21d"
   integrity sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==
 
+effector-factorio@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/effector-factorio/-/effector-factorio-1.1.0.tgz#af1cd4dee40182f45ae794e80973202aa543ec38"
+  integrity sha512-yTkxvYSGCdzpmYR6AR/0yQHN7PJ3TXKK/XYYdLvWslVEmaZEp8mhrvRalSX3tnycVsZpdgvr7VIM7yFWL2v9fQ==
+
 effector-react@^22.5.3:
   version "22.5.3"
   resolved "https://registry.yarnpkg.com/effector-react/-/effector-react-22.5.3.tgz#76da8ea811f73bdf3cd0f5b2477c9f5440bee358"
@@ -9164,6 +9164,11 @@ pathval@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/pathval/-/pathval-1.1.1.tgz#8534e77a77ce7ac5a2512ea21e0fdb8fcf6c3d8d"
   integrity sha512-Dp6zGqpTdETdR63lehJYPeIOqpiNBNtc7BpWSLrOje7UaIsE5aY92r/AunQA7rsXvet3lrJ3JnZX29UPTKXyKQ==
+
+patronum@^1.18.0:
+  version "1.18.0"
+  resolved "https://registry.yarnpkg.com/patronum/-/patronum-1.18.0.tgz#e4ffce785aa718f8ef25e7dc8027f66d716ec4dc"
+  integrity sha512-2SxZTLHXw56dXvns41YksVD030shnewef+4Gak2RSYdgEBGdCKCYYNfegsvoW8MWwjQxUZpp1Mgos8a3pXipCQ==
 
 pause@0.0.1:
   version "0.0.1"

@@ -1,1 +1,2 @@
-export * as dom from './dom';
+export * from './dom';
+export * from './notification';

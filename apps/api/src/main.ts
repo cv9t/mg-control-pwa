@@ -7,7 +7,7 @@ import { Logger, LoggerErrorInterceptor } from 'nestjs-pino';
 import { AppModule } from './app/app.module';
 import { env } from './config';
 
-async function bootstrap(): Promise<void> {
+const bootstrap = async (): Promise<void> => {
   const app = await NestFactory.create(AppModule, { bufferLogs: true });
   const config = app.get(env.Config);
 
@@ -20,6 +20,6 @@ async function bootstrap(): Promise<void> {
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
   await app.listen(config.port);
-}
+};
 
 bootstrap();

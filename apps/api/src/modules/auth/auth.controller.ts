@@ -6,8 +6,8 @@ import { DeleteResult } from '@mg-control/api/common/types';
 
 import { Cookies } from './decorators/cookies.decorator';
 import { User } from './decorators/user.decorator';
-import { LoginDto } from './dtos/login.dto';
-import { RegisterDto } from './dtos/register.dto';
+import { ActivationDto } from './dtos/activation.dto';
+import { SignInDto } from './dtos/sign-in.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 import { AuthService } from './auth.service';
@@ -17,23 +17,23 @@ import { AuthResponse } from './types';
 export class AuthController {
   public constructor(private readonly authService: AuthService) {}
 
-  @Post('register')
-  public async register(
-    @Body() registerDto: RegisterDto,
+  @Post('activate')
+  public async activate(
+    @Body() activationDto: ActivationDto,
     @Res({ passthrough: true }) res: Response,
   ): Promise<AuthResponse> {
-    const { accessToken, refreshToken } = await this.authService.register(registerDto);
+    const { accessToken, refreshToken } = await this.authService.activate(activationDto);
     res.cookie('refreshToken', refreshToken, { maxAge: 7 * 24 * 60 * 60 * 1000, httpOnly: true });
     return { accessToken };
   }
 
   @HttpCode(HttpStatus.OK)
-  @Post('login')
-  public async login(
-    @Body() loginDto: LoginDto,
+  @Post('signIn')
+  public async signIn(
+    @Body() signInDto: SignInDto,
     @Res({ passthrough: true }) res: Response,
   ): Promise<AuthResponse> {
-    const { accessToken, refreshToken } = await this.authService.login(loginDto);
+    const { accessToken, refreshToken } = await this.authService.signIn(signInDto);
     res.cookie('refreshToken', refreshToken, { maxAge: 7 * 24 * 60 * 60 * 1000, httpOnly: true });
     return { accessToken };
   }

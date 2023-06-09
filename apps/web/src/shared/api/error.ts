@@ -1,4 +1,12 @@
-import { ApiErrorKind } from './types';
+type ApiErrorKind =
+  | 'bad-data'
+  | 'unauthorized'
+  | 'forbidden'
+  | 'not-found'
+  | 'server-error'
+  | 'unknown';
+
+type CreateApiError = (kind: ApiErrorKind) => typeof ApiError;
 
 export class ApiError {
   public constructor(public message: string) {}
@@ -8,8 +16,8 @@ export class ApiError {
   }
 }
 
-function createApiError(kind: ApiErrorKind): typeof ApiError {
-  return class extends ApiError {
+const createApiError: CreateApiError = (kind) =>
+  class extends ApiError {
     public kind: ApiErrorKind;
 
     public constructor(message: string) {
@@ -17,7 +25,6 @@ function createApiError(kind: ApiErrorKind): typeof ApiError {
       this.kind = kind;
     }
   };
-}
 
 export const BadDataError = createApiError('bad-data');
 export const UnauthorizedError = createApiError('unauthorized');

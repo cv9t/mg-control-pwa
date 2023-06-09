@@ -10,7 +10,7 @@ export class Device {
   public isActivated: boolean;
 
   @Prop({ required: true, unique: true })
-  public activateCode: string;
+  public activationCode: string;
 }
 
 export const DeviceSchema = SchemaFactory.createForClass(Device);

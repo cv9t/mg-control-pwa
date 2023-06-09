@@ -1,6 +1,6 @@
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
-export class RegisterDto {
+export class ActivationDto {
   @IsEmail()
   public readonly email: string;
 
@@ -10,5 +10,5 @@ export class RegisterDto {
 
   @IsString()
   @IsNotEmpty()
-  public readonly activateCode: string;
+  public readonly activationCode: string;
 }

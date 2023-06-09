@@ -3,18 +3,18 @@ import { ReactNode } from 'react';
 import { Layout } from 'antd';
 
 import { View } from '@mg-control/web/shared/types';
-import { Content } from '@mg-control/web/shared/ui';
+import { Center } from '@mg-control/web/shared/ui';
 
-type HomeLayoutViewProps = {
+type HomeLayoutProps = {
   children: ReactNode;
 };
 
-export function HomeLayoutView({ children }: HomeLayoutViewProps): View {
+export function HomeLayout({ children }: HomeLayoutProps): View {
   return (
     <Layout className="site-layout">
-      <Content.Center style={{ minHeight: '100vh' }}>
+      <Center style={{ minHeight: '100vh' }}>
         <>{children}</>
-      </Content.Center>
+      </Center>
     </Layout>
   );
 }
