@@ -26,7 +26,37 @@
       "files": ["*.ts", "*.tsx"],
       "extends": ["plugin:@nx/typescript", "airbnb-base", "airbnb-typescript/base"],
       "rules": {
-        "simple-import-sort/exports": "error"
+        "import/prefer-default-export": "off",
+
+        "simple-import-sort/exports": "error",
+
+        "@typescript-eslint/indent": "off",
+        "@typescript-eslint/explicit-function-return-type": [
+          "error",
+          {
+            "allowExpressions": true
+          }
+        ],
+        "@typescript-eslint/naming-convention": [
+          "error",
+          {
+            "selector": "variable",
+            "format": ["camelCase", "UPPER_CASE", "PascalCase"]
+          },
+          {
+            "selector": "typeLike",
+            "format": ["PascalCase", "UPPER_CASE"]
+          }
+        ],
+
+        "max-classes-per-file": "off",
+        "linebreak-style": "off",
+        "object-curly-newline": "off",
+        "class-methods-use-this": "off",
+        "import/no-extraneous-dependencies": "off",
+        "implicit-arrow-linebreak": "off",
+        "function-paren-newline": "off",
+        "no-underscore-dangle": "off"
       }
     },
     {
