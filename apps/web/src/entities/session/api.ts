@@ -2,35 +2,41 @@ import { Model, modelFactory } from 'effector-factorio';
 
 import { $$apiModel } from '@mg-control/web/shared/api';
 
-export type ActivateBody = {
+type ActivationBody = {
   activationCode: string;
   email: string;
   password: string;
 };
 
-export type SignInBody = {
+type SignInBody = {
   email: string;
   password: string;
 };
 
-export type AuthResponse = {
+type AuthResponse = {
   accessToken: string;
 };
 
-export const sessionApiFactory = modelFactory(() => {
-  const activateFx = $$apiModel.createRequestFx<ActivateBody, AuthResponse>({
-    path: 'activate',
+const sessionApiFactory = modelFactory(() => {
+  const activateFx = $$apiModel.createRequestFx<ActivationBody, AuthResponse>({
+    url: 'auth/activate',
     method: 'POST',
   });
 
   const signInFx = $$apiModel.createRequestFx<SignInBody, AuthResponse>({
-    path: 'signIn',
+    url: 'auth/signIn',
     method: 'POST',
+  });
+
+  const refreshTokensFx = $$apiModel.createAuthorizedRequestFx<void, AuthResponse>({
+    url: 'auth/refresh-tokens',
+    method: 'GET',
   });
 
   return {
     activateFx,
     signInFx,
+    refreshTokensFx,
   };
 });
 

@@ -1,18 +1,14 @@
-import { ComponentType, Suspense } from 'react';
+import { ComponentType } from 'react';
 
-import { RouterProvider } from 'atomic-Router-react';
+import { RouterProvider } from 'atomic-router-react';
 
-import { Router } from '@mg-control/web/shared/routing';
-import { View } from '@mg-control/web/shared/types';
-import { Spin } from '@mg-control/web/shared/ui';
+import { router } from '@mg-control/web/shared/routing';
 
 export function withRouter(WrappedComponent: ComponentType) {
-  return function wrapper(): View {
+  return function wrapper() {
     return (
-      <RouterProvider router={Router}>
-        <Suspense fallback={<Spin className="overlay" />}>
-          <WrappedComponent />
-        </Suspense>
+      <RouterProvider router={router}>
+        <WrappedComponent />
       </RouterProvider>
     );
   };

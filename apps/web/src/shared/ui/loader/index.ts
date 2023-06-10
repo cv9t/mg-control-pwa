@@ -1,1 +1,1 @@
-export * from './spin';
+export * from './page';

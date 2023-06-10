@@ -1,9 +1,8 @@
 import { ReactNode } from 'react';
 
-import { Layout } from 'antd';
+import { Container, Flex } from '@mantine/core';
 
 import { View } from '@mg-control/web/shared/types';
-import { Center } from '@mg-control/web/shared/ui';
 
 type HomeLayoutProps = {
   children: ReactNode;
@@ -11,10 +10,10 @@ type HomeLayoutProps = {
 
 export function HomeLayout({ children }: HomeLayoutProps): View {
   return (
-    <Layout className="site-layout">
-      <Center style={{ minHeight: '100vh' }}>
-        <>{children}</>
-      </Center>
-    </Layout>
+    <Container size="xs" h="100svh">
+      <Flex h="100%" direction="column" align="center" justify="center">
+        {children}
+      </Flex>
+    </Container>
   );
 }

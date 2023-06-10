@@ -38,6 +38,5 @@ testem.log
 .DS_Store
 Thumbs.db
 
-*.env
-.*.yaml
-*.log
+.env
+.swc

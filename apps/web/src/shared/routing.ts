@@ -11,11 +11,12 @@ export const routes = {
     activation: createRoute(),
     signIn: createRoute(),
   },
+  dashboard: createRoute(),
 };
 
 export const controls = createRouterControls();
 
-export const Router = createHistoryRouter({
+export const router = createHistoryRouter({
   routes: [
     {
       path: '/',
@@ -36,5 +37,5 @@ export const Router = createHistoryRouter({
 sample({
   clock: appStarted,
   fn: () => createBrowserHistory(),
-  target: Router.setHistory,
+  target: router.setHistory,
 });

@@ -6,8 +6,6 @@ type ApiErrorKind =
   | 'server-error'
   | 'unknown';
 
-type CreateApiError = (kind: ApiErrorKind) => typeof ApiError;
-
 export class ApiError {
   public constructor(public message: string) {}
 
@@ -16,7 +14,7 @@ export class ApiError {
   }
 }
 
-const createApiError: CreateApiError = (kind) =>
+const createApiError = (kind: ApiErrorKind): typeof ApiError =>
   class extends ApiError {
     public kind: ApiErrorKind;
 

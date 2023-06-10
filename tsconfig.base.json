@@ -15,9 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@mg-control/api/*": ["apps/api/src/*"],
-      "@mg-control/shared/types": ["libs/shared/types/src/index.ts"],
-      "@mg-control/web/*": ["apps/web/src/*"]
+      "@mg-control/web/*": ["apps/web/src/*"],
+      "@mg-control/shared/types": ["libs/shared/types/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

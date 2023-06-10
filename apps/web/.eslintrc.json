@@ -1,7 +1,7 @@
 {
   "extends": ["plugin:@nx/react", "../../.eslintrc.json"],
   "ignorePatterns": ["!**/*"],
-  "plugins": ["effector", "simple-import-sort"],
+  "plugins": ["effector"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
@@ -19,9 +19,11 @@
         "react/jsx-props-no-spreading": "off",
         "react/jsx-one-expression-per-line": "off",
         "react/jsx-no-useless-fragment": "off",
+        "react/jsx-wrap-multilines": "off",
 
         "import/prefer-default-export": "off",
         "import/no-extraneous-dependencies": "off",
+
         "simple-import-sort/imports": [
           "error",
           {
@@ -38,8 +40,24 @@
           }
         ],
 
-        "@typescript-eslint/naming-convention": "off",
         "@typescript-eslint/indent": "off",
+        "@typescript-eslint/explicit-function-return-type": [
+          "error",
+          {
+            "allowExpressions": true
+          }
+        ],
+        "@typescript-eslint/naming-convention": [
+          "error",
+          {
+            "selector": "variable",
+            "format": ["camelCase", "UPPER_CASE", "PascalCase"]
+          },
+          {
+            "selector": "typeLike",
+            "format": ["PascalCase", "UPPER_CASE"]
+          }
+        ],
 
         "max-classes-per-file": "off",
         "linebreak-style": "off",
@@ -48,8 +66,7 @@
         "no-param-reassign": "off",
         "operator-linebreak": "off",
         "implicit-arrow-linebreak": "off",
-        "function-paren-newline": "off",
-        "@typescript-eslint/no-shadow": "off"
+        "function-paren-newline": "off"
       }
     },
     {

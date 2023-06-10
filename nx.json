@@ -3,12 +3,13 @@
   "affected": {
     "defaultBase": "master"
   },
+  "defaultProject": "web",
   "tasksRunnerOptions": {
     "default": {
       "runner": "nx-cloud",
       "options": {
         "cacheableOperations": ["build", "lint", "test", "e2e"],
-        "accessToken": "OWU1OTVhOTctNjNjMC00MzRkLThkMmItZGMxYzg0OWY0NTNjfHJlYWQtd3JpdGU="
+        "accessToken": "NmZhNjg4MzEtNDQ0NS00N2NhLWJmOTktMTU3ODA1YjYwMzA0fHJlYWQtd3JpdGU="
       }
     }
   },
@@ -21,7 +22,7 @@
       "inputs": ["default", "^production"]
     },
     "test": {
-      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"]
+      "inputs": ["default", "^production"]
     },
     "lint": {
       "inputs": ["default", "{workspaceRoot}/.eslintrc.json", "{workspaceRoot}/.eslintignore"]
@@ -33,24 +34,23 @@
       "default",
       "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
       "!{projectRoot}/tsconfig.spec.json",
-      "!{projectRoot}/.eslintrc.json",
-      "!{projectRoot}/jest.config.[jt]s"
+      "!{projectRoot}/.eslintrc.json"
     ],
     "sharedGlobals": []
   },
   "generators": {
     "@nx/react": {
       "application": {
-        "style": "scss",
+        "style": "@emotion/styled",
         "linter": "eslint",
         "bundler": "vite",
         "babel": true
       },
       "component": {
-        "style": "scss"
+        "style": "@emotion/styled"
       },
       "library": {
-        "style": "scss",
+        "style": "@emotion/styled",
         "linter": "eslint"
       }
     }

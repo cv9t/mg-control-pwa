@@ -17,14 +17,14 @@ import {
 } from './error';
 
 type RequestConfig = {
-  path: string;
+  url: string;
   method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   body?: unknown;
   headers?: Record<string, string>;
 };
 
 type CreateRequest<B = unknown, R = unknown> = <T_1 extends B, T_2 extends R>(
-  params: Pick<RequestConfig, 'path' | 'method'>,
+  params: Pick<RequestConfig, 'url' | 'method'>,
 ) => Effect<T_1, T_2>;
 
 type ApiFactoryOptions = {
@@ -106,7 +106,7 @@ export type ApiModel = Model<typeof apiFactory>;
 
 export const $$apiModel = apiFactory.createModel({
   axiosConfig: {
-    baseURL: API_URL,
+    baseURL: `${API_URL}/api/v1`,
     withCredentials: true,
   },
 });
