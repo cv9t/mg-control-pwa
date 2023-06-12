@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer';
 import { IsNumber, ValidateNested } from 'class-validator';
 
-export class AirDto {
+class AirDto {
   @IsNumber()
   public readonly humidity: number;
 
@@ -9,7 +9,7 @@ export class AirDto {
   public readonly temp: number;
 }
 
-export class SoilDto {
+class SoilDto {
   @IsNumber()
   public readonly moisture: number;
 

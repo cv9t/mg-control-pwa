@@ -1,91 +1,127 @@
-import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
 import { DeleteResult } from '@mg-control/api/common/types';
 import { Config } from '@mg-control/api/config';
-import { DeviceService } from '@mg-control/api/modules/device/device.service';
-import { TokenService } from '@mg-control/api/modules/token/token.service';
-import { UserService } from '@mg-control/api/modules/user/user.service';
+import { DevicesService } from '@mg-control/api/modules/devices/devices.service';
+import { TokensService } from '@mg-control/api/modules/tokens/tokens.service';
+import { UsersService } from '@mg-control/api/modules/users/users.service';
+import { ActivationDto, SignInDto } from '@mg-control/shared/dtos';
+import { ERROR_TYPE } from '@mg-control/shared/typings';
 
-import { ActivationDto } from './dtos/activation.dto';
-import { SignInDto } from './dtos/sign-in.dto';
 import { hashData, verifyHashedData } from './helpers/crypto.helpers';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
-import { GeneratedTokens } from './types';
+import { CreatedTokens } from './types';
 
 @Injectable()
 export class AuthService {
   public constructor(
     private readonly config: Config,
     private readonly jwtService: JwtService,
-    private readonly userService: UserService,
-    private readonly deviceService: DeviceService,
-    private readonly tokenService: TokenService,
+    private readonly usersService: UsersService,
+    private readonly devicesService: DevicesService,
+    private readonly tokensService: TokensService,
   ) {}
 
-  public async activate(activationDto: ActivationDto): Promise<GeneratedTokens> {
-    const device = await this.deviceService.findByActivationCode(activationDto.activationCode);
-    if (!device) {
-      throw new BadRequestException('Activation code is not valid');
+  public async activate(activationDto: ActivationDto): Promise<CreatedTokens> {
+    const existingDevice = await this.devicesService.findByActivationCode(
+      activationDto.activationCode,
+    );
+    if (!existingDevice) {
+      throw new BadRequestException({
+        type: ERROR_TYPE.invalid_activation_code,
+        message: 'Invalid activation code',
+      });
     }
-    if (device.isActivated) {
-      throw new BadRequestException('Device already activated');
+    if (existingDevice.isActivated) {
+      throw new BadRequestException({
+        type: ERROR_TYPE.device_already_activated,
+        message: 'Device already activated',
+      });
     }
 
-    const existingUser = await this.userService.findByEmail(activationDto.email);
+    const existingUser = await this.usersService.findByEmail(activationDto.email);
     if (existingUser) {
-      throw new BadRequestException('User already exists');
+      throw new BadRequestException({
+        type: ERROR_TYPE.user_already_exists,
+        message: 'User already exists',
+      });
     }
 
-    const user = await this.userService.create({
-      device: device._id,
+    const createdUser = await this.usersService.create({
+      device: existingDevice._id,
       email: activationDto.email,
       password: hashData(activationDto.password),
     });
-    await this.deviceService.update(device.id, { isActivated: true });
+    await this.devicesService.update(existingDevice.id, { isActivated: true });
 
-    const tokens = await this.generateTokens({ deviceId: device.id, sub: user.id });
-    await this.tokenService.save({ user: user._id, refreshToken: tokens.refreshToken });
+    const tokens = await this._createTokens({ deviceId: existingDevice.id, sub: createdUser.id });
+    await this.tokensService.save({ user: createdUser._id, refreshToken: tokens.refreshToken });
     return tokens;
   }
 
-  public async signIn(signInDto: SignInDto): Promise<GeneratedTokens> {
-    const user = await this.userService.findByEmail(signInDto.email);
-    if (!user) {
-      throw new BadRequestException('User does not exist');
+  public async signIn(signInDto: SignInDto): Promise<CreatedTokens> {
+    const existingUser = await this.usersService.findByEmail(signInDto.email);
+    if (!existingUser) {
+      throw new BadRequestException({
+        type: ERROR_TYPE.invalid_credentials,
+        message: 'Invalid email and/or password',
+      });
     }
 
-    const passwordMatches = verifyHashedData(signInDto.password, user.password);
+    const passwordMatches = verifyHashedData(signInDto.password, existingUser.password);
     if (!passwordMatches) {
-      throw new BadRequestException('Password is incorrect');
+      throw new BadRequestException({
+        type: ERROR_TYPE.invalid_credentials,
+        message: 'Invalid email and/or password',
+      });
     }
 
-    const tokens = await this.generateTokens({ deviceId: user.device.toString(), sub: user.id });
-    await this.tokenService.save({ user: user._id, refreshToken: tokens.refreshToken });
+    const tokens = await this._createTokens({
+      deviceId: existingUser.device.toString(),
+      sub: existingUser.id,
+    });
+    await this.tokensService.save({ user: existingUser._id, refreshToken: tokens.refreshToken });
     return tokens;
   }
 
-  public async logout(refreshToken: string): Promise<DeleteResult> {
-    return this.tokenService.remove(refreshToken);
+  public async signOut(refreshToken: string): Promise<DeleteResult> {
+    const existingToken = this.tokensService.findByRefreshToken(refreshToken);
+    if (!existingToken) {
+      throw new UnauthorizedException({
+        type: ERROR_TYPE.invalid_token,
+        message: 'Invalid token',
+      });
+    }
+    return this.tokensService.remove(refreshToken);
   }
 
-  public async refreshTokens(userId: string, refreshToken: string): Promise<GeneratedTokens> {
-    const user = await this.userService.findById(userId);
-    if (!user) {
-      throw new ForbiddenException('Access Denied');
+  public async refreshTokens(userId: string, refreshToken: string): Promise<CreatedTokens> {
+    const existingUser = await this.usersService.findById(userId);
+    if (!existingUser) {
+      throw new UnauthorizedException({
+        type: ERROR_TYPE.user_does_not_exists,
+        message: 'User does not exists',
+      });
     }
 
-    const existingRefreshToken = await this.tokenService.findByRefreshToken(refreshToken);
+    const existingRefreshToken = await this.tokensService.findByRefreshToken(refreshToken);
     if (!existingRefreshToken) {
-      throw new ForbiddenException('Access Denied');
+      throw new UnauthorizedException({
+        type: ERROR_TYPE.invalid_token,
+        message: 'Invalid token',
+      });
     }
 
-    const tokens = await this.generateTokens({ deviceId: user.device.toString(), sub: user.id });
-    await this.tokenService.save({ user: user._id, refreshToken: tokens.refreshToken });
+    const tokens = await this._createTokens({
+      deviceId: existingUser.device.toString(),
+      sub: existingUser.id,
+    });
+    await this.tokensService.save({ user: existingUser._id, refreshToken: tokens.refreshToken });
     return tokens;
   }
 
-  private async generateTokens(payload: JwtPayload): Promise<GeneratedTokens> {
+  private async _createTokens(payload: JwtPayload): Promise<CreatedTokens> {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(
         { ...payload },

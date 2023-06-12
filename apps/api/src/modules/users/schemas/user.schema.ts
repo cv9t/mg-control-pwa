@@ -9,7 +9,7 @@ export class User {
   @Prop({ type: Types.ObjectId, ref: 'Device', required: true })
   public device: Types.ObjectId;
 
-  @Prop({ unique: true })
+  @Prop({ unique: true, required: true })
   public email: string;
 
   @Prop({ required: true })

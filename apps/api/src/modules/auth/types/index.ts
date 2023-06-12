@@ -2,7 +2,7 @@ export type AuthResponse = {
   accessToken: string;
 };
 
-export type GeneratedTokens = {
+export type CreatedTokens = {
   accessToken: string;
   refreshToken: string;
 };

@@ -1,4 +1,4 @@
-import { BadRequestException, Bind, Injectable, MessageEvent } from '@nestjs/common';
+import { Bind, Injectable, MessageEvent } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
 import { plainToClass } from 'class-transformer';
@@ -10,15 +10,16 @@ import { Observable } from 'rxjs';
 
 import { MqttService } from '@mg-control/api/modules/mqtt/mqtt.service';
 import { SseService } from '@mg-control/api/modules/sse/sse.service';
+import { Nullable } from '@mg-control/shared/typings';
 
 import { SensorDataDto } from './dtos/sensor-data.dto';
 import { UpdateDeviceDto } from './dtos/update-device.dto';
 import { Device, DeviceDocument } from './schemas/device.schema';
 
 @Injectable()
-export class DeviceService {
+export class DevicesService {
   public constructor(
-    @InjectPinoLogger(DeviceService.name) private readonly logger: PinoLogger,
+    @InjectPinoLogger(DevicesService.name) private readonly logger: PinoLogger,
     @InjectModel(Device.name) private readonly deviceModel: Model<Device>,
     private readonly mqttService: MqttService,
     private readonly sseService: SseService,
@@ -57,18 +58,18 @@ export class DeviceService {
     const sensorData = plainToClass(SensorDataDto, JSON.parse(message));
     const errors = validateSync(sensorData);
     if (errors.length > 0) {
-      throw new BadRequestException(errors);
+      throw new Error(errors.flatMap(({ constraints }) => Object.values(constraints)).join(', '));
     }
   }
 
-  public async findByActivationCode(activationCode: string): Promise<DeviceDocument | null> {
+  public async findByActivationCode(activationCode: string): Promise<Nullable<DeviceDocument>> {
     return this.deviceModel.findOne({ activationCode });
   }
 
   public async update(
     id: string,
     updateDeviceDto: UpdateDeviceDto,
-  ): Promise<DeviceDocument | null> {
+  ): Promise<Nullable<DeviceDocument>> {
     return this.deviceModel.findByIdAndUpdate(id, updateDeviceDto, { new: true });
   }
 }

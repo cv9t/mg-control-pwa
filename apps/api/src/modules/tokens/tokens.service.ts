@@ -4,12 +4,13 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 import { DeleteResult } from '@mg-control/api/common/types';
+import { Nullable } from '@mg-control/shared/typings';
 
 import { SaveTokenDto } from './dtos/save-token.dto';
 import { Token, TokenDocument } from './schemas/token.schema';
 
 @Injectable()
-export class TokenService {
+export class TokensService {
   public constructor(@InjectModel(Token.name) private readonly tokenModel: Model<Token>) {}
 
   public async save(saveTokenDto: SaveTokenDto): Promise<TokenDocument> {
@@ -21,7 +22,7 @@ export class TokenService {
     return this.tokenModel.create(saveTokenDto);
   }
 
-  public async findByRefreshToken(refreshToken: string): Promise<TokenDocument | null> {
+  public async findByRefreshToken(refreshToken: string): Promise<Nullable<TokenDocument>> {
     return this.tokenModel.findOne({ refreshToken });
   }
 

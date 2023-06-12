@@ -5,8 +5,8 @@ import { MqttModule } from '@mg-control/api/modules/mqtt/mqtt.module';
 import { SseModule } from '@mg-control/api/modules/sse/sse.module';
 
 import { Device, DeviceSchema } from './schemas/device.schema';
-import { DeviceController } from './device.controller';
-import { DeviceService } from './device.service';
+import { DevicesController } from './devices.controller';
+import { DevicesService } from './devices.service';
 
 @Module({
   imports: [
@@ -14,8 +14,8 @@ import { DeviceService } from './device.service';
     MqttModule,
     SseModule,
   ],
-  controllers: [DeviceController],
-  providers: [DeviceService],
-  exports: [DeviceService],
+  controllers: [DevicesController],
+  providers: [DevicesService],
+  exports: [DevicesService],
 })
-export class DeviceModule {}
+export class DevicesModule {}

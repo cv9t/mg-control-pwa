@@ -1,10 +1,12 @@
-import { ValidationPipe } from '@nestjs/common';
+import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 
 import cookieParser from 'cookie-parser';
 import { Logger, LoggerErrorInterceptor } from 'nestjs-pino';
 
-import { AppModule } from './app/app.module';
+import { ERROR_TYPE } from '@mg-control/shared/typings';
+
+import AppModule from './app/app.module';
 import { Config } from './config';
 
 const bootstrap = async (): Promise<void> => {
@@ -12,12 +14,22 @@ const bootstrap = async (): Promise<void> => {
   const config = app.get(Config);
 
   app.setGlobalPrefix('/api/v1');
-  app.enableCors();
+  app.enableCors({ origin: true, methods: 'GET,POST', credentials: true });
 
   app.use(cookieParser());
   app.useLogger(app.get(Logger));
   app.useGlobalInterceptors(new LoggerErrorInterceptor());
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      exceptionFactory: (errors) =>
+        new BadRequestException({
+          type: ERROR_TYPE.validation_error,
+          message: errors.flatMap(({ constraints }) => Object.values(constraints)),
+        }),
+    }),
+  );
 
   await app.listen(config.port);
 };

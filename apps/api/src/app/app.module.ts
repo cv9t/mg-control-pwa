@@ -6,7 +6,7 @@ import { LoggerModule } from 'nestjs-pino';
 
 import { Config } from '../config';
 import { AuthModule } from '../modules/auth/auth.module';
-import { DeviceModule } from '../modules/device/device.module';
+import { DevicesModule } from '../modules/devices/devices.module';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -36,9 +36,9 @@ import { AppService } from './app.service';
       }),
     }),
     AuthModule,
-    DeviceModule,
+    DevicesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export default class AppModule {}

@@ -3,11 +3,10 @@ import { Body, Controller, Get, HttpCode, HttpStatus, Post, Res, UseGuards } fro
 import { type Response } from 'express';
 
 import { DeleteResult } from '@mg-control/api/common/types';
+import { ActivationDto, SignInDto } from '@mg-control/shared/dtos';
 
 import { Cookies } from './decorators/cookies.decorator';
 import { User } from './decorators/user.decorator';
-import { ActivationDto } from './dtos/activation.dto';
-import { SignInDto } from './dtos/sign-in.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 import { AuthService } from './auth.service';
@@ -28,7 +27,7 @@ export class AuthController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @Post('signIn')
+  @Post('sign-in')
   public async signIn(
     @Body() signInDto: SignInDto,
     @Res({ passthrough: true }) res: Response,
@@ -40,18 +39,18 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
-  @Post('logout')
-  public async logout(
+  @Post('sign-out')
+  public async signOut(
     @Cookies('refreshToken') refreshToken: string,
     @Res({ passthrough: true }) res: Response,
   ): Promise<DeleteResult> {
-    const result = await this.authService.logout(refreshToken);
+    const result = await this.authService.signOut(refreshToken);
     res.clearCookie('refreshToken');
     return result;
   }
 
   @UseGuards(JwtRefreshGuard)
-  @Get('refresh')
+  @Get('refresh-tokens')
   public async refreshTokens(
     @User('id') userId: string,
     @Cookies('refreshToken') refreshToken: string,

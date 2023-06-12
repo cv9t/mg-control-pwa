@@ -1,14 +1,14 @@
 {
-  "name": "shared-types",
+  "name": "shared-typings",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/shared/types/src",
+  "sourceRoot": "libs/shared/typings/src",
   "projectType": "library",
   "targets": {
     "lint": {
       "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/shared/types/**/*.ts"]
+        "lintFilePatterns": ["libs/shared/typings/**/*.ts"]
       }
     }
   },
