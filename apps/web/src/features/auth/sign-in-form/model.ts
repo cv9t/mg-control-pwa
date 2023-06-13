@@ -7,7 +7,7 @@ import { redirect } from 'atomic-router';
 import { SignInDto } from '@mg-control/shared/dtos';
 import { Nullable } from '@mg-control/shared/typings';
 import { SessionModel } from '@mg-control/web/entities/session';
-import { ApiRequestConfig } from '@mg-control/web/shared/api';
+import { RequestOptions } from '@mg-control/web/shared/api';
 import { validationRules } from '@mg-control/web/shared/lib';
 import { routes } from '@mg-control/web/shared/routing';
 
@@ -20,7 +20,7 @@ export const signInFormFactory = modelFactory(({ $$sessionModel }: SignInFormFac
 
   const signInFx = attach({
     effect: $$sessionModel.signInFx,
-    mapParams: (data: SignInDto): ApiRequestConfig<SignInDto> => ({
+    mapParams: (data: SignInDto): RequestOptions<SignInDto> => ({
       data,
       errorNotificationOptions: {
         title: 'Sign In Error!',
@@ -46,6 +46,7 @@ export const signInFormFactory = modelFactory(({ $$sessionModel }: SignInFormFac
     },
     validateOn: ['submit'],
   });
+
   const $signInError = createStore<Nullable<string>>(null)
     .reset(mounted)
     .on(signInFx.failData, (_, error) => {

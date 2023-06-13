@@ -1,7 +1,7 @@
 import { Model, modelFactory } from 'effector-factorio';
 
 import { $$sessionModel, SessionModel } from '@mg-control/web/entities/session';
-import { signInFormFactory } from '@mg-control/web/features/auth/sign-in';
+import { signInFormFactory } from '@mg-control/web/features/auth/sign-in-form';
 
 type SignInPageFactoryOptions = {
   $$sessionModel: SessionModel;

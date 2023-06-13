@@ -5,7 +5,7 @@ import { createForm } from 'effector-forms';
 import { ActivationDto } from '@mg-control/shared/dtos';
 import { Nullable } from '@mg-control/shared/typings';
 import { SessionModel } from '@mg-control/web/entities/session';
-import { ApiRequestConfig } from '@mg-control/web/shared/api';
+import { RequestOptions } from '@mg-control/web/shared/api';
 import { excludeField, validationRules } from '@mg-control/web/shared/lib';
 
 export type ActivationFormFactoryOptions = {
@@ -18,7 +18,7 @@ export const activationFormFactory = modelFactory(
 
     const activateFx = attach({
       effect: $$sessionModel.activateFx,
-      mapParams: (data: ActivationDto): ApiRequestConfig<ActivationDto> => ({
+      mapParams: (data: ActivationDto): RequestOptions<ActivationDto> => ({
         data,
         errorNotificationOptions: {
           title: 'Activation Error!',
@@ -61,6 +61,7 @@ export const activationFormFactory = modelFactory(
         },
       },
     });
+
     const $activationError = createStore<Nullable<string>>(null)
       .on(activateFx.failData, (_, error) => {
         if (error.type === 'device_already_activated') {

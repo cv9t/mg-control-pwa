@@ -6,23 +6,23 @@ import { Anchor, Box, Button, Card, CardSection, Flex, Space, Text, Title } from
 import { IconCircleCheck } from '@tabler/icons-react';
 import { Link } from 'atomic-router-react';
 
-import { ActivationForm } from '@mg-control/web/features/auth/activation';
-import { excludeField } from '@mg-control/web/shared/lib';
+import { ActivationForm } from '@mg-control/web/features/auth/activation-form';
 import { routes } from '@mg-control/web/shared/routing';
 import { View } from '@mg-control/web/shared/types';
 
 import { $$activationPageModel } from './model';
 
 export function ActivationPage(): View {
-  const { mounted, $activationDone } = useUnit(
-    excludeField($$activationPageModel, '$$activationFormModel'),
-  );
+  const { mounted, isActivationCompleted } = useUnit({
+    mounted: $$activationPageModel.mounted,
+    isActivationCompleted: $$activationPageModel.$isActivationCompleted,
+  });
 
   useEffect(() => {
     mounted();
   }, [mounted]);
 
-  if ($activationDone) {
+  if (isActivationCompleted) {
     return <SuccessView />;
   }
 

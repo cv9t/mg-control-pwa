@@ -74,5 +74,6 @@
       }
     }
   },
-  "tags": []
+  "tags": [],
+  "implicitDependencies": ["shared-dtos", "shared-typings"]
 }

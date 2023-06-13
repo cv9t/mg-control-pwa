@@ -4,14 +4,14 @@ import { Model, modelFactory } from 'effector-factorio';
 import { chainRoute, RouteInstance, RouteParams, RouteParamsAndQuery } from 'atomic-router';
 import { combineEvents } from 'patronum';
 
-import { ApiRequestConfig } from '@mg-control/web/shared/api';
+import { RequestOptions } from '@mg-control/web/shared/api';
 import { routes } from '@mg-control/web/shared/routing';
 import { $$tokenStorageModel, TokenStorageModel } from '@mg-control/web/shared/token-storage';
 
 import { $$sessionApiModel, SessionApiModel } from './api';
 
 enum AuthStatus {
-  Initial = 0,
+  Initial,
   Pending,
   Anonymous,
   Authorized,
@@ -28,10 +28,11 @@ const sessionFactory = modelFactory(
 
     const activateFx = attach({ effect: $$sessionApiModel.activateFx });
     const signInFx = attach({ effect: $$sessionApiModel.signInFx });
+    const signOutFx = attach({ effect: $$sessionApiModel.signOutFx });
 
     const checkAuthFx = attach({
       effect: $$sessionApiModel.checkAuthFx,
-      mapParams: (): ApiRequestConfig<void> => ({
+      mapParams: (): RequestOptions<void> => ({
         errorNotificationOptions: {
           title: 'Authorization Error!',
           message: 'Authorization check failed.',
@@ -39,13 +40,14 @@ const sessionFactory = modelFactory(
       }),
     });
 
-    const authorizeStarted = merge([checkAuthFx, signInFx]);
-    const authorizeDone = merge([checkAuthFx.done, signInFx.done]);
+    const authStarted = merge([checkAuthFx, signInFx]);
+    const authCompleted = merge([checkAuthFx.doneData, signInFx.doneData]);
+    const authFailed = merge([checkAuthFx.fail, signOutFx.done]);
 
     const $authStatus = createStore(AuthStatus.Initial)
-      .on(authorizeStarted, () => AuthStatus.Pending)
-      .on(authorizeDone, () => AuthStatus.Authorized)
-      .on(checkAuthFx.fail, () => AuthStatus.Anonymous)
+      .on(authStarted, () => AuthStatus.Pending)
+      .on(authCompleted, () => AuthStatus.Authorized)
+      .on(authFailed, () => AuthStatus.Anonymous)
       .on(syncedWithToken, (_, newStatus) => newStatus);
 
     sample({
@@ -61,17 +63,18 @@ const sessionFactory = modelFactory(
     });
 
     sample({
-      clock: [checkAuthFx.doneData, signInFx.doneData],
+      clock: authCompleted,
       fn: ({ accessToken }) => accessToken,
       target: $$tokenStorageModel.saveToken,
     });
 
-    sample({ clock: checkAuthFx.fail, target: $$tokenStorageModel.deleteToken });
+    sample({ clock: authFailed, target: $$tokenStorageModel.deleteToken });
 
     return {
       syncedWithToken,
       activateFx,
       signInFx,
+      signOutFx,
       checkAuthFx,
       $authStatus,
     };
