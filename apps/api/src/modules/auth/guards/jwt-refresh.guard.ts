@@ -9,7 +9,7 @@ export class JwtRefreshGuard extends AuthGuard('jwt-refresh') {
     try {
       const result = (await super.canActivate(context)) as boolean;
       return result;
-    } catch {
+    } catch (error) {
       throw new UnauthorizedException({
         type: ERROR_TYPE.invalid_token,
         message: 'Invalid token',

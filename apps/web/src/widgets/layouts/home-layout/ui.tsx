@@ -4,7 +4,7 @@ import { Container, Flex } from '@mantine/core';
 
 import { View } from '@mg-control/web/shared/types';
 
-type HomeLayoutProps = {
+export type HomeLayoutProps = {
   children: ReactNode;
 };
 

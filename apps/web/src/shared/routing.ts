@@ -27,8 +27,12 @@ export const router = createHistoryRouter({
       route: routes.auth.activation,
     },
     {
-      path: '/login',
+      path: '/sign-in',
       route: routes.auth.signIn,
+    },
+    {
+      path: '/dashboard',
+      route: routes.dashboard,
     },
   ],
   controls,

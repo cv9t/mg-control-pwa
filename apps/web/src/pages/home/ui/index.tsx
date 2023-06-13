@@ -1,22 +1,19 @@
-import { useUnit } from 'effector-react';
-
 import { Button, Highlight, Image, Title } from '@mantine/core';
+import { Link } from 'atomic-router-react';
 
+import { APP_NAME } from '@mg-control/web/shared/config';
 import { useTitle } from '@mg-control/web/shared/lib';
+import { routes } from '@mg-control/web/shared/routing';
 import { View } from '@mg-control/web/shared/types';
-
-import { $$homePageModel } from '../model';
 
 import heroUrl from './assets/hero.svg?url';
 
 export function HomePage(): View {
-  useTitle('MG Control | Home');
-
-  const { goActivationPressed, goSignInPressed } = useUnit($$homePageModel);
+  useTitle(`${APP_NAME} | Home`);
 
   return (
     <>
-      <Title order={1} align="center" mb="sm">
+      <Title align="center">
         <Highlight
           highlight={['MicroGreen']}
           highlightStyles={(theme) => ({
@@ -33,15 +30,15 @@ export function HomePage(): View {
           MicroGreen Control
         </Highlight>
       </Title>
-      <Title order={5} color="gray.6">
+      <Title order={5} c="dimmed" mt="xs">
         Keep your microgreens in comfort
       </Title>
-      <Image src={heroUrl} mb={48} />
-      <Button mb="xs" onClick={goSignInPressed}>
+      <Image src={heroUrl} />
+      <Button mt="xl" component={Link} to={routes.auth.signIn}>
         Sign In
       </Button>
-      <Button variant="white" onClick={goActivationPressed}>
-        Activate Device
+      <Button variant="white" mt="xs" component={Link} to={routes.auth.signIn}>
+        Activate account
       </Button>
     </>
   );

@@ -1,41 +1,43 @@
 import { createEffect, createEvent, createStore, sample, scopeBind } from 'effector';
 import { Model, modelFactory } from 'effector-factorio';
 
-import { Nullable } from '@mg-control/shared/types';
+import { Nullable } from '@mg-control/shared/typings';
 
 import { appStarted, LS_ACCESS_TOKEN } from './config';
 
 type TokenStorageFactoryOptions = {
-  lsKey: string;
+  key: string;
 };
 
-const tokenStorageFactory = modelFactory(({ lsKey }: TokenStorageFactoryOptions) => {
-  const updateToken = createEvent<string>();
+const tokenStorageFactory = modelFactory(({ key }: TokenStorageFactoryOptions) => {
+  const saveToken = createEvent<string>();
   const deleteToken = createEvent();
   const initialize = createEvent();
+  const initialized = createEvent();
 
-  const updateInStorageFx = createEffect((newToken: string) => {
-    localStorage.setItem(lsKey, newToken);
+  const saveInStorageFx = createEffect<string, string>((newToken) => {
+    localStorage.setItem(key, newToken);
     return newToken;
   });
 
   const deleteFromStorageFx = createEffect(() => {
-    localStorage.removeItem(lsKey);
+    localStorage.removeItem(key);
   });
 
-  const loadFromStorageFx = createEffect(() => localStorage.getItem(lsKey));
+  const loadFromStorageFx = createEffect<void, Nullable<string>>(() => localStorage.getItem(key));
 
   const syncStorageWithTabsFx = createEffect(() => {
-    const updateTokenBound = scopeBind(updateToken);
+    const saveTokenBound = scopeBind(saveToken);
     const deleteTokenBound = scopeBind(deleteToken);
+
     window.addEventListener('storage', (e) => {
-      if (e.key === lsKey) {
-        const updatedToken = localStorage.getItem(lsKey);
-        if (updatedToken === null) {
+      if (e.key === key) {
+        const persistedToken = localStorage.getItem(key);
+        if (persistedToken === null) {
           deleteTokenBound();
           return;
         }
-        updateTokenBound(updatedToken);
+        saveTokenBound(persistedToken);
       }
     });
   });
@@ -45,28 +47,27 @@ const tokenStorageFactory = modelFactory(({ lsKey }: TokenStorageFactoryOptions)
     syncStorageWithTabsFx();
   });
 
-  const $token = createStore<Nullable<string>>(null);
+  const $token = createStore<Nullable<string>>(null)
+    .on(saveInStorageFx.doneData, (_, newToken) => newToken)
+    .on(deleteFromStorageFx.doneData, () => null)
+    .on(loadFromStorageFx.doneData, (_, persistedToken) => persistedToken);
 
-  sample({ clock: updateToken, target: updateInStorageFx });
-  sample({ clock: updateInStorageFx.doneData, target: $token });
-
+  sample({ clock: saveToken, target: saveInStorageFx });
   sample({ clock: deleteToken, target: deleteFromStorageFx });
-  sample({ clock: deleteFromStorageFx.doneData, fn: () => null, target: $token });
-
   sample({ clock: initialize, target: initializationFx });
+  sample({ clock: initializationFx.finally, target: initialized });
 
   return {
-    $token,
-    updateToken,
+    saveToken,
     deleteToken,
     initialize,
+    initialized,
+    $token,
   };
 });
 
 export type TokenStorageModel = Model<typeof tokenStorageFactory>;
 
-export const $$tokenStorageModel = tokenStorageFactory.createModel({
-  lsKey: LS_ACCESS_TOKEN,
-});
+export const $$tokenStorageModel = tokenStorageFactory.createModel({ key: LS_ACCESS_TOKEN });
 
 sample({ clock: appStarted, target: $$tokenStorageModel.initialize });

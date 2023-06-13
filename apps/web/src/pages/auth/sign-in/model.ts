@@ -1,7 +1,22 @@
-import { chainAnonymous } from '@mg-control/web/entities/session';
-import { routes } from '@mg-control/web/shared/routing';
+import { Model, modelFactory } from 'effector-factorio';
 
-export const signInPageRoute = routes.auth.signIn;
-export const anonymousSignInPageRoute = chainAnonymous(signInPageRoute, {
-  otherwise: routes.dashboard.open,
+import { $$sessionModel, SessionModel } from '@mg-control/web/entities/session';
+import { signInFormFactory } from '@mg-control/web/features/auth/sign-in';
+
+type SignInPageFactoryOptions = {
+  $$sessionModel: SessionModel;
+};
+
+const signInPageFactory = modelFactory(({ $$sessionModel }: SignInPageFactoryOptions) => {
+  const $$signInFormModel = signInFormFactory.createModel({ $$sessionModel });
+
+  return {
+    $$signInFormModel,
+  };
+});
+
+export type SignInPageModel = Model<typeof signInPageFactory>;
+
+export const $$signInPageModel = signInPageFactory.createModel({
+  $$sessionModel,
 });

@@ -19,7 +19,7 @@ export default defineConfig({
 
   plugins: [
     svgr(),
-    react({ plugins: [['@effector/swc-plugin', { factories: ['atomic-router'] }]] }),
+    react(),
     viteTsConfigPaths({
       root: '../../',
     }),

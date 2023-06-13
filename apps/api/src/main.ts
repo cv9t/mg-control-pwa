@@ -14,7 +14,7 @@ const bootstrap = async (): Promise<void> => {
   const config = app.get(Config);
 
   app.setGlobalPrefix('/api/v1');
-  app.enableCors({ origin: true, methods: 'GET,POST', credentials: true });
+  app.enableCors({ origin: config.frontend.url, credentials: true });
 
   app.use(cookieParser());
   app.useLogger(app.get(Logger));

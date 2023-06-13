@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
-import { fileLoader, TypedConfigModule } from 'nest-typed-config';
+import { dotenvLoader, TypedConfigModule } from 'nest-typed-config';
 import { LoggerModule } from 'nestjs-pino';
 
 import { Config } from '../config';
@@ -22,7 +22,18 @@ import { AppService } from './app.service';
     }),
     TypedConfigModule.forRoot({
       schema: Config,
-      load: fileLoader({ searchFrom: 'apps/api' }),
+      load: dotenvLoader({
+        envFilePath: [
+          'apps/api/.env',
+          process.env.NODE_ENV === 'development' ? 'apps/api/.env.dev' : 'apps/api/.env.prod',
+        ],
+        separator: '__',
+      }),
+      normalize(config) {
+        config.port = parseInt(config.port, 10);
+        config.db.port = parseInt(config.db.port, 10);
+        return config;
+      },
     }),
     MongooseModule.forRootAsync({
       imports: [TypedConfigModule],

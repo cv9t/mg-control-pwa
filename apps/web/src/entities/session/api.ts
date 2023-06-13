@@ -1,34 +1,25 @@
 import { Model, modelFactory } from 'effector-factorio';
 
-import { $$apiModel } from '@mg-control/web/shared/api';
+import { ActivationDto, SignInDto } from '@mg-control/shared/dtos';
+import { AuthResponse } from '@mg-control/shared/typings';
+import { $$apiModel, ApiModel } from '@mg-control/web/shared/api';
 
-type ActivationBody = {
-  activationCode: string;
-  email: string;
-  password: string;
+type SessionApiFactoryOptions = {
+  $$apiModel: ApiModel;
 };
 
-type SignInBody = {
-  email: string;
-  password: string;
-};
-
-type AuthResponse = {
-  accessToken: string;
-};
-
-const sessionApiFactory = modelFactory(() => {
-  const activateFx = $$apiModel.createRequestFx<ActivationBody, AuthResponse>({
+const sessionApiFactory = modelFactory(({ $$apiModel }: SessionApiFactoryOptions) => {
+  const activateFx = $$apiModel.createAuthorizedRequestFx<ActivationDto, void>({
     url: 'auth/activate',
     method: 'POST',
   });
 
-  const signInFx = $$apiModel.createRequestFx<SignInBody, AuthResponse>({
-    url: 'auth/signIn',
+  const signInFx = $$apiModel.createRequestFx<SignInDto, AuthResponse>({
+    url: 'auth/sign-in',
     method: 'POST',
   });
 
-  const refreshTokensFx = $$apiModel.createAuthorizedRequestFx<void, AuthResponse>({
+  const checkAuthFx = $$apiModel.createAuthorizedRequestFx<void, AuthResponse>({
     url: 'auth/refresh-tokens',
     method: 'GET',
   });
@@ -36,10 +27,10 @@ const sessionApiFactory = modelFactory(() => {
   return {
     activateFx,
     signInFx,
-    refreshTokensFx,
+    checkAuthFx,
   };
 });
 
 export type SessionApiModel = Model<typeof sessionApiFactory>;
 
-export const $$sessionApiModel = sessionApiFactory.createModel();
+export const $$sessionApiModel = sessionApiFactory.createModel({ $$apiModel });

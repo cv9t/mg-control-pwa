@@ -23,7 +23,7 @@ export class AuthService {
     private readonly tokensService: TokensService,
   ) {}
 
-  public async activate(activationDto: ActivationDto): Promise<CreatedTokens> {
+  public async activate(activationDto: ActivationDto): Promise<void> {
     const existingDevice = await this.devicesService.findByActivationCode(
       activationDto.activationCode,
     );
@@ -48,32 +48,20 @@ export class AuthService {
       });
     }
 
-    const createdUser = await this.usersService.create({
+    await this.usersService.create({
       device: existingDevice._id,
       email: activationDto.email,
       password: hashData(activationDto.password),
     });
     await this.devicesService.update(existingDevice.id, { isActivated: true });
-
-    const tokens = await this._createTokens({ deviceId: existingDevice.id, sub: createdUser.id });
-    await this.tokensService.save({ user: createdUser._id, refreshToken: tokens.refreshToken });
-    return tokens;
   }
 
   public async signIn(signInDto: SignInDto): Promise<CreatedTokens> {
     const existingUser = await this.usersService.findByEmail(signInDto.email);
-    if (!existingUser) {
+    if (!existingUser || !verifyHashedData(signInDto.password, existingUser.password)) {
       throw new BadRequestException({
         type: ERROR_TYPE.invalid_credentials,
-        message: 'Invalid email and/or password',
-      });
-    }
-
-    const passwordMatches = verifyHashedData(signInDto.password, existingUser.password);
-    if (!passwordMatches) {
-      throw new BadRequestException({
-        type: ERROR_TYPE.invalid_credentials,
-        message: 'Invalid email and/or password',
+        message: 'Invalid email or password',
       });
     }
 

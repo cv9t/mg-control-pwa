@@ -1,6 +1,7 @@
 import { ComponentType } from 'react';
 
 import { MantineProvider } from '@mantine/core';
+import { Notifications } from '@mantine/notifications';
 
 export function withMantine(WrappedComponent: ComponentType) {
   return function wrapper() {
@@ -13,7 +14,28 @@ export function withMantine(WrappedComponent: ComponentType) {
               defaultProps: {
                 fullWidth: true,
                 radius: 'md',
-                size: 'md',
+              },
+            },
+            TextInput: {
+              defaultProps: {
+                radius: 'md',
+              },
+            },
+            PasswordInput: {
+              defaultProps: {
+                radius: 'md',
+              },
+            },
+            Paper: {
+              defaultProps: {
+                radius: 'md',
+                withBorder: true,
+                shadow: 'md',
+              },
+            },
+            Alert: {
+              defaultProps: {
+                radius: 'md',
               },
             },
           },
@@ -21,6 +43,7 @@ export function withMantine(WrappedComponent: ComponentType) {
         withGlobalStyles
         withNormalizeCSS
       >
+        <Notifications />
         <WrappedComponent />
       </MantineProvider>
     );

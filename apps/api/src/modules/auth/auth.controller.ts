@@ -3,27 +3,23 @@ import { Body, Controller, Get, HttpCode, HttpStatus, Post, Res, UseGuards } fro
 import { type Response } from 'express';
 
 import { DeleteResult } from '@mg-control/api/common/types';
+import { Config } from '@mg-control/api/config';
 import { ActivationDto, SignInDto } from '@mg-control/shared/dtos';
+import { AuthResponse } from '@mg-control/shared/typings';
 
 import { Cookies } from './decorators/cookies.decorator';
 import { User } from './decorators/user.decorator';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 import { AuthService } from './auth.service';
-import { AuthResponse } from './types';
 
 @Controller('auth')
 export class AuthController {
-  public constructor(private readonly authService: AuthService) {}
+  public constructor(private readonly config: Config, private readonly authService: AuthService) {}
 
   @Post('activate')
-  public async activate(
-    @Body() activationDto: ActivationDto,
-    @Res({ passthrough: true }) res: Response,
-  ): Promise<AuthResponse> {
-    const { accessToken, refreshToken } = await this.authService.activate(activationDto);
-    res.cookie('refreshToken', refreshToken, { maxAge: 7 * 24 * 60 * 60 * 1000, httpOnly: true });
-    return { accessToken };
+  public async activate(@Body() activationDto: ActivationDto): Promise<void> {
+    await this.authService.activate(activationDto);
   }
 
   @HttpCode(HttpStatus.OK)
@@ -33,7 +29,11 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<AuthResponse> {
     const { accessToken, refreshToken } = await this.authService.signIn(signInDto);
-    res.cookie('refreshToken', refreshToken, { maxAge: 7 * 24 * 60 * 60 * 1000, httpOnly: true });
+    res.cookie('refreshToken', refreshToken, {
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
+      domain: this.config.frontend.domain,
+    });
     return { accessToken };
   }
 
@@ -63,6 +63,7 @@ export class AuthController {
     res.cookie('refreshToken', updatedRefreshToken, {
       maxAge: 7 * 24 * 60 * 60 * 1000,
       httpOnly: true,
+      domain: this.config.frontend.domain,
     });
     return { accessToken };
   }

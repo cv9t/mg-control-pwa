@@ -1,11 +1,14 @@
-import { attach, createEvent, createStore, Effect, Event, sample } from 'effector';
+import { attach, createEvent, createStore, Effect, Event, merge, sample } from 'effector';
 import { Model, modelFactory } from 'effector-factorio';
 
 import { chainRoute, RouteInstance, RouteParams, RouteParamsAndQuery } from 'atomic-router';
+import { combineEvents } from 'patronum';
 
-import { $$tokenStorageModel } from '@mg-control/web/shared/token-storage';
+import { ApiRequestConfig } from '@mg-control/web/shared/api';
+import { routes } from '@mg-control/web/shared/routing';
+import { $$tokenStorageModel, TokenStorageModel } from '@mg-control/web/shared/token-storage';
 
-import { $$sessionApiModel } from './api';
+import { $$sessionApiModel, SessionApiModel } from './api';
 
 enum AuthStatus {
   Initial = 0,
@@ -14,52 +17,89 @@ enum AuthStatus {
   Authorized,
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-type ChainParams<Params extends RouteParams> = {
+type SessionFactoryOptions = {
+  $$sessionApiModel: SessionApiModel;
+  $$tokenStorageModel: TokenStorageModel;
+};
+
+const sessionFactory = modelFactory(
+  ({ $$sessionApiModel, $$tokenStorageModel }: SessionFactoryOptions) => {
+    const syncedWithToken = createEvent<AuthStatus>();
+
+    const activateFx = attach({ effect: $$sessionApiModel.activateFx });
+    const signInFx = attach({ effect: $$sessionApiModel.signInFx });
+
+    const checkAuthFx = attach({
+      effect: $$sessionApiModel.checkAuthFx,
+      mapParams: (): ApiRequestConfig<void> => ({
+        errorNotificationOptions: {
+          title: 'Authorization Error!',
+          message: 'Authorization check failed.',
+        },
+      }),
+    });
+
+    const authorizeStarted = merge([checkAuthFx, signInFx]);
+    const authorizeDone = merge([checkAuthFx.done, signInFx.done]);
+
+    const $authStatus = createStore(AuthStatus.Initial)
+      .on(authorizeStarted, () => AuthStatus.Pending)
+      .on(authorizeDone, () => AuthStatus.Authorized)
+      .on(checkAuthFx.fail, () => AuthStatus.Anonymous)
+      .on(syncedWithToken, (_, newStatus) => newStatus);
+
+    sample({
+      clock: $$tokenStorageModel.initialized,
+      source: $$tokenStorageModel.$token,
+      fn: (token) => {
+        if (token) {
+          return AuthStatus.Initial;
+        }
+        return AuthStatus.Anonymous;
+      },
+      target: syncedWithToken,
+    });
+
+    sample({
+      clock: [checkAuthFx.doneData, signInFx.doneData],
+      fn: ({ accessToken }) => accessToken,
+      target: $$tokenStorageModel.saveToken,
+    });
+
+    sample({ clock: checkAuthFx.fail, target: $$tokenStorageModel.deleteToken });
+
+    return {
+      syncedWithToken,
+      activateFx,
+      signInFx,
+      checkAuthFx,
+      $authStatus,
+    };
+  },
+);
+
+export type SessionModel = Model<typeof sessionFactory>;
+
+export const $$sessionModel = sessionFactory.createModel({
+  $$sessionApiModel,
+  $$tokenStorageModel,
+});
+
+type ChainParams = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   otherwise?: Event<void> | Effect<void, any, any>;
 };
 
-const sessionFactory = modelFactory(() => {
-  const refreshTokensFx = attach({ effect: $$sessionApiModel.refreshTokensFx });
-
-  const $authStatus = createStore(AuthStatus.Initial);
-
-  sample({
-    clock: refreshTokensFx,
-    source: $authStatus,
-    fn: (status) => {
-      if (status === AuthStatus.Initial) return AuthStatus.Pending;
-      return status;
-    },
-    target: $authStatus,
-  });
-
-  sample({
-    clock: refreshTokensFx.doneData,
-    fn: ({ accessToken }) => accessToken,
-    target: $$tokenStorageModel.updateToken,
-  });
-
-  sample({ clock: refreshTokensFx.done, fn: () => AuthStatus.Authorized, target: $authStatus });
-  sample({ clock: refreshTokensFx.fail, fn: () => AuthStatus.Anonymous, target: $authStatus });
-
-  return {
-    refreshTokensFx,
-    $authStatus,
-  };
-});
-
-export type SessionModel = Model<typeof sessionFactory>;
-
-export const $$sessionModel = sessionFactory.createModel();
-
 export const chainAuthorized = <Params extends RouteParams>(
   route: RouteInstance<Params>,
-  { otherwise }: ChainParams<Params> = {},
+  { otherwise = routes.auth.signIn.open }: ChainParams = {},
 ): RouteInstance<Params> => {
   const authCheckStarted = createEvent<RouteParamsAndQuery<Params>>();
-  const authCheckFailed = createEvent<RouteParamsAndQuery<Params>>();
+  const receivedAnonymous = createEvent<RouteParamsAndQuery<Params>>();
+
+  const readyToCheckAuth = combineEvents({
+    events: [authCheckStarted, $$sessionModel.syncedWithToken],
+  });
 
   const alreadyAuthorized = sample({
     clock: authCheckStarted,
@@ -68,46 +108,45 @@ export const chainAuthorized = <Params extends RouteParams>(
   });
 
   const alreadyAnonymous = sample({
-    clock: authCheckStarted,
+    clock: [authCheckStarted, readyToCheckAuth],
     source: $$sessionModel.$authStatus,
     filter: (status) => status === AuthStatus.Anonymous,
   });
 
   sample({
-    clock: authCheckStarted,
+    clock: readyToCheckAuth,
     source: $$sessionModel.$authStatus,
     filter: (status) => status === AuthStatus.Initial,
-    target: $$sessionModel.refreshTokensFx,
+    target: $$sessionModel.checkAuthFx,
   });
 
   sample({
-    clock: [alreadyAnonymous, $$sessionModel.refreshTokensFx.fail],
+    clock: [alreadyAnonymous, $$sessionModel.checkAuthFx.fail],
     source: { params: route.$params, query: route.$query },
     filter: route.$isOpened,
-    target: authCheckFailed,
+    target: receivedAnonymous,
   });
 
-  if (otherwise) {
-    sample({
-      clock: authCheckFailed,
-      target: otherwise as Event<void>,
-    });
-  }
+  sample({ clock: receivedAnonymous, target: otherwise as Event<void> });
 
   return chainRoute({
     route,
     beforeOpen: authCheckStarted,
-    openOn: [alreadyAuthorized, $$sessionModel.refreshTokensFx.done],
-    cancelOn: authCheckFailed,
+    openOn: [alreadyAuthorized, $$sessionModel.checkAuthFx.done],
+    cancelOn: receivedAnonymous,
   });
 };
 
 export const chainAnonymous = <Params extends RouteParams>(
   route: RouteInstance<Params>,
-  { otherwise }: ChainParams<Params> = {},
+  { otherwise = routes.dashboard.open }: ChainParams = {},
 ): RouteInstance<Params> => {
   const authCheckStarted = createEvent<RouteParamsAndQuery<Params>>();
-  const authChecked = createEvent<RouteParamsAndQuery<Params>>();
+  const receivedAuthorized = createEvent<RouteParamsAndQuery<Params>>();
+
+  const readyToCheckAuth = combineEvents({
+    events: [authCheckStarted, $$sessionModel.syncedWithToken],
+  });
 
   const alreadyAuthorized = sample({
     clock: authCheckStarted,
@@ -116,36 +155,31 @@ export const chainAnonymous = <Params extends RouteParams>(
   });
 
   const alreadyAnonymous = sample({
-    clock: authCheckStarted,
+    clock: [authCheckStarted, readyToCheckAuth],
     source: $$sessionModel.$authStatus,
     filter: (status) => status === AuthStatus.Anonymous,
   });
 
   sample({
-    clock: authCheckStarted,
+    clock: readyToCheckAuth,
     source: $$sessionModel.$authStatus,
     filter: (status) => status === AuthStatus.Initial,
-    target: $$sessionModel.refreshTokensFx,
+    target: $$sessionModel.checkAuthFx,
   });
 
   sample({
-    clock: [alreadyAuthorized, $$sessionModel.refreshTokensFx.done],
+    clock: [alreadyAuthorized, $$sessionModel.checkAuthFx.done],
     source: { params: route.$params, query: route.$query },
     filter: route.$isOpened,
-    target: authChecked,
+    target: receivedAuthorized,
   });
 
-  if (otherwise) {
-    sample({
-      clock: authChecked,
-      target: otherwise as Event<void>,
-    });
-  }
+  sample({ clock: receivedAuthorized, target: otherwise as Event<void> });
 
   return chainRoute({
     route,
     beforeOpen: authCheckStarted,
-    openOn: [alreadyAnonymous, $$sessionModel.refreshTokensFx.fail],
-    cancelOn: authChecked,
+    openOn: [alreadyAnonymous, $$sessionModel.checkAuthFx.fail],
+    cancelOn: receivedAuthorized,
   });
 };

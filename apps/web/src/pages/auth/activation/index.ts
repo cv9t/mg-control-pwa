@@ -5,14 +5,14 @@ import { routes } from '@mg-control/web/shared/routing';
 import { PageLoader } from '@mg-control/web/shared/ui';
 import { HomeLayout } from '@mg-control/web/widgets/layouts';
 
-import { SignInPage } from './ui';
+import { ActivationPage } from './ui';
 
-export const SignInPageRoute = {
+export const ActivationRoute = {
   view: createRouteView({
-    route: chainAnonymous(routes.auth.signIn),
-    view: SignInPage,
+    route: chainAnonymous(routes.auth.activation),
+    view: ActivationPage,
     otherwise: PageLoader,
   }),
-  route: routes.auth.signIn,
+  route: routes.auth.activation,
   layout: HomeLayout,
 };
