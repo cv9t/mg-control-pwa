@@ -1,0 +1,25 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "es2015",
+    "module": "esnext",
+    "lib": ["es2020", "dom"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@mg-control/api/*": ["apps/api/src/*"],
+      "@mg-control/shared/dtos": ["libs/shared/dtos/src/index.ts"],
+      "@mg-control/shared/typings": ["libs/shared/typings/src/index.ts"],
+      "@mg-control/web/*": ["apps/web/src/*"]
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
+}

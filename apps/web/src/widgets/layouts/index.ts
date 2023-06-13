@@ -1,2 +1,2 @@
-export { default as AuthLayout } from "./auth-layout";
-export { default as GuestLayout } from "./guest-layout";
+export * from './dashboard-layout';
+export * from './home-layout';

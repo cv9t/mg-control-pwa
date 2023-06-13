@@ -1,3 +1,4 @@
-export * as alert from "./alert";
-export * as dom from "./dom";
-export * as hooks from "./hooks";
+export * from './dom';
+export * from './notification';
+export * from './object';
+export * from './validation';

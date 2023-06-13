@@ -1,20 +1,7 @@
 {
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "[javascript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  // ------------------------ PRETTIER ------------------------
-  "prettier.printWidth": 140,
-  "prettier.endOfLine": "auto",
-  "prettier.singleQuote": false,
-  "prettier.tabWidth": 2,
-  "prettier.useTabs": false,
-  "prettier.trailingComma": "es5",
-  "editor.tabSize": 2,
-  // ------------------------ PRETTIER ------------------------
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   },
-  "eslint.workingDirectories": ["./apps/api", "./apps/web", "./packages/types"]
+  "cSpell.words": ["Mantine"]
 }

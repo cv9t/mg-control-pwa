@@ -1,29 +1,45 @@
-import { useNavigate } from "react-router-dom";
-import { Button, Space, Typography } from "antd";
+import { Button, Highlight, Image, Title } from '@mantine/core';
+import { Link } from 'atomic-router-react';
 
-import { dom } from "@/shared/lib";
+import { APP_NAME } from '@mg-control/web/shared/config';
+import { useTitle } from '@mg-control/web/shared/lib';
+import { routes } from '@mg-control/web/shared/routing';
+import { View } from '@mg-control/web/shared/types';
 
-import styles from "./styles.module.scss";
+import heroUrl from './assets/hero.svg?url';
 
-const HomePage = () => {
-  dom.useTitle("MG Control | Главная");
-
-  const navigate = useNavigate();
+export function HomePage(): View {
+  useTitle(`${APP_NAME} | Home`);
 
   return (
-    <div className={styles.root}>
-      <Typography.Title level={4}>Выращивайте микрозелень без усилий в домашних условиях 🌱</Typography.Title>
-      <Typography.Text className={styles.text}>
-        <b>MicroGreen Box</b> - автоматизированное устройство, позволяющее быстро вырастить любую микрозелень!
-      </Typography.Text>
-      <Space>
-        <Button type="primary" onClick={() => navigate("/activate")}>
-          Активировать устройство
-        </Button>
-        <Button onClick={() => navigate("/login")}>Войти</Button>
-      </Space>
-    </div>
+    <>
+      <Title align="center">
+        <Highlight
+          highlight={['MicroGreen']}
+          highlightStyles={(theme) => ({
+            backgroundImage: theme.fn.linearGradient(
+              45,
+              theme.colors.cyan[5],
+              theme.colors.indigo[5],
+            ),
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+          })}
+          component="span"
+        >
+          MicroGreen Control
+        </Highlight>
+      </Title>
+      <Title order={5} c="dimmed" mt="xs">
+        Keep your microgreens in comfort
+      </Title>
+      <Image src={heroUrl} />
+      <Button mt="xl" component={Link} to={routes.auth.signIn}>
+        Sign In
+      </Button>
+      <Button variant="white" mt="xs" component={Link} to={routes.auth.signIn}>
+        Activate account
+      </Button>
+    </>
   );
-};
-
-export default HomePage;
+}

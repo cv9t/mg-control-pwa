@@ -1,9 +1,11 @@
-import Routing from "@/pages";
+import { View } from '@mg-control/web/shared/types';
 
-import { withHocs } from "./hocs";
+import { Pages } from '../pages';
 
-import "./index.scss";
+import { withProviders } from './providers';
 
-const App = () => <Routing />;
+function App(): View {
+  return <Pages />;
+}
 
-export default withHocs(App);
+export const AppWithProviders = withProviders(App);

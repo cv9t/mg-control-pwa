@@ -1,11 +1,16 @@
 {
-  "extends": "@mg-control/tsconfig/express.json",
-  "compilerOptions": {
-    "baseUrl": ".",
-    "outDir": "dist",
-    "paths": {
-      "@/*": ["./src/*"]
+  "extends": "../../tsconfig.base.json",
+  "files": [],
+  "include": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
     }
-  },
-  "include": ["src", "esbuild.config.ts"]
+  ],
+  "compilerOptions": {
+    "esModuleInterop": true
+  }
 }

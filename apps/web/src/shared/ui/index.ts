@@ -1,5 +1,4 @@
-export * as Card from "./card";
-export * as Chart from "./chart";
-export * as Content from "./content";
-export * as Loader from "./loader";
-export * as Progress from "./progress";
+export * from './alert';
+export * from './form';
+export * from './input';
+export * from './loader';

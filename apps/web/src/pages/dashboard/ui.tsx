@@ -1,63 +1,11 @@
-import { Col, Row } from "antd";
+import { Flex } from '@mantine/core';
 
-import { deviceModel } from "@/entities/device";
-import { dom } from "@/shared/lib";
-import { Card, Chart, Loader } from "@/shared/ui";
+import { View } from '@mg-control/web/shared/types';
 
-const DashboardPage = () => {
-  dom.useTitle("MG Control | Панель");
-
-  const { sensorData } = deviceModel.useDeviceStore();
-  deviceModel.useDeviceConnect();
-
-  if (!sensorData) {
-    return <Loader.Spin className="overlay" />;
-  }
-
+export function DashboardPage(): View {
   return (
-    <div>
-      <Row gutter={[16, 16]}>
-        <Col span={24}>
-          <Chart.Liquid percent={sensorData.liquid} width={240} height={240} />
-        </Col>
-
-        <Col md={{ span: 12 }} xs={{ span: 24 }}>
-          <Card.Dashboard
-            title="Воздух"
-            mainIndicator={{
-              value: sensorData.air.temp,
-              maxValue: 40,
-              format: (value) => `${value}°`,
-            }}
-            indicators={[
-              {
-                label: "Влажность",
-                value: sensorData.air.humidity,
-                format: (value) => `${value}%`,
-              },
-            ]}
-          />
-        </Col>
-        <Col md={{ span: 12 }} xs={{ span: 24 }}>
-          <Card.Dashboard
-            title="Почва"
-            mainIndicator={{
-              value: sensorData.soil.temp,
-              maxValue: 40,
-              format: (value) => `${value}°`,
-            }}
-            indicators={[
-              {
-                label: "Влажность",
-                value: sensorData.soil.moisture,
-                format: (value) => `${value}%`,
-              },
-            ]}
-          />
-        </Col>
-      </Row>
-    </div>
+    <Flex h="100svh" align="center" justify="center">
+      Dashboard Page
+    </Flex>
   );
-};
-
-export default DashboardPage;
+}

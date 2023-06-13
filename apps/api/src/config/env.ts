@@ -1,17 +1,67 @@
-import dotenv from "dotenv";
+import { Injectable } from '@nestjs/common';
 
-dotenv.config();
+import { Type } from 'class-transformer';
+import { IsNumber, IsString, ValidateNested } from 'class-validator';
 
-export const PORT = process.env.PORT ?? "";
+class DbConfig {
+  @IsString()
+  public readonly host: string;
 
-export const DB_HOST = process.env.DB_HOST ?? "";
-export const DB_PORT = process.env.DB_PORT ?? "";
-export const DB_NAME = process.env.DB_NAME ?? "";
-export const DB_USERNAME = process.env.DB_USERNAME ?? "";
-export const DB_PASSWORD = process.env.DB_PASSWORD ?? "";
+  @IsNumber()
+  public readonly port: number;
 
-export const JWT_ACCESS_SECRET_KEY = process.env.JWT_ACCESS_SECRET_KEY ?? "";
-export const JWT_REFRESH_SECRET_KEY = process.env.JWT_REFRESH_SECRET_KEY ?? "";
+  @IsString()
+  public readonly name: string;
 
-export const MQTT_BROKER_URL = process.env.MQTT_BROKER_URL ?? "";
-export const MQTT_PRIMARY_TOPIC = process.env.MQTT_PRIMARY_TOPIC ?? "";
+  @IsString()
+  public readonly username: string;
+
+  @IsString()
+  public readonly password: string;
+}
+
+class JwtConfig {
+  @IsString()
+  public readonly access_secret: string;
+
+  @IsString()
+  public readonly refresh_secret: string;
+}
+
+class MqttConfig {
+  @IsString()
+  public readonly broker_url: string;
+
+  @IsString()
+  public readonly primary_topic: string;
+}
+
+class FrontendConfig {
+  @IsString()
+  public readonly url: string;
+
+  @IsString()
+  public readonly domain: string;
+}
+
+@Injectable()
+export class Config {
+  @IsNumber()
+  public readonly port: number;
+
+  @Type(() => DbConfig)
+  @ValidateNested()
+  public readonly db: DbConfig;
+
+  @Type(() => JwtConfig)
+  @ValidateNested()
+  public readonly jwt: JwtConfig;
+
+  @Type(() => MqttConfig)
+  @ValidateNested()
+  public readonly mqtt: MqttConfig;
+
+  @Type(() => FrontendConfig)
+  @ValidateNested()
+  public readonly frontend: FrontendConfig;
+}
