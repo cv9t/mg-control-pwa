@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "prepare": "husky install",
-    "ci": "rm -rf node_modules && yarn install --immutable --immutable-cache --check-cache"
+    "ci": "yarn install --immutable --immutable-cache --check-cache"
   },
   "private": true,
   "dependencies": {
