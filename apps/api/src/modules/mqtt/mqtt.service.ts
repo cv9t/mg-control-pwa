@@ -11,8 +11,6 @@ import { MqttSubscription } from './interfaces/mqtt-subscription.interface';
 export class MqttService implements OnModuleInit {
   private client: MqttClient;
 
-  private primaryTopic: string;
-
   private readonly subscriptions: MqttSubscription[] = [];
 
   public constructor(
@@ -22,7 +20,6 @@ export class MqttService implements OnModuleInit {
 
   public onModuleInit(): void {
     this.client = mqtt.connect(this.config.mqtt.broker_url);
-    this.primaryTopic = this.config.mqtt.primary_topic;
 
     this.client.on('connect', () => {
       this.logger.info(`MQTT connected on: ${this.client.options.hostname}`);
@@ -42,7 +39,7 @@ export class MqttService implements OnModuleInit {
 
     this.client.on('message', (topic, message) => {
       const matchingSubscription = this.subscriptions.find((subscription) =>
-        topic.startsWith(this.primaryTopic.concat(subscription.topic).replace('#', '')),
+        topic.startsWith(this._createFullTopicTopic(subscription.topic)),
       );
       if (matchingSubscription) {
         matchingSubscription.onMessage(topic, message.toString());
@@ -54,7 +51,8 @@ export class MqttService implements OnModuleInit {
     topic: MqttSubscription['topic'],
     onMessage: MqttSubscription['onMessage'],
   ): void {
-    this.client.subscribe(this.createTopic(topic));
+    const fullTopic = this._createFullTopicTopic(topic);
+    this.client.subscribe(fullTopic);
     this.subscriptions.push({ topic, onMessage });
   }
 
@@ -63,12 +61,18 @@ export class MqttService implements OnModuleInit {
       (subscription) => subscription.topic === topic,
     );
     if (matchingSubscriptionIndex >= 0) {
-      this.client.unsubscribe(this.createTopic(topic));
+      const fullTopic = this._createFullTopicTopic(topic);
+      this.client.unsubscribe(fullTopic);
       this.subscriptions.splice(matchingSubscriptionIndex, 1);
     }
   }
 
-  private createTopic(topic: string): string {
-    return this.primaryTopic.concat(topic);
+  public publish(topic: string, message: string): void {
+    const fullTopic = this._createFullTopicTopic(topic);
+    this.client.publish(fullTopic, message);
+  }
+
+  private _createFullTopicTopic(topic: string): string {
+    return `${this.config.mqtt.primary_topic}/${topic}`;
   }
 }

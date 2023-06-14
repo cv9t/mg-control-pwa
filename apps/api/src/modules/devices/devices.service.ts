@@ -10,11 +10,17 @@ import { Observable } from 'rxjs';
 
 import { MqttService } from '@mg-control/api/modules/mqtt/mqtt.service';
 import { SseService } from '@mg-control/api/modules/sse/sse.service';
+import { DeviceDataDto } from '@mg-control/shared/dtos';
 import { Nullable } from '@mg-control/shared/typings';
 
-import { SensorDataDto } from './dtos/sensor-data.dto';
 import { UpdateDeviceDto } from './dtos/update-device.dto';
 import { Device, DeviceDocument } from './schemas/device.schema';
+
+const COMMANDS = {
+  lightOn: 'light on',
+  lightOff: 'light off',
+  sprinkleWater: 'sprinkle water',
+};
 
 @Injectable()
 export class DevicesService {
@@ -25,41 +31,64 @@ export class DevicesService {
     private readonly sseService: SseService,
   ) {}
 
-  public sendSensorData(res: Response, deviceId: string): Observable<MessageEvent> {
-    const topic = `/devices/${deviceId}/sensor-data`;
-    this.mqttService.subscribe(topic, this.handleSensorDataMessage(deviceId));
+  public sendData(res: Response, deviceId: string): Observable<MessageEvent> {
+    const fullTopic = this._createFullTopicTopic(deviceId, 'data');
+    this.mqttService.subscribe(fullTopic, (topic, message) => {
+      const room = topic.split('/').pop() ?? '';
+      if (room === 'data') {
+        this._handleDataMessage(deviceId, message);
+      }
+    });
+
     this.logger.info(`Device ${deviceId} connected`);
+
     res.on('close', () => {
-      this.mqttService.unsubscribe(topic);
+      this.mqttService.unsubscribe(fullTopic);
       this.sseService.disconnect(deviceId);
       this.logger.info(`Device ${deviceId} disconnected`);
     });
+
     return this.sseService.connect(deviceId);
   }
 
-  @Bind()
-  private handleSensorDataMessage(deviceId: string) {
-    return (topic: string, message: string) => {
-      try {
-        const room = topic.split('/').pop() ?? '';
-        if (room === 'sensor-data') {
-          this.validateSensorDataMessage(message);
-          this.sseService.sendEvent(deviceId, {
-            data: message,
-          });
-        }
-      } catch (err) {
-        this.logger.error(`Failed to process sensor data message from device ${deviceId}: ${err}`);
-      }
-    };
+  public controlLight(deviceId: string, state: 'on' | 'off'): void {
+    const fullTopic = this._createFullTopicTopic(deviceId, 'control');
+    const message = state === 'on' ? COMMANDS.lightOn : COMMANDS.lightOff;
+    this.mqttService.publish(fullTopic, message);
   }
 
-  private validateSensorDataMessage(message: string): void {
-    const sensorData = plainToClass(SensorDataDto, JSON.parse(message));
-    const errors = validateSync(sensorData);
-    if (errors.length > 0) {
-      throw new Error(errors.flatMap(({ constraints }) => Object.values(constraints)).join(', '));
+  public sprinkleWater(deviceId: string): void {
+    const fullTopic = this._createFullTopicTopic(deviceId, 'control');
+    this.mqttService.publish(fullTopic, COMMANDS.sprinkleWater);
+  }
+
+  @Bind()
+  private _handleDataMessage(deviceId: string, message: string): void {
+    if (this._isDataMessageValid(message)) {
+      this.sseService.sendEvent(deviceId, {
+        data: message,
+      });
+    } else {
+      this.logger.error(`Invalid data message from device: ${deviceId}`);
     }
+  }
+
+  private _createFullTopicTopic(deviceId: string, topic: string): string {
+    return `devices/${deviceId}/${topic}`;
+  }
+
+  private _isDataMessageValid(message: string): boolean {
+    try {
+      const data = plainToClass(DeviceDataDto, JSON.parse(message));
+      const errors = validateSync(data);
+      return errors.length === 0;
+    } catch {
+      return false;
+    }
+  }
+
+  public async findById(id: string): Promise<Nullable<DeviceDocument>> {
+    return this.deviceModel.findById(id);
   }
 
   public async findByActivationCode(activationCode: string): Promise<Nullable<DeviceDocument>> {

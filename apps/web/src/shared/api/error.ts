@@ -5,7 +5,6 @@ export type ApiErrorType = keyof typeof ERROR_TYPE | 'unknown' | 'network_error'
 export type ApiError = {
   status: number;
   type: ApiErrorType;
-  message: string;
 };
 
 export const isBadRequestError = ({ status }: ApiError): boolean => status === 400;

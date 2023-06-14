@@ -4,7 +4,7 @@ import { Model, modelFactory } from 'effector-factorio';
 import axios, { AxiosError, CreateAxiosDefaults } from 'axios';
 
 import { API_URL } from '../config';
-import { $$notificationModel, NotificationModel, NotificationOptions } from '../lib';
+import { $$notificationModel, delay, NotificationModel, NotificationOptions } from '../lib';
 import { $$tokenStorageModel, TokenStorageModel } from '../token-storage';
 
 import { ApiError, ApiErrorType } from './error';
@@ -33,7 +33,7 @@ type ApiFactoryOptions = {
   axiosConfig: CreateAxiosDefaults;
 };
 
-type ErrorResponse = AxiosError<{ message: string; type: ApiErrorType }>;
+type ErrorResponse = AxiosError<{ type: ApiErrorType }>;
 
 // TODO: добавить возможность валидации по контракту
 const apiFactory = modelFactory(
@@ -43,23 +43,17 @@ const apiFactory = modelFactory(
     const handleError = (error: ErrorResponse): ApiError => {
       if (error.response) {
         const { status } = error.response;
-        const { message, type } = error.response.data;
-        return { status, message, type };
+        const { type } = error.response.data;
+        return { status, type };
       }
-      return { status: 600, message: error.message, type: 'unknown' };
+      return { status: 600, type: 'unknown' };
     };
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const baseRequestFx = createEffect<BaseRequestOptions, any, ApiError>((options) =>
       axiosInstance({ ...options })
-        .then(
-          // eslint-disable-next-line no-promise-executor-return
-          (response) => new Promise((resolve) => setTimeout(() => resolve(response.data), 2000)),
-        )
-        .catch(
-          // eslint-disable-next-line no-promise-executor-return
-          (error) => new Promise((_, reject) => setTimeout(() => reject(handleError(error)), 2000)),
-        ),
+        .then((response) => delay(2000).then(() => response.data))
+        .catch((error) => delay(2000).then(() => Promise.reject(handleError(error)))),
     );
 
     const authorizedRequestFx = attach({

@@ -28,24 +28,15 @@ export class AuthService {
       activationDto.activationCode,
     );
     if (!existingDevice) {
-      throw new BadRequestException({
-        type: ERROR_TYPE.invalid_activation_code,
-        message: 'Invalid activation code',
-      });
+      throw new BadRequestException({ type: ERROR_TYPE.invalid_activation_code });
     }
     if (existingDevice.isActivated) {
-      throw new BadRequestException({
-        type: ERROR_TYPE.device_already_activated,
-        message: 'Device already activated',
-      });
+      throw new BadRequestException({ type: ERROR_TYPE.device_already_activated });
     }
 
     const existingUser = await this.usersService.findByEmail(activationDto.email);
     if (existingUser) {
-      throw new BadRequestException({
-        type: ERROR_TYPE.user_already_exists,
-        message: 'User already exists',
-      });
+      throw new BadRequestException({ type: ERROR_TYPE.user_already_exists });
     }
 
     await this.usersService.create({
@@ -59,10 +50,7 @@ export class AuthService {
   public async signIn(signInDto: SignInDto): Promise<CreatedTokens> {
     const existingUser = await this.usersService.findByEmail(signInDto.email);
     if (!existingUser || !verifyHashedData(signInDto.password, existingUser.password)) {
-      throw new BadRequestException({
-        type: ERROR_TYPE.invalid_credentials,
-        message: 'Invalid email or password',
-      });
+      throw new BadRequestException({ type: ERROR_TYPE.invalid_credentials });
     }
 
     const tokens = await this._createTokens({
@@ -76,10 +64,7 @@ export class AuthService {
   public async signOut(refreshToken: string): Promise<DeleteResult> {
     const existingToken = this.tokensService.findByRefreshToken(refreshToken);
     if (!existingToken) {
-      throw new UnauthorizedException({
-        type: ERROR_TYPE.invalid_token,
-        message: 'Invalid token',
-      });
+      throw new UnauthorizedException({ type: ERROR_TYPE.invalid_token });
     }
     return this.tokensService.remove(refreshToken);
   }
@@ -87,18 +72,12 @@ export class AuthService {
   public async refreshTokens(userId: string, refreshToken: string): Promise<CreatedTokens> {
     const existingUser = await this.usersService.findById(userId);
     if (!existingUser) {
-      throw new UnauthorizedException({
-        type: ERROR_TYPE.user_does_not_exists,
-        message: 'User does not exists',
-      });
+      throw new UnauthorizedException({ type: ERROR_TYPE.user_does_not_exists });
     }
 
     const existingRefreshToken = await this.tokensService.findByRefreshToken(refreshToken);
     if (!existingRefreshToken) {
-      throw new UnauthorizedException({
-        type: ERROR_TYPE.invalid_token,
-        message: 'Invalid token',
-      });
+      throw new UnauthorizedException({ type: ERROR_TYPE.invalid_token });
     }
 
     const tokens = await this._createTokens({
@@ -107,6 +86,18 @@ export class AuthService {
     });
     await this.tokensService.save({ user: existingUser._id, refreshToken: tokens.refreshToken });
     return tokens;
+  }
+
+  public async validatePayload(payload: JwtPayload): Promise<void> {
+    const existingUser = await this.usersService.findById(payload.sub);
+    if (!existingUser) {
+      throw new UnauthorizedException({ type: ERROR_TYPE.user_does_not_exists });
+    }
+
+    const existingDevice = await this.devicesService.findById(payload.deviceId);
+    if (!existingDevice) {
+      throw new UnauthorizedException({ type: ERROR_TYPE.device_does_not_exists });
+    }
   }
 
   private async _createTokens(payload: JwtPayload): Promise<CreatedTokens> {

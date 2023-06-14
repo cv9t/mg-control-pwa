@@ -23,11 +23,7 @@ const bootstrap = async (): Promise<void> => {
     new ValidationPipe({
       whitelist: true,
       transform: true,
-      exceptionFactory: (errors) =>
-        new BadRequestException({
-          type: ERROR_TYPE.validation_error,
-          message: errors.flatMap(({ constraints }) => Object.values(constraints)),
-        }),
+      exceptionFactory: () => new BadRequestException({ ype: ERROR_TYPE.validation_error }),
     }),
   );
 
