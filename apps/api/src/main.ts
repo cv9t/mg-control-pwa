@@ -6,7 +6,7 @@ import { Logger, LoggerErrorInterceptor } from 'nestjs-pino';
 
 import { ERROR_TYPE } from '@mg-control/shared/typings';
 
-import AppModule from './app/app.module';
+import { AppModule } from './app/app.module';
 import { Config } from './config';
 
 const bootstrap = async (): Promise<void> => {

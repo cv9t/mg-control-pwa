@@ -1,4 +1,4 @@
-import { Box, Flex, Loader } from '@mantine/core';
+import { Box, Loader } from '@mantine/core';
 
 import { View } from '@mg-control/web/shared/types';
 
@@ -12,11 +12,13 @@ export function PageLoader(): View {
         bottom: 0,
         left: 0,
         zIndex: 9999,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'white',
       }}
     >
-      <Flex w="100%" h="100%" align="center" justify="center">
-        <Loader variant="dots" />
-      </Flex>
+      <Loader variant="dots" />
     </Box>
   );
 }

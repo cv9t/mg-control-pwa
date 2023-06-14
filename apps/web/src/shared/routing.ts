@@ -1,9 +1,7 @@
-import { sample } from 'effector';
+import { createEvent, sample } from 'effector';
 
 import { createHistoryRouter, createRoute, createRouterControls } from 'atomic-router';
 import { createBrowserHistory } from 'history';
-
-import { appStarted } from './config';
 
 export const routes = {
   home: createRoute(),
@@ -38,8 +36,10 @@ export const router = createHistoryRouter({
   controls,
 });
 
+export const routerInit = createEvent();
+
 sample({
-  clock: appStarted,
+  clock: routerInit,
   fn: () => createBrowserHistory(),
   target: router.setHistory,
 });

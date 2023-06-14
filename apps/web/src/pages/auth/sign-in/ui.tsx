@@ -15,9 +15,9 @@ export function SignInPage(): View {
   return (
     <Box w="100%">
       <Title align="center">Welcome back!</Title>
-      <Text c="dimmed" size="sm" align="center" mt="xs">
+      <Text mt="xs" c="dimmed" align="center">
         Do not activate an account yet?{' '}
-        <Anchor size="sm" component={Link} to={routes.auth.activation}>
+        <Anchor component={Link} to={routes.auth.activation}>
           Activate account
         </Anchor>
       </Text>

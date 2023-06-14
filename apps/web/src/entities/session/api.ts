@@ -8,23 +8,23 @@ type SessionApiFactoryOptions = {
   $$apiModel: ApiModel;
 };
 
-const sessionApiFactory = modelFactory(({ $$apiModel }: SessionApiFactoryOptions) => {
-  const activateFx = $$apiModel.createRequestFx<ActivationDto, void>({
+const sessionApiFactory = modelFactory((options: SessionApiFactoryOptions) => {
+  const activateFx = options.$$apiModel.createRequestFx<ActivationDto, void>({
     url: 'auth/activate',
     method: 'POST',
   });
 
-  const signInFx = $$apiModel.createRequestFx<SignInDto, AuthResponse>({
+  const signInFx = options.$$apiModel.createRequestFx<SignInDto, AuthResponse>({
     url: 'auth/sign-in',
     method: 'POST',
   });
 
-  const signOutFx = $$apiModel.createAuthorizedRequestFx<void, void>({
+  const signOutFx = options.$$apiModel.createAuthorizedRequestFx<void, void>({
     url: 'auth/sign-out',
     method: 'POST',
   });
 
-  const checkAuthFx = $$apiModel.createAuthorizedRequestFx<void, AuthResponse>({
+  const checkAuthFx = options.$$apiModel.createAuthorizedRequestFx<void, AuthResponse>({
     url: 'auth/refresh-tokens',
     method: 'GET',
   });

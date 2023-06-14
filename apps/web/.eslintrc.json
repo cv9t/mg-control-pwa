@@ -43,7 +43,6 @@
         "@typescript-eslint/no-use-before-define": "off",
         "@typescript-eslint/indent": "off",
         "@typescript-eslint/ban-types": "off",
-        "@typescript-eslint/no-shadow": "off",
         "@typescript-eslint/naming-convention": [
           "error",
           {

@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-import { Container, Flex } from '@mantine/core';
+import { Container } from '@mantine/core';
 
 import { View } from '@mg-control/web/shared/types';
 
@@ -10,10 +10,16 @@ export type HomeLayoutProps = {
 
 export function HomeLayout({ children }: HomeLayoutProps): View {
   return (
-    <Container size="xs" h="100svh">
-      <Flex h="100%" direction="column" align="center" justify="center">
-        {children}
-      </Flex>
+    <Container
+      h="100svh"
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      {children}
     </Container>
   );
 }

@@ -1,26 +1,25 @@
-import { attach, createEvent, createStore, sample } from 'effector';
+import { attach, createEvent, createStore, Effect, forward } from 'effector';
 import { Model, modelFactory } from 'effector-factorio';
 import { createForm } from 'effector-forms';
 
 import { redirect } from 'atomic-router';
 
 import { SignInDto } from '@mg-control/shared/dtos';
-import { Nullable } from '@mg-control/shared/typings';
-import { SessionModel } from '@mg-control/web/entities/session';
-import { RequestOptions } from '@mg-control/web/shared/api';
+import { AuthResponse, Nullable } from '@mg-control/shared/typings';
+import { ApiError, RequestConfig } from '@mg-control/web/shared/api';
 import { validationRules } from '@mg-control/web/shared/lib';
 import { routes } from '@mg-control/web/shared/routing';
 
 type SignInFormFactoryOptions = {
-  $$sessionModel: SessionModel;
+  signInFx: Effect<RequestConfig<SignInDto>, AuthResponse, ApiError>;
 };
 
-export const signInFormFactory = modelFactory(({ $$sessionModel }: SignInFormFactoryOptions) => {
+export const signInFormFactory = modelFactory((options: SignInFormFactoryOptions) => {
   const mounted = createEvent();
 
   const signInFx = attach({
-    effect: $$sessionModel.signInFx,
-    mapParams: (data: SignInDto): RequestOptions<SignInDto> => ({
+    effect: options.signInFx,
+    mapParams: (data: SignInDto): RequestConfig<SignInDto> => ({
       data,
       errorNotificationOptions: {
         title: 'Sign In Error!',
@@ -47,7 +46,7 @@ export const signInFormFactory = modelFactory(({ $$sessionModel }: SignInFormFac
     validateOn: ['submit'],
   });
 
-  const $signInError = createStore<Nullable<string>>(null)
+  const $error = createStore<Nullable<string>>(null)
     .reset(mounted)
     .on(signInFx.failData, (_, error) => {
       if (error.type === 'invalid_credentials') {
@@ -56,19 +55,18 @@ export const signInFormFactory = modelFactory(({ $$sessionModel }: SignInFormFac
       return null;
     });
 
-  const $formDisabled = signInFx.pending;
+  const $isPending = signInFx.pending;
 
-  sample({ clock: mounted, target: $$form.reset });
-  sample({ clock: $$form.formValidated, target: signInFx });
-  sample({ clock: signInFx, target: $$form.resetErrors });
-
+  forward({ from: mounted, to: $$form.reset });
+  forward({ from: $$form.formValidated, to: signInFx });
+  forward({ from: signInFx, to: $$form.resetErrors });
   redirect({ clock: signInFx.done, route: routes.dashboard });
 
   return {
     mounted,
     $$form,
-    $signInError,
-    $formDisabled,
+    $error,
+    $isPending,
   };
 });
 

@@ -1,20 +1,24 @@
-import { createEvent, createStore } from 'effector';
+import { attach, createEvent, createStore } from 'effector';
 import { Model, modelFactory } from 'effector-factorio';
 
 import { $$sessionModel, SessionModel } from '@mg-control/web/entities/session';
-import { activationFormFactory } from '@mg-control/web/features/auth/activation-form';
+import { activationFormFactory } from '@mg-control/web/features/auth/activation';
 
 type ActivationPageFactoryOptions = {
   $$sessionModel: SessionModel;
 };
 
-const activationPageFactory = modelFactory(({ $$sessionModel }: ActivationPageFactoryOptions) => {
+const activationPageFactory = modelFactory((options: ActivationPageFactoryOptions) => {
   const mounted = createEvent();
 
-  const $$activationFormModel = activationFormFactory.createModel({ $$sessionModel });
+  const activateFx = attach({ effect: options.$$sessionModel.activateFx });
+
+  const $$activationFormModel = activationFormFactory.createModel({
+    activateFx,
+  });
 
   const $isActivationCompleted = createStore(false)
-    .on($$sessionModel.activateFx.done, () => true)
+    .on(activateFx.done, () => true)
     .reset(mounted);
 
   return {
@@ -24,6 +28,6 @@ const activationPageFactory = modelFactory(({ $$sessionModel }: ActivationPageFa
   };
 });
 
-export type ActivationPageModel = Model<typeof activationFormFactory>;
+export type ActivationPageModel = Model<typeof activationPageFactory>;
 
 export const $$activationPageModel = activationPageFactory.createModel({ $$sessionModel });

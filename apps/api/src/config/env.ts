@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { Type } from 'class-transformer';
 import { IsNumber, IsString, ValidateNested } from 'class-validator';
 
-class DbConfig {
+export class DbConfig {
   @IsString()
   public readonly host: string;
 
@@ -20,7 +20,7 @@ class DbConfig {
   public readonly password: string;
 }
 
-class JwtConfig {
+export class JwtConfig {
   @IsString()
   public readonly access_secret: string;
 
@@ -28,7 +28,7 @@ class JwtConfig {
   public readonly refresh_secret: string;
 }
 
-class MqttConfig {
+export class MqttConfig {
   @IsString()
   public readonly broker_url: string;
 
@@ -36,7 +36,7 @@ class MqttConfig {
   public readonly primary_topic: string;
 }
 
-class FrontendConfig {
+export class FrontendConfig {
   @IsString()
   public readonly url: string;
 

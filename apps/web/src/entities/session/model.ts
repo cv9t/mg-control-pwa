@@ -1,10 +1,10 @@
-import { attach, createEvent, createStore, Effect, Event, merge, sample } from 'effector';
+import { attach, createEvent, createStore, Effect, Event, forward, merge, sample } from 'effector';
 import { Model, modelFactory } from 'effector-factorio';
 
 import { chainRoute, RouteInstance, RouteParams, RouteParamsAndQuery } from 'atomic-router';
 import { combineEvents } from 'patronum';
 
-import { RequestOptions } from '@mg-control/web/shared/api';
+import { RequestConfig } from '@mg-control/web/shared/api';
 import { routes } from '@mg-control/web/shared/routing';
 import { $$tokenStorageModel, TokenStorageModel } from '@mg-control/web/shared/token-storage';
 
@@ -22,64 +22,62 @@ type SessionFactoryOptions = {
   $$tokenStorageModel: TokenStorageModel;
 };
 
-const sessionFactory = modelFactory(
-  ({ $$sessionApiModel, $$tokenStorageModel }: SessionFactoryOptions) => {
-    const syncedWithToken = createEvent<AuthStatus>();
+const sessionFactory = modelFactory((options: SessionFactoryOptions) => {
+  const syncedWithToken = createEvent<AuthStatus>();
 
-    const activateFx = attach({ effect: $$sessionApiModel.activateFx });
-    const signInFx = attach({ effect: $$sessionApiModel.signInFx });
-    const signOutFx = attach({ effect: $$sessionApiModel.signOutFx });
+  const activateFx = attach({ effect: options.$$sessionApiModel.activateFx });
+  const signInFx = attach({ effect: options.$$sessionApiModel.signInFx });
+  const signOutFx = attach({ effect: options.$$sessionApiModel.signOutFx });
 
-    const checkAuthFx = attach({
-      effect: $$sessionApiModel.checkAuthFx,
-      mapParams: (): RequestOptions<void> => ({
-        errorNotificationOptions: {
-          title: 'Authorization Error!',
-          message: 'Authorization check failed.',
-        },
-      }),
-    });
-
-    const authStarted = merge([checkAuthFx, signInFx]);
-    const authCompleted = merge([checkAuthFx.doneData, signInFx.doneData]);
-    const authFailed = merge([checkAuthFx.fail, signOutFx.done]);
-
-    const $authStatus = createStore(AuthStatus.Initial)
-      .on(authStarted, () => AuthStatus.Pending)
-      .on(authCompleted, () => AuthStatus.Authorized)
-      .on(authFailed, () => AuthStatus.Anonymous)
-      .on(syncedWithToken, (_, newStatus) => newStatus);
-
-    sample({
-      clock: $$tokenStorageModel.initialized,
-      source: $$tokenStorageModel.$token,
-      fn: (token) => {
-        if (token) {
-          return AuthStatus.Initial;
-        }
-        return AuthStatus.Anonymous;
+  const checkAuthFx = attach({
+    effect: options.$$sessionApiModel.checkAuthFx,
+    mapParams: (): RequestConfig<void> => ({
+      errorNotificationOptions: {
+        title: 'Authorization Error!',
+        message: 'Authorization check failed.',
       },
-      target: syncedWithToken,
-    });
+    }),
+  });
 
-    sample({
-      clock: authCompleted,
-      fn: ({ accessToken }) => accessToken,
-      target: $$tokenStorageModel.saveToken,
-    });
+  const authStarted = merge([checkAuthFx, signInFx]);
+  const authCompleted = merge([checkAuthFx.doneData, signInFx.doneData]);
+  const authFailed = merge([checkAuthFx.fail, signOutFx.done]);
 
-    sample({ clock: authFailed, target: $$tokenStorageModel.deleteToken });
+  const $authStatus = createStore(AuthStatus.Initial)
+    .on(authStarted, () => AuthStatus.Pending)
+    .on(authCompleted, () => AuthStatus.Authorized)
+    .on(authFailed, () => AuthStatus.Anonymous)
+    .on(syncedWithToken, (_, newStatus) => newStatus);
 
-    return {
-      syncedWithToken,
-      activateFx,
-      signInFx,
-      signOutFx,
-      checkAuthFx,
-      $authStatus,
-    };
-  },
-);
+  sample({
+    clock: options.$$tokenStorageModel.initCompleted,
+    source: options.$$tokenStorageModel.$token,
+    fn: (token) => {
+      if (token) {
+        return AuthStatus.Initial;
+      }
+      return AuthStatus.Anonymous;
+    },
+    target: syncedWithToken,
+  });
+
+  sample({
+    clock: authCompleted,
+    fn: ({ accessToken }) => accessToken,
+    target: options.$$tokenStorageModel.saveToken,
+  });
+
+  forward({ from: authFailed, to: options.$$tokenStorageModel.deleteToken });
+
+  return {
+    syncedWithToken,
+    activateFx,
+    signInFx,
+    signOutFx,
+    checkAuthFx,
+    $authStatus,
+  };
+});
 
 export type SessionModel = Model<typeof sessionFactory>;
 
@@ -130,7 +128,7 @@ export const chainAuthorized = <Params extends RouteParams>(
     target: receivedAnonymous,
   });
 
-  sample({ clock: receivedAnonymous, target: otherwise as Event<void> });
+  forward({ from: receivedAnonymous, to: otherwise as Event<void> });
 
   return chainRoute({
     route,
@@ -177,7 +175,7 @@ export const chainAnonymous = <Params extends RouteParams>(
     target: receivedAuthorized,
   });
 
-  sample({ clock: receivedAuthorized, target: otherwise as Event<void> });
+  forward({ from: receivedAuthorized, to: otherwise as Event<void> });
 
   return chainRoute({
     route,

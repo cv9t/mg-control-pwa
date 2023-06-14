@@ -12,34 +12,36 @@ export function HomePage(): View {
   useTitle(`${APP_NAME} | Home`);
 
   return (
-    <>
-      <Title align="center">
-        <Highlight
-          highlight={['MicroGreen']}
-          highlightStyles={(theme) => ({
-            backgroundImage: theme.fn.linearGradient(
-              45,
-              theme.colors.cyan[5],
-              theme.colors.indigo[5],
-            ),
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-          })}
-          component="span"
-        >
-          MicroGreen Control
-        </Highlight>
-      </Title>
-      <Title order={5} c="dimmed" mt="xs">
+    <div>
+      <Highlight
+        align="center"
+        highlight={['MicroGreen']}
+        highlightStyles={(theme) => ({
+          backgroundImage: theme.fn.linearGradient(
+            45,
+            theme.colors.cyan[5],
+            theme.colors.indigo[5],
+          ),
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+        })}
+        sx={(theme) => ({
+          ...theme.headings.sizes.h1,
+          fontWeight: 'bold',
+        })}
+      >
+        MicroGreen Control
+      </Highlight>
+      <Title mt="xs" order={5} c="dimmed" align="center">
         Keep your microgreens in comfort
       </Title>
       <Image src={heroUrl} />
       <Button mt="xl" component={Link} to={routes.auth.signIn}>
         Sign In
       </Button>
-      <Button variant="white" mt="xs" component={Link} to={routes.auth.signIn}>
+      <Button mt="xs" variant="white" component={Link} to={routes.auth.signIn}>
         Activate account
       </Button>
-    </>
+    </div>
   );
 }
