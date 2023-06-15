@@ -9,7 +9,7 @@ type ErrorAlertProps = Omit<AlertProps, 'color' | 'icon' | 'children'> & {
 
 export function ErrorAlert({ text, ...props }: ErrorAlertProps): View {
   return (
-    <Alert icon={<IconAlertCircle />} color="red" {...props}>
+    <Alert icon={<IconAlertCircle size="1.3rem" />} color="red" {...props}>
       <Text c="red">{text}</Text>
     </Alert>
   );

@@ -8,7 +8,7 @@ export function PasswordInput(props: PasswordInputProps): View {
     <MantinePasswordInput
       label="Password"
       placeholder="Enter password"
-      icon={<IconLock size="1rem" />}
+      icon={<IconLock size="1.3rem" />}
       required
       {...props}
     />

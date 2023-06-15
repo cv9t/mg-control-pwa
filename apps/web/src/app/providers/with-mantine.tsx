@@ -13,29 +13,28 @@ export function withMantine(WrappedComponent: ComponentType) {
             Button: {
               defaultProps: {
                 fullWidth: true,
-                radius: 'md',
-              },
-            },
-            TextInput: {
-              defaultProps: {
-                radius: 'md',
-              },
-            },
-            PasswordInput: {
-              defaultProps: {
-                radius: 'md',
+                size: 'md',
               },
             },
             Paper: {
               defaultProps: {
-                radius: 'md',
                 withBorder: true,
                 shadow: 'md',
               },
             },
-            Alert: {
+            Container: {
               defaultProps: {
-                radius: 'md',
+                size: 'xs',
+              },
+            },
+            TextInput: {
+              defaultProps: {
+                size: 'md',
+              },
+            },
+            PasswordInput: {
+              defaultProps: {
+                size: 'md',
               },
             },
           },

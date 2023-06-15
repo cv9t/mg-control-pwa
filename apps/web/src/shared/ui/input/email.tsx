@@ -8,7 +8,7 @@ export function EmailInput(props: TextInputProps): View {
     <TextInput
       label="Email"
       placeholder="Enter email"
-      icon={<IconAt size="1rem" />}
+      icon={<IconAt size="1.3rem" />}
       required
       {...props}
     />

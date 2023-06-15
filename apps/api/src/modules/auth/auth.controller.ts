@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
 
 import { type Response } from 'express';
 
@@ -22,7 +22,6 @@ export class AuthController {
     await this.authService.activate(activationDto);
   }
 
-  @HttpCode(HttpStatus.OK)
   @Post('sign-in')
   public async signIn(
     @Body() signInDto: SignInDto,
@@ -38,7 +37,6 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @HttpCode(HttpStatus.OK)
   @Post('sign-out')
   public async signOut(
     @Cookies('refreshToken') refreshToken: string,

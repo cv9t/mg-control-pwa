@@ -1,31 +1,33 @@
-import { attach, createEffect, Effect, sample } from 'effector';
+import { attach, createEffect, createEvent, Effect, sample } from 'effector';
 import { Model, modelFactory } from 'effector-factorio';
 
 import axios, { AxiosError, CreateAxiosDefaults } from 'axios';
 
 import { API_URL } from '../config';
-import { $$notificationModel, NotificationModel, NotificationOptions } from '../lib';
+import { $$notificationModel, delay, NotificationModel, NotificationOptions } from '../lib';
 import { $$tokenStorageModel, TokenStorageModel } from '../token-storage';
 
 import { ApiError, ApiErrorType } from './error';
 
-type BaseRequestOptions<T = unknown> = {
+type BaseRequestConfig<T = unknown> = {
   url: string;
   method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   data?: T;
   headers?: Record<string, string>;
   ignoreErrorTypes?: ApiErrorType[];
   errorNotificationOptions?: NotificationOptions;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  params?: any;
 };
 
-export type RequestOptions<T = unknown> = { data?: T } & Pick<
-  BaseRequestOptions,
-  'ignoreErrorTypes' | 'errorNotificationOptions'
+export type RequestConfig<T = unknown> = { data?: T } & Pick<
+  BaseRequestConfig,
+  'ignoreErrorTypes' | 'errorNotificationOptions' | 'params'
 >;
 
 type RequestFactory<D = unknown, R = unknown> = <T_1 extends D, T_2 extends R>(
-  params: Pick<BaseRequestOptions, 'url' | 'method'>,
-) => Effect<RequestOptions<T_1>, T_2, ApiError>;
+  params: Pick<BaseRequestConfig, 'url' | 'method'>,
+) => Effect<RequestConfig<T_1>, T_2, ApiError>;
 
 type ApiFactoryOptions = {
   $$notificationModel: NotificationModel;
@@ -33,86 +35,84 @@ type ApiFactoryOptions = {
   axiosConfig: CreateAxiosDefaults;
 };
 
-type ErrorResponse = AxiosError<{ message: string; type: ApiErrorType }>;
+type ErrorResponse = AxiosError<{ type: ApiErrorType }>;
 
-// TODO: добавить возможность валидации по контракту
-const apiFactory = modelFactory(
-  ({ $$notificationModel, $$tokenStorageModel, axiosConfig }: ApiFactoryOptions) => {
-    const axiosInstance = axios.create(axiosConfig);
+// TODO: добавить контракты
+// TODO: добавить retry
+const apiFactory = modelFactory((options: ApiFactoryOptions) => {
+  const axiosInstance = axios.create(options.axiosConfig);
 
-    const handleError = (error: ErrorResponse): ApiError => {
-      if (error.response) {
-        const { status } = error.response;
-        const { message, type } = error.response.data;
-        return { status, message, type };
-      }
-      return { status: 600, message: error.message, type: 'unknown' };
-    };
+  const handleError = (error: ErrorResponse): ApiError => {
+    if (error.response) {
+      const { status } = error.response;
+      const { type } = error.response.data;
+      return { status, type };
+    }
+    return { status: 600, type: 'unknown' };
+  };
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const baseRequestFx = createEffect<BaseRequestOptions, any, ApiError>((options) =>
-      axiosInstance({ ...options })
-        .then(
-          // eslint-disable-next-line no-promise-executor-return
-          (response) => new Promise((resolve) => setTimeout(() => resolve(response.data), 2000)),
-        )
-        .catch(
-          // eslint-disable-next-line no-promise-executor-return
-          (error) => new Promise((_, reject) => setTimeout(() => reject(handleError(error)), 2000)),
-        ),
-    );
+  const authorizedRequestFailed = createEvent<ApiError>();
 
-    const authorizedRequestFx = attach({
-      source: $$tokenStorageModel.$token,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const baseRequestFx = createEffect<BaseRequestConfig, any, ApiError>((config) =>
+    axiosInstance({ ...config })
+      .then((response) => delay(2000).then(() => response.data))
+      .catch((error) => delay(2000).then(() => Promise.reject(handleError(error)))),
+  );
+
+  const authorizedRequestFx = attach({
+    source: options.$$tokenStorageModel.$token,
+    effect: baseRequestFx,
+    mapParams: (config: BaseRequestConfig, token) => ({
+      ...config,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }),
+  });
+
+  const createRequestFx: RequestFactory = (params) =>
+    attach({
       effect: baseRequestFx,
-      mapParams: (options: BaseRequestOptions, token) => ({
-        ...options,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      mapParams: (config) => ({
+        ...params,
+        ...config,
       }),
     });
 
-    const createRequestFx: RequestFactory = (params) =>
-      attach({
-        effect: baseRequestFx,
-        mapParams: (options) => ({
-          ...params,
-          ...options,
-        }),
-      });
-
-    const createAuthorizedRequestFx: RequestFactory = (params) =>
-      attach({
-        effect: authorizedRequestFx,
-        mapParams: (options) => ({
-          ...params,
-          ...options,
-        }),
-      });
-
-    sample({
-      clock: baseRequestFx.fail,
-      filter({ params, error }) {
-        return !params.ignoreErrorTypes?.includes(error.type);
-      },
-      fn({ params }): NotificationOptions {
-        return (
-          params.errorNotificationOptions ?? {
-            title: 'Error!',
-            message: 'Oops! Something went wrong.',
-          }
-        );
-      },
-      target: $$notificationModel.showError,
+  const createAuthorizedRequestFx: RequestFactory = (params) =>
+    attach({
+      effect: authorizedRequestFx,
+      mapParams: (config) => ({
+        ...params,
+        ...config,
+      }),
     });
 
-    return {
-      createRequestFx,
-      createAuthorizedRequestFx,
-    };
-  },
-);
+  sample({
+    clock: baseRequestFx.fail,
+    filter({ params, error }) {
+      return !params.ignoreErrorTypes?.includes(error.type);
+    },
+    fn({ params }): NotificationOptions {
+      return (
+        params.errorNotificationOptions ?? {
+          title: 'Error!',
+          message: 'Oops! Something went wrong.',
+        }
+      );
+    },
+    target: options.$$notificationModel.showError,
+  });
+
+  sample({ clock: authorizedRequestFx.failData, target: authorizedRequestFailed });
+
+  return {
+    authorizedRequestFailed,
+    createRequestFx,
+    createAuthorizedRequestFx,
+  };
+});
 
 export type ApiModel = Model<typeof apiFactory>;
 

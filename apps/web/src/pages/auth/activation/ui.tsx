@@ -2,11 +2,11 @@ import { useEffect } from 'react';
 
 import { useUnit } from 'effector-react';
 
-import { Anchor, Box, Button, Card, CardSection, Flex, Space, Text, Title } from '@mantine/core';
+import { Anchor, Box, Button, Card, CardSection, Space, Text, Title } from '@mantine/core';
 import { IconCircleCheck } from '@tabler/icons-react';
 import { Link } from 'atomic-router-react';
 
-import { ActivationForm } from '@mg-control/web/features/auth/activation-form';
+import { ActivationForm } from '@mg-control/web/features/auth/activation';
 import { routes } from '@mg-control/web/shared/routing';
 import { View } from '@mg-control/web/shared/types';
 
@@ -23,15 +23,15 @@ export function ActivationPage(): View {
   }, [mounted]);
 
   if (isActivationCompleted) {
-    return <SuccessView />;
+    return <SuccessCard />;
   }
 
   return (
     <Box w="100%">
       <Title align="center">Activation</Title>
-      <Text c="dimmed" size="sm" align="center" mt="xs">
+      <Text mt="xs" c="dimmed" align="center">
         Already have an activated account?{' '}
-        <Anchor size="sm" component={Link} to={routes.auth.signIn}>
+        <Anchor component={Link} to={routes.auth.signIn}>
           Sign In
         </Anchor>
       </Text>
@@ -41,19 +41,27 @@ export function ActivationPage(): View {
   );
 }
 
-function SuccessView(): View {
+function SuccessCard(): View {
   return (
-    <Card withBorder shadow="md" radius="md" w={280}>
-      <CardSection>
-        <Flex c="white" bg="green" h={120} align="center" justify="center" direction="column">
-          <IconCircleCheck size="3.5rem" />
-          <Title order={5}>Success!</Title>
-        </Flex>
+    <Card withBorder shadow="md" w={300}>
+      <CardSection
+        sx={{
+          height: 120,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexDirection: 'column',
+          color: 'white',
+          backgroundColor: 'green',
+        }}
+      >
+        <IconCircleCheck size="3.5rem" />
+        <Title order={5}>Success!</Title>
       </CardSection>
-      <Text c="dimmed" size="sm" mt="md">
+      <Text mt="md" c="dimmed">
         Congratulations, your account has been successfully activated.
       </Text>
-      <Button variant="light" mt="md" component={Link} to={routes.auth.signIn}>
+      <Button mt="md" variant="light" component={Link} to={routes.auth.signIn}>
         Sign In
       </Button>
     </Card>

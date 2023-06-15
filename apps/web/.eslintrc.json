@@ -43,7 +43,6 @@
         "@typescript-eslint/no-use-before-define": "off",
         "@typescript-eslint/indent": "off",
         "@typescript-eslint/ban-types": "off",
-        "@typescript-eslint/no-shadow": "off",
         "@typescript-eslint/naming-convention": [
           "error",
           {
@@ -56,10 +55,8 @@
           }
         ],
 
-        "max-classes-per-file": "off",
         "linebreak-style": "off",
         "object-curly-newline": "off",
-        "class-methods-use-this": "off",
         "no-param-reassign": "off",
         "operator-linebreak": "off",
         "implicit-arrow-linebreak": "off",

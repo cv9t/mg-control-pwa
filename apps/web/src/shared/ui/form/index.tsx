@@ -11,7 +11,7 @@ type FormProps = {
 
 export function Form({ children, onSubmit }: FormProps): View {
   return (
-    <Container size="xs" p={0}>
+    <Container p={0}>
       <Paper p={30} component="form" onSubmit={onSubmit}>
         {children}
       </Paper>

@@ -1,8 +1,12 @@
-import { Box, Flex, Loader } from '@mantine/core';
+import { Box, Loader, Text } from '@mantine/core';
 
 import { View } from '@mg-control/web/shared/types';
 
-export function PageLoader(): View {
+type PageLoaderProps = {
+  title?: string;
+};
+
+export function PageLoader({ title }: PageLoaderProps): View {
   return (
     <Box
       sx={{
@@ -12,11 +16,19 @@ export function PageLoader(): View {
         bottom: 0,
         left: 0,
         zIndex: 9999,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'column',
+        backgroundColor: 'white',
       }}
     >
-      <Flex w="100%" h="100%" align="center" justify="center">
-        <Loader variant="dots" />
-      </Flex>
+      <Loader variant="dots" />
+      {title && (
+        <Text mt="md" c="blue" weight={500}>
+          {title}
+        </Text>
+      )}
     </Box>
   );
 }

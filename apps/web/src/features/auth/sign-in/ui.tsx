@@ -16,10 +16,10 @@ type SignInFormProps = {
 
 export function SignInForm({ $$model }: SignInFormProps): View {
   const { submit, fields } = useForm($$model.$$form);
-  const { mounted, signInError, formDisabled } = useUnit({
+  const { mounted, error, isLoading } = useUnit({
     mounted: $$model.mounted,
-    signInError: $$model.$signInError,
-    formDisabled: $$model.$formDisabled,
+    error: $$model.$error,
+    isLoading: $$model.$isLoading,
   });
 
   useEffect(() => {
@@ -33,21 +33,21 @@ export function SignInForm({ $$model }: SignInFormProps): View {
         submit();
       }}
     >
-      {signInError && <ErrorAlert mb="md" text={signInError} />}
+      {error && <ErrorAlert mb="md" text={error} />}
       <EmailInput
         value={fields.email.value}
         onChange={(e) => fields.email.onChange(e.target.value)}
         error={fields.email.firstError?.errorText}
-        disabled={formDisabled}
+        disabled={isLoading}
       />
       <PasswordInput
         mt="md"
         value={fields.password.value}
         onChange={(e) => fields.password.onChange(e.target.value)}
         error={fields.password.firstError?.errorText}
-        disabled={formDisabled}
+        disabled={isLoading}
       />
-      <Button type="submit" fullWidth mt="xl" loading={formDisabled}>
+      <Button mt="xl" type="submit" loading={isLoading}>
         Sign In
       </Button>
     </Form>

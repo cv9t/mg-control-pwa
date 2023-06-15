@@ -6,7 +6,7 @@ import { Logger, LoggerErrorInterceptor } from 'nestjs-pino';
 
 import { ERROR_TYPE } from '@mg-control/shared/typings';
 
-import AppModule from './app/app.module';
+import { AppModule } from './app/app.module';
 import { Config } from './config';
 
 const bootstrap = async (): Promise<void> => {
@@ -23,11 +23,7 @@ const bootstrap = async (): Promise<void> => {
     new ValidationPipe({
       whitelist: true,
       transform: true,
-      exceptionFactory: (errors) =>
-        new BadRequestException({
-          type: ERROR_TYPE.validation_error,
-          message: errors.flatMap(({ constraints }) => Object.values(constraints)),
-        }),
+      exceptionFactory: () => new BadRequestException({ ype: ERROR_TYPE.validation_error }),
     }),
   );
 
