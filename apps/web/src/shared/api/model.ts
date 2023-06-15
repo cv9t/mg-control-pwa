@@ -1,4 +1,4 @@
-import { attach, createEffect, Effect, sample } from 'effector';
+import { attach, createEffect, createEvent, Effect, sample } from 'effector';
 import { Model, modelFactory } from 'effector-factorio';
 
 import axios, { AxiosError, CreateAxiosDefaults } from 'axios';
@@ -37,6 +37,8 @@ type ApiFactoryOptions = {
 
 type ErrorResponse = AxiosError<{ type: ApiErrorType }>;
 
+// TODO: добавить контракты
+// TODO: добавить retry
 const apiFactory = modelFactory((options: ApiFactoryOptions) => {
   const axiosInstance = axios.create(options.axiosConfig);
 
@@ -48,6 +50,8 @@ const apiFactory = modelFactory((options: ApiFactoryOptions) => {
     }
     return { status: 600, type: 'unknown' };
   };
+
+  const authorizedRequestFailed = createEvent<ApiError>();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const baseRequestFx = createEffect<BaseRequestConfig, any, ApiError>((config) =>
@@ -101,7 +105,10 @@ const apiFactory = modelFactory((options: ApiFactoryOptions) => {
     target: options.$$notificationModel.showError,
   });
 
+  sample({ clock: authorizedRequestFx.failData, target: authorizedRequestFailed });
+
   return {
+    authorizedRequestFailed,
     createRequestFx,
     createAuthorizedRequestFx,
   };

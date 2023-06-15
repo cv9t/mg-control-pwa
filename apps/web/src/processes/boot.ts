@@ -1,8 +1,8 @@
 import { createEvent, sample } from 'effector';
 
-import { routerInit } from '../shared/routing';
+import { initializeRouter } from '../shared/routing';
 import { $$tokenStorageModel } from '../shared/token-storage';
 
 export const boot = createEvent();
 
-sample({ clock: boot, target: [routerInit, $$tokenStorageModel.init] });
+sample({ clock: boot, target: [initializeRouter, $$tokenStorageModel.initialize] });

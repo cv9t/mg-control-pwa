@@ -1,4 +1,4 @@
-import { Button, Highlight, Image, Title } from '@mantine/core';
+import { Button, Highlight, Image, Text } from '@mantine/core';
 import { Link } from 'atomic-router-react';
 
 import { APP_NAME } from '@mg-control/web/shared/config';
@@ -32,9 +32,9 @@ export function HomePage(): View {
       >
         MicroGreen Control
       </Highlight>
-      <Title mt="xs" order={5} c="dimmed" align="center">
+      <Text mt="xs" c="dimmed" weight={500} align="center">
         Keep your microgreens in comfort
-      </Title>
+      </Text>
       <Image src={heroUrl} />
       <Button mt="xl" component={Link} to={routes.auth.signIn}>
         Sign In

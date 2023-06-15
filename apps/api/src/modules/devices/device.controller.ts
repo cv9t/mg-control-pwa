@@ -21,16 +21,11 @@ export class DeviceController {
     return this.devicesService.sendData(res, deviceId);
   }
 
-  @Post('control-light')
-  public controlLight(
+  @Post('toggle-light')
+  public toggleLight(
     @Query('state') state: 'on' | 'off',
     @User('deviceId') deviceId: string,
   ): void {
-    this.devicesService.controlLight(deviceId, state);
-  }
-
-  @Post('sprinkle-water')
-  public sprinkle(@User('deviceId') deviceId: string): void {
-    this.devicesService.sprinkleWater(deviceId);
+    this.devicesService.toggleLight(deviceId, state);
   }
 }

@@ -1,4 +1,4 @@
-import { attach, createEvent, createStore, Effect, forward, sample } from 'effector';
+import { attach, createEvent, createStore, Effect, sample } from 'effector';
 import { Model, modelFactory } from 'effector-factorio';
 import { createForm } from 'effector-forms';
 
@@ -75,10 +75,10 @@ export const activationFormFactory = modelFactory((options: ActivationFormFactor
     })
     .reset(mounted);
 
-  const $isPending = activateFx.pending;
+  const $isLoading = activateFx.pending;
 
-  forward({ from: mounted, to: $$form.reset });
-  forward({ from: activateFx, to: $$form.resetErrors });
+  sample({ clock: mounted, target: $$form.reset });
+  sample({ clock: activateFx, target: $$form.resetErrors });
 
   sample({
     clock: $$form.formValidated,
@@ -90,7 +90,7 @@ export const activationFormFactory = modelFactory((options: ActivationFormFactor
     mounted,
     $$form,
     $error,
-    $isPending,
+    $isLoading,
   };
 });
 

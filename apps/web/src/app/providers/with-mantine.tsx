@@ -13,6 +13,7 @@ export function withMantine(WrappedComponent: ComponentType) {
             Button: {
               defaultProps: {
                 fullWidth: true,
+                size: 'md',
               },
             },
             Paper: {
@@ -26,19 +27,14 @@ export function withMantine(WrappedComponent: ComponentType) {
                 size: 'xs',
               },
             },
-            Text: {
+            TextInput: {
               defaultProps: {
-                size: 'sm',
+                size: 'md',
               },
             },
-            Anchor: {
+            PasswordInput: {
               defaultProps: {
-                size: 'sm',
-              },
-            },
-            ActionIcon: {
-              defaultProps: {
-                variant: 'filled',
+                size: 'md',
               },
             },
           },

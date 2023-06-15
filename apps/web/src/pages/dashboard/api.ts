@@ -7,12 +7,12 @@ type DashboardPageApiFactoryOptions = {
 };
 
 const dashboardPageApiFactory = modelFactory((options: DashboardPageApiFactoryOptions) => {
-  const controlLightFx = options.$$apiModel.createAuthorizedRequestFx<void, void>({
-    url: 'device/control-light',
+  const toggleLightFx = options.$$apiModel.createAuthorizedRequestFx<void, void>({
+    url: 'device/toggle-light',
     method: 'POST',
   });
 
-  return { controlLightFx };
+  return { toggleLightFx };
 });
 
 export type DashboardPageApiModel = Model<typeof dashboardPageApiFactory>;

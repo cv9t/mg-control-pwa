@@ -23,7 +23,7 @@ export function ActivationPage(): View {
   }, [mounted]);
 
   if (isActivationCompleted) {
-    return <SuccessView />;
+    return <SuccessCard />;
   }
 
   return (
@@ -41,9 +41,9 @@ export function ActivationPage(): View {
   );
 }
 
-function SuccessView(): View {
+function SuccessCard(): View {
   return (
-    <Card withBorder shadow="md" w={280}>
+    <Card withBorder shadow="md" w={300}>
       <CardSection
         sx={{
           height: 120,
@@ -55,7 +55,7 @@ function SuccessView(): View {
           backgroundColor: 'green',
         }}
       >
-        <IconCircleCheck size="3rem" />
+        <IconCircleCheck size="3.5rem" />
         <Title order={5}>Success!</Title>
       </CardSection>
       <Text mt="md" c="dimmed">

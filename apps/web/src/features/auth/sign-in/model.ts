@@ -1,4 +1,4 @@
-import { attach, createEvent, createStore, Effect, forward } from 'effector';
+import { attach, createEvent, createStore, Effect, sample } from 'effector';
 import { Model, modelFactory } from 'effector-factorio';
 import { createForm } from 'effector-forms';
 
@@ -55,18 +55,18 @@ export const signInFormFactory = modelFactory((options: SignInFormFactoryOptions
       return null;
     });
 
-  const $isPending = signInFx.pending;
+  const $isLoading = signInFx.pending;
 
-  forward({ from: mounted, to: $$form.reset });
-  forward({ from: $$form.formValidated, to: signInFx });
-  forward({ from: signInFx, to: $$form.resetErrors });
+  sample({ clock: mounted, target: $$form.reset });
+  sample({ clock: $$form.formValidated, target: signInFx });
+  sample({ clock: signInFx, target: $$form.resetErrors });
   redirect({ clock: signInFx.done, route: routes.dashboard });
 
   return {
     mounted,
     $$form,
     $error,
-    $isPending,
+    $isLoading,
   };
 });
 

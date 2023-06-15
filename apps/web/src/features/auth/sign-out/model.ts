@@ -1,6 +1,6 @@
 import { MouseEvent } from 'react';
 
-import { attach, createEvent, Effect, forward } from 'effector';
+import { attach, createEvent, Effect, sample } from 'effector';
 import { Model, modelFactory } from 'effector-factorio';
 
 import { redirect } from 'atomic-router';
@@ -13,7 +13,7 @@ type SignOutButtonFactoryOptions = {
 };
 
 export const signOutButtonFactory = modelFactory((options: SignOutButtonFactoryOptions) => {
-  const signOutClicked = createEvent<MouseEvent>();
+  const clicked = createEvent<MouseEvent>();
 
   const signOutFx = attach({
     effect: options.signOutFx,
@@ -25,12 +25,12 @@ export const signOutButtonFactory = modelFactory((options: SignOutButtonFactoryO
     }),
   });
 
-  const $isPending = signOutFx.pending;
+  const $isLoading = signOutFx.pending;
 
-  forward({ from: signOutClicked, to: signOutFx });
+  sample({ clock: clicked, target: signOutFx });
   redirect({ clock: signOutFx.done, route: routes.home });
 
-  return { signOutClicked, $isPending };
+  return { clicked, $isLoading };
 });
 
 export type SignOutButtonModel = Model<typeof signOutButtonFactory>;

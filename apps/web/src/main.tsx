@@ -1,4 +1,3 @@
-import { StrictMode } from 'react';
 import * as ReactDOM from 'react-dom/client';
 
 import { boot } from './processes/boot';
@@ -8,8 +7,4 @@ const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 
 boot();
 
-root.render(
-  <StrictMode>
-    <AppWithProviders />
-  </StrictMode>,
-);
+root.render(<AppWithProviders />);

@@ -36,10 +36,10 @@ export const router = createHistoryRouter({
   controls,
 });
 
-export const routerInit = createEvent();
+export const initializeRouter = createEvent();
 
 sample({
-  clock: routerInit,
+  clock: initializeRouter,
   fn: () => createBrowserHistory(),
   target: router.setHistory,
 });

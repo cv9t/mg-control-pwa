@@ -1,10 +1,21 @@
-import { attach, createEvent, createStore, Effect, Event, forward, merge, sample } from 'effector';
+import { attach, createEvent, createStore, Effect, Event, merge, sample } from 'effector';
 import { Model, modelFactory } from 'effector-factorio';
 
-import { chainRoute, RouteInstance, RouteParams, RouteParamsAndQuery } from 'atomic-router';
+import {
+  chainRoute,
+  redirect,
+  RouteInstance,
+  RouteParams,
+  RouteParamsAndQuery,
+} from 'atomic-router';
 import { combineEvents } from 'patronum';
 
-import { RequestConfig } from '@mg-control/web/shared/api';
+import {
+  $$apiModel,
+  ApiError,
+  isUnauthorizedError,
+  RequestConfig,
+} from '@mg-control/web/shared/api';
 import { routes } from '@mg-control/web/shared/routing';
 import { $$tokenStorageModel, TokenStorageModel } from '@mg-control/web/shared/token-storage';
 
@@ -12,16 +23,17 @@ import { $$sessionApiModel, SessionApiModel } from './api';
 
 enum AuthStatus {
   Initial,
-  Pending,
   Anonymous,
   Authorized,
 }
 
 type SessionFactoryOptions = {
+  authorizedRequestFailed: Event<ApiError>;
   $$sessionApiModel: SessionApiModel;
   $$tokenStorageModel: TokenStorageModel;
 };
 
+// TODO: signOut при 401
 const sessionFactory = modelFactory((options: SessionFactoryOptions) => {
   const syncedWithToken = createEvent<AuthStatus>();
 
@@ -39,18 +51,16 @@ const sessionFactory = modelFactory((options: SessionFactoryOptions) => {
     }),
   });
 
-  const authStarted = merge([checkAuthFx, signInFx]);
-  const authCompleted = merge([checkAuthFx.doneData, signInFx.doneData]);
-  const authFailed = merge([checkAuthFx.fail, signOutFx.done]);
+  const sessionStarted = merge([checkAuthFx.doneData, signInFx.doneData]);
+  const sessionEnded = merge([checkAuthFx.fail, signOutFx.done]);
 
   const $authStatus = createStore(AuthStatus.Initial)
-    .on(authStarted, () => AuthStatus.Pending)
-    .on(authCompleted, () => AuthStatus.Authorized)
-    .on(authFailed, () => AuthStatus.Anonymous)
-    .on(syncedWithToken, (_, newStatus) => newStatus);
+    .on(sessionStarted, () => AuthStatus.Authorized)
+    .on(sessionEnded, () => AuthStatus.Anonymous)
+    .on(syncedWithToken, (_, syncedStatus) => syncedStatus);
 
   sample({
-    clock: options.$$tokenStorageModel.initCompleted,
+    clock: options.$$tokenStorageModel.initializeCompleted,
     source: options.$$tokenStorageModel.$token,
     fn: (token) => {
       if (token) {
@@ -62,12 +72,21 @@ const sessionFactory = modelFactory((options: SessionFactoryOptions) => {
   });
 
   sample({
-    clock: authCompleted,
+    clock: sessionStarted,
     fn: ({ accessToken }) => accessToken,
     target: options.$$tokenStorageModel.saveToken,
   });
 
-  forward({ from: authFailed, to: options.$$tokenStorageModel.deleteToken });
+  sample({ clock: sessionEnded, target: options.$$tokenStorageModel.deleteToken });
+
+  const receivedUnauthorized = sample({
+    clock: options.authorizedRequestFailed,
+    filter: isUnauthorizedError,
+  });
+
+  sample({ clock: receivedUnauthorized, target: options.$$tokenStorageModel.deleteToken });
+  sample({ clock: receivedUnauthorized, fn: () => AuthStatus.Anonymous, target: $authStatus });
+  redirect({ clock: receivedUnauthorized, route: routes.auth.signIn });
 
   return {
     syncedWithToken,
@@ -82,6 +101,7 @@ const sessionFactory = modelFactory((options: SessionFactoryOptions) => {
 export type SessionModel = Model<typeof sessionFactory>;
 
 export const $$sessionModel = sessionFactory.createModel({
+  authorizedRequestFailed: $$apiModel.authorizedRequestFailed,
   $$sessionApiModel,
   $$tokenStorageModel,
 });
@@ -95,27 +115,27 @@ export const chainAuthorized = <Params extends RouteParams>(
   route: RouteInstance<Params>,
   { otherwise = routes.auth.signIn.open }: ChainParams = {},
 ): RouteInstance<Params> => {
-  const authCheckStarted = createEvent<RouteParamsAndQuery<Params>>();
+  const sessionCheckStarted = createEvent<RouteParamsAndQuery<Params>>();
   const receivedAnonymous = createEvent<RouteParamsAndQuery<Params>>();
 
-  const readyToCheckAuth = combineEvents({
-    events: [authCheckStarted, $$sessionModel.syncedWithToken],
+  const initialSessionCheckStarted = combineEvents({
+    events: [sessionCheckStarted, $$sessionModel.syncedWithToken],
   });
 
   const alreadyAuthorized = sample({
-    clock: authCheckStarted,
+    clock: sessionCheckStarted,
     source: $$sessionModel.$authStatus,
     filter: (status) => status === AuthStatus.Authorized,
   });
 
   const alreadyAnonymous = sample({
-    clock: [authCheckStarted, readyToCheckAuth],
+    clock: [sessionCheckStarted, initialSessionCheckStarted],
     source: $$sessionModel.$authStatus,
     filter: (status) => status === AuthStatus.Anonymous,
   });
 
   sample({
-    clock: readyToCheckAuth,
+    clock: initialSessionCheckStarted,
     source: $$sessionModel.$authStatus,
     filter: (status) => status === AuthStatus.Initial,
     target: $$sessionModel.checkAuthFx,
@@ -128,11 +148,11 @@ export const chainAuthorized = <Params extends RouteParams>(
     target: receivedAnonymous,
   });
 
-  forward({ from: receivedAnonymous, to: otherwise as Event<void> });
+  sample({ clock: receivedAnonymous, target: otherwise as Event<void> });
 
   return chainRoute({
     route,
-    beforeOpen: authCheckStarted,
+    beforeOpen: sessionCheckStarted,
     openOn: [alreadyAuthorized, $$sessionModel.checkAuthFx.done],
     cancelOn: receivedAnonymous,
   });
@@ -142,27 +162,27 @@ export const chainAnonymous = <Params extends RouteParams>(
   route: RouteInstance<Params>,
   { otherwise = routes.dashboard.open }: ChainParams = {},
 ): RouteInstance<Params> => {
-  const authCheckStarted = createEvent<RouteParamsAndQuery<Params>>();
+  const sessionCheckStarted = createEvent<RouteParamsAndQuery<Params>>();
   const receivedAuthorized = createEvent<RouteParamsAndQuery<Params>>();
 
-  const readyToCheckAuth = combineEvents({
-    events: [authCheckStarted, $$sessionModel.syncedWithToken],
+  const initialSessionCheckStarted = combineEvents({
+    events: [sessionCheckStarted, $$sessionModel.syncedWithToken],
   });
 
   const alreadyAuthorized = sample({
-    clock: authCheckStarted,
+    clock: sessionCheckStarted,
     source: $$sessionModel.$authStatus,
     filter: (status) => status === AuthStatus.Authorized,
   });
 
   const alreadyAnonymous = sample({
-    clock: [authCheckStarted, readyToCheckAuth],
+    clock: [sessionCheckStarted, initialSessionCheckStarted],
     source: $$sessionModel.$authStatus,
     filter: (status) => status === AuthStatus.Anonymous,
   });
 
   sample({
-    clock: readyToCheckAuth,
+    clock: initialSessionCheckStarted,
     source: $$sessionModel.$authStatus,
     filter: (status) => status === AuthStatus.Initial,
     target: $$sessionModel.checkAuthFx,
@@ -175,11 +195,11 @@ export const chainAnonymous = <Params extends RouteParams>(
     target: receivedAuthorized,
   });
 
-  forward({ from: receivedAuthorized, to: otherwise as Event<void> });
+  sample({ clock: receivedAuthorized, target: otherwise as Event<void> });
 
   return chainRoute({
     route,
-    beforeOpen: authCheckStarted,
+    beforeOpen: sessionCheckStarted,
     openOn: [alreadyAnonymous, $$sessionModel.checkAuthFx.fail],
     cancelOn: receivedAuthorized,
   });

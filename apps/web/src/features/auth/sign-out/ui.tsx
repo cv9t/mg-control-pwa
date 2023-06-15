@@ -12,14 +12,14 @@ type SignOutButtonProps = {
 };
 
 export function SignOutButton({ $$model }: SignOutButtonProps): View {
-  const { signOutClicked, isPending } = useUnit({
-    signOutClicked: $$model.signOutClicked,
-    isPending: $$model.$isPending,
+  const { clicked, isLoading } = useUnit({
+    clicked: $$model.clicked,
+    isLoading: $$model.$isLoading,
   });
 
   return (
-    <ActionIcon color="red" size="lg" loading={isPending} onClick={signOutClicked}>
-      <IconLogout size="1.1rem" />
+    <ActionIcon w={50} variant="light" color="red" size="lg" loading={isLoading} onClick={clicked}>
+      <IconLogout size="1.3rem" />
     </ActionIcon>
   );
 }

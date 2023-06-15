@@ -16,11 +16,7 @@ import { Nullable } from '@mg-control/shared/typings';
 import { UpdateDeviceDto } from './dtos/update-device.dto';
 import { Device, DeviceDocument } from './schemas/device.schema';
 
-const COMMANDS = {
-  lightOn: 'light on',
-  lightOff: 'light off',
-  sprinkleWater: 'sprinkle water',
-};
+const COMMANDS = { lightOn: 'light on', lightOff: 'light off' };
 
 @Injectable()
 export class DevicesService {
@@ -51,15 +47,10 @@ export class DevicesService {
     return this.sseService.connect(deviceId);
   }
 
-  public controlLight(deviceId: string, state: 'on' | 'off'): void {
+  public toggleLight(deviceId: string, state: 'on' | 'off'): void {
     const fullTopic = this._createFullTopicTopic(deviceId, 'control');
     const message = state === 'on' ? COMMANDS.lightOn : COMMANDS.lightOff;
     this.mqttService.publish(fullTopic, message);
-  }
-
-  public sprinkleWater(deviceId: string): void {
-    const fullTopic = this._createFullTopicTopic(deviceId, 'control');
-    this.mqttService.publish(fullTopic, COMMANDS.sprinkleWater);
   }
 
   @Bind()
