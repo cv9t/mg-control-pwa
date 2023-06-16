@@ -76,6 +76,14 @@ export function DashboardPage(): View {
                   {deviceData?.air.temp}°
                 </Title>
               </Group>
+              <Group>
+                <Text c="dimmed" weight={500}>
+                  Humidity:
+                </Text>
+                <Title c="blue" order={4}>
+                  {deviceData?.air.humidity}%
+                </Title>
+              </Group>
             </DashboardCard>
           </Grid.Col>
 
@@ -83,18 +91,10 @@ export function DashboardPage(): View {
             <DashboardCard title="Soil">
               <Group>
                 <Text c="dimmed" weight={500}>
-                  Temp:
+                  Condition:
                 </Text>
                 <Title c="blue" order={4}>
-                  {deviceData?.soil.temp}°
-                </Title>
-              </Group>
-              <Group>
-                <Text c="dimmed" weight={500}>
-                  Moisture:
-                </Text>
-                <Title c="blue" order={4}>
-                  {deviceData?.soil.moisture}%
+                  {deviceData?.soil.isDry ? 'Wet' : 'Dry'}
                 </Title>
               </Group>
             </DashboardCard>

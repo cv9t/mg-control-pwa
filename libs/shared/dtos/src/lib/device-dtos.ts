@@ -4,14 +4,14 @@ import { IsBoolean, IsNumber, ValidateNested } from 'class-validator';
 class AirDataDto {
   @IsNumber()
   public readonly temp: number;
+
+  @IsNumber()
+  public readonly humidity: number;
 }
 
 class SoilDataDto {
-  @IsNumber()
-  public readonly moisture: number;
-
-  @IsNumber()
-  public readonly temp: number;
+  @IsBoolean()
+  public readonly isDry: boolean;
 }
 
 export class DeviceDataDto {
