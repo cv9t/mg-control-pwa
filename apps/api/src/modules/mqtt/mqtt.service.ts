@@ -3,7 +3,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import mqtt, { MqttClient } from 'mqtt';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { Config } from '@mg-control/api/config';
+import { env } from '@mg-control/api/config';
 
 import { MqttSubscription } from './interfaces/mqtt-subscription.interface';
 
@@ -15,7 +15,7 @@ export class MqttService implements OnModuleInit {
 
   public constructor(
     @InjectPinoLogger(MqttService.name) private readonly logger: PinoLogger,
-    private readonly config: Config,
+    private readonly config: env.Config,
   ) {}
 
   public onModuleInit(): void {

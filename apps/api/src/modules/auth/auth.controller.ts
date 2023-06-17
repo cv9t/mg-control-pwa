@@ -3,9 +3,9 @@ import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
 import { type Response } from 'express';
 
 import { DeleteResult } from '@mg-control/api/common/types';
-import { Config } from '@mg-control/api/config';
+import { env } from '@mg-control/api/config';
 import { ActivationDto, SignInDto } from '@mg-control/shared/dtos';
-import { AuthResponse } from '@mg-control/shared/typings';
+import { AuthResponse } from '@mg-control/shared/types';
 
 import { Cookies } from './decorators/cookies.decorator';
 import { User } from './decorators/user.decorator';
@@ -15,7 +15,10 @@ import { AuthService } from './auth.service';
 
 @Controller('auth')
 export class AuthController {
-  public constructor(private readonly config: Config, private readonly authService: AuthService) {}
+  public constructor(
+    private readonly config: env.Config,
+    private readonly authService: AuthService,
+  ) {}
 
   @Post('activate')
   public async activate(@Body() activationDto: ActivationDto): Promise<void> {

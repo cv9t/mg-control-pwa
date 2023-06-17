@@ -4,14 +4,14 @@ import { NestFactory } from '@nestjs/core';
 import cookieParser from 'cookie-parser';
 import { Logger, LoggerErrorInterceptor } from 'nestjs-pino';
 
-import { ERROR_TYPE } from '@mg-control/shared/typings';
+import { ERROR_TYPE } from '@mg-control/shared/types';
 
 import { AppModule } from './app/app.module';
-import { Config } from './config';
+import { env } from './config';
 
 const bootstrap = async (): Promise<void> => {
   const app = await NestFactory.create(AppModule, { bufferLogs: true });
-  const config = app.get(Config);
+  const config = app.get(env.Config);
 
   app.setGlobalPrefix('/api/v1');
   app.enableCors({ origin: config.frontend.url, credentials: true });
@@ -23,7 +23,7 @@ const bootstrap = async (): Promise<void> => {
     new ValidationPipe({
       whitelist: true,
       transform: true,
-      exceptionFactory: () => new BadRequestException({ ype: ERROR_TYPE.validation_error }),
+      exceptionFactory: () => new BadRequestException({ type: ERROR_TYPE.validation_error }),
     }),
   );
 

@@ -1,37 +1,20 @@
 import { attach, createEvent, createStore } from 'effector';
-import { Model, modelFactory } from 'effector-factorio';
 
-import { $$sessionModel, chainAnonymous, SessionModel } from '@mg-control/web/entities/session';
-import { activationFormFactory } from '@mg-control/web/features/auth/activation';
+import { sessionModel } from '@mg-control/web/entities/session';
+import { Activation } from '@mg-control/web/features/auth/activation';
 import { routes } from '@mg-control/web/shared/routing';
 
-type ActivationPageFactoryOptions = {
-  $$sessionModel: SessionModel;
-};
+export const mounted = createEvent();
 
-const activationPageFactory = modelFactory((options: ActivationPageFactoryOptions) => {
-  const mounted = createEvent();
+const activateFx = attach({ effect: sessionModel.activateFx });
 
-  const activateFx = attach({ effect: options.$$sessionModel.activateFx });
-
-  const $$activationFormModel = activationFormFactory.createModel({
-    activateFx,
-  });
-
-  const $isActivationCompleted = createStore(false)
-    .on(activateFx.done, () => true)
-    .reset(mounted);
-
-  return {
-    mounted,
-    $$activationFormModel,
-    $isActivationCompleted,
-  };
+export const activationFormModel = Activation.createFormModel({
+  activateFx,
 });
 
-export type ActivationPageModel = Model<typeof activationPageFactory>;
+export const $isActivationCompleted = createStore(false)
+  .on(activateFx.done, () => true)
+  .reset(mounted);
 
-export const $$activationPageModel = activationPageFactory.createModel({ $$sessionModel });
-
-export const activationRoute = routes.auth.activation;
-export const anonymousActivationRoute = chainAnonymous(activationRoute);
+export const currentRoute = routes.auth.activation;
+export const anonymousRoute = sessionModel.chainAnonymous(currentRoute);

@@ -1,2 +1,1 @@
-export * from './api';
-export * from './model';
+export * as sessionModel from './model';

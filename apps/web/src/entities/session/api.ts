@@ -1,42 +1,35 @@
-import { Model, modelFactory } from 'effector-factorio';
+import { createEffect } from 'effector';
 
 import { ActivationDto, SignInDto } from '@mg-control/shared/dtos';
-import { AuthResponse } from '@mg-control/shared/typings';
-import { $$apiModel, ApiModel } from '@mg-control/web/shared/api';
+import { AuthResponse } from '@mg-control/shared/types';
+import { api, ApiError } from '@mg-control/web/shared/api';
 
-type SessionApiFactoryOptions = {
-  $$apiModel: ApiModel;
-};
-
-const sessionApiFactory = modelFactory((options: SessionApiFactoryOptions) => {
-  const activateFx = options.$$apiModel.createRequestFx<ActivationDto, void>({
+export const activateFx = createEffect<ActivationDto, void, ApiError>((data) =>
+  api.publicRequestFx({
     url: 'auth/activate',
     method: 'POST',
-  });
+    data,
+  }),
+);
 
-  const signInFx = options.$$apiModel.createRequestFx<SignInDto, AuthResponse>({
+export const signInFx = createEffect<SignInDto, AuthResponse, ApiError>((data) =>
+  api.publicRequestFx({
     url: 'auth/sign-in',
     method: 'POST',
-  });
+    data,
+  }),
+);
 
-  const signOutFx = options.$$apiModel.createAuthorizedRequestFx<void, void>({
+export const signOutFx = createEffect<void, void, ApiError>(() =>
+  api.authorizedRequestFx({
     url: 'auth/sign-out',
     method: 'POST',
-  });
+  }),
+);
 
-  const checkAuthFx = options.$$apiModel.createAuthorizedRequestFx<void, AuthResponse>({
+export const refreshTokensFx = createEffect<void, AuthResponse, ApiError>(() =>
+  api.publicRequestFx({
     url: 'auth/refresh-tokens',
     method: 'GET',
-  });
-
-  return {
-    activateFx,
-    signInFx,
-    signOutFx,
-    checkAuthFx,
-  };
-});
-
-export type SessionApiModel = Model<typeof sessionApiFactory>;
-
-export const $$sessionApiModel = sessionApiFactory.createModel({ $$apiModel });
+  }),
+);

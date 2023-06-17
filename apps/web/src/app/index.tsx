@@ -1,10 +1,10 @@
-import { View } from '@mg-control/web/shared/types';
+import { Nullable } from '@mg-control/shared/types';
 
 import { Pages } from '../pages';
 
 import { withProviders } from './providers';
 
-function App(): View {
+function App(): Nullable<JSX.Element> {
   return <Pages />;
 }
 

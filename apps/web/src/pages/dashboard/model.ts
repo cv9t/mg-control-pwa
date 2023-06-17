@@ -1,93 +1,73 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { MouseEvent } from 'react';
 
 import { attach, createEvent, createStore, merge, sample } from 'effector';
-import { Model, modelFactory } from 'effector-factorio';
 
-import { chainRoute } from 'atomic-router';
+import { chainRoute, RouteParamsAndQuery } from 'atomic-router';
 import { combineEvents } from 'patronum';
 
-import { $$deviceModel, DeviceModel } from '@mg-control/web/entities/device/model';
-import { chainAuthorized } from '@mg-control/web/entities/session';
-import { RequestConfig } from '@mg-control/web/shared/api';
+import { deviceModel } from '@mg-control/web/entities/device';
+import { chainAuthorized } from '@mg-control/web/entities/session/model';
 import { routes } from '@mg-control/web/shared/routing';
 
-import { $$dashboardPageApiModel, DashboardPageApiModel } from './api';
+import * as api from './api';
 
-type DashboardPageFactoryOptions = {
-  $$deviceModel: DeviceModel;
-  $$dashboardPageApiModel: DashboardPageApiModel;
-};
+export const unmounted = createEvent();
 
-const dashboardPageFactory = modelFactory((options: DashboardPageFactoryOptions) => {
-  const unmounted = createEvent();
+export const toggleLightClicked = createEvent<MouseEvent>();
 
-  const setupDeviceStarted = createEvent();
+const deviceConnectionCompleted = merge([
+  deviceModel.connectionFailed,
+  combineEvents({
+    events: [deviceModel.connectionEstablished, deviceModel.dataReceived],
+  }),
+]);
 
-  const toggleLightClicked = createEvent<MouseEvent>();
+const toggleLightFx = attach({ effect: api.toggleLightFx });
 
-  const setupDeviceCompleted = merge([
-    options.$$deviceModel.connectionFailed,
-    combineEvents({
-      events: [options.$$deviceModel.connectionEstablished, options.$$deviceModel.dataReceived],
-    }),
-  ]);
+const $prevIsLightOn = createStore(false);
 
-  const toggleLightFx = attach({
-    effect: options.$$dashboardPageApiModel.toggleLightFx,
-    mapParams: (state: 'on' | 'off'): RequestConfig<void> => ({
-      params: { state },
-      errorNotificationOptions: {
-        title: 'Toggle light Error!',
-        message: 'Toggle light failed.',
-      },
-    }),
-  });
-
-  const lightStateLoaded = combineEvents({
-    events: [toggleLightFx.finally, options.$$deviceModel.dataReceived],
-  });
-
-  const $isDeviceConnectionFailed = createStore(false)
-    .on(options.$$deviceModel.setupConnection, () => false)
-    .on(options.$$deviceModel.connectionFailed, () => true);
-
-  const $isLightStateLoading = createStore(false)
-    .on(toggleLightFx, () => true)
-    .on(lightStateLoaded, () => false);
-
-  sample({ clock: setupDeviceStarted, target: options.$$deviceModel.setupConnection });
-  sample({ clock: unmounted, target: options.$$deviceModel.closeConnection });
-  sample({
-    source: options.$$deviceModel.$data,
-    clock: toggleLightClicked,
-    fn: (data) => (data?.isLightOn ? 'off' : 'on'),
-    target: toggleLightFx,
-  });
-
-  return {
-    unmounted,
-    setupDeviceStarted,
-    setupDeviceCompleted,
-    toggleLightClicked,
-    $isDeviceConnectionFailed,
-    $deviceData: options.$$deviceModel.$data,
-    $isLightStateLoading,
-  };
+const isLightOnChanged = sample({
+  clock: deviceModel.dataReceived,
+  source: { deviceData: deviceModel.$data, prevIsLightOn: $prevIsLightOn },
+  filter: ({ deviceData, prevIsLightOn }) => !!deviceData?.isLightOn !== prevIsLightOn,
 });
 
-export type DashboardPageModel = Model<typeof dashboardPageFactory>;
+export const $isLightOnPending = createStore(false)
+  .on(toggleLightFx, () => true)
+  .reset(isLightOnChanged);
 
-export const $$dashboardPageModel = dashboardPageFactory.createModel({
-  $$deviceModel,
-  $$dashboardPageApiModel,
+export const $isDeviceConnectionFailed = createStore(false)
+  .on(deviceModel.connectionFailed, () => true)
+  .reset(deviceModel.setupConnection);
+
+export const $isLightOn = deviceModel.$data.map((data) => !!data?.isLightOn);
+export const $airData = deviceModel.$data.map((data) => data?.air);
+export const $soilData = deviceModel.$data.map((data) => data?.soil);
+
+sample({ clock: unmounted, target: deviceModel.closeConnection });
+
+sample({
+  clock: toggleLightClicked,
+  source: deviceModel.$data,
+  fn: (data) => (data?.isLightOn ? 'off' : 'on'),
+  target: toggleLightFx,
 });
 
-export const dashboardRoute = routes.dashboard;
-export const authorizedDashboardRoute = chainAuthorized(dashboardRoute);
+sample({
+  clock: toggleLightFx,
+  source: deviceModel.$data,
+  fn: (data) => !!data?.isLightOn,
+  target: $prevIsLightOn,
+});
+
+const deviceConnectStarted = createEvent<RouteParamsAndQuery<{}>>();
+
+sample({ clock: deviceConnectStarted, target: deviceModel.setupConnection });
+
+export const currentRoute = routes.dashboard;
+export const authorizedRoute = chainAuthorized(routes.dashboard);
 export const deviceConnectedRoute = chainRoute({
-  route: authorizedDashboardRoute,
-  // @ts-ignore
-  beforeOpen: $$dashboardPageModel.setupDeviceStarted,
-  openOn: $$dashboardPageModel.setupDeviceCompleted,
+  route: authorizedRoute,
+  beforeOpen: deviceConnectStarted,
+  openOn: deviceConnectionCompleted,
 });

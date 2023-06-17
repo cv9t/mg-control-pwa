@@ -3,22 +3,25 @@ import { useUnit } from 'effector-react';
 import { ActionIcon } from '@mantine/core';
 import { IconLogout } from '@tabler/icons-react';
 
-import { View } from '@mg-control/web/shared/types';
+import { Nullable } from '@mg-control/shared/types';
 
-import { SignOutButtonModel } from './model';
+import * as model from './model';
 
-type SignOutButtonProps = {
-  $$model: SignOutButtonModel;
-};
-
-export function SignOutButton({ $$model }: SignOutButtonProps): View {
-  const { clicked, isLoading } = useUnit({
-    clicked: $$model.clicked,
-    isLoading: $$model.$isLoading,
+export function SignOutButton(): Nullable<JSX.Element> {
+  const { isPending, signOutPressed } = useUnit({
+    signOutPressed: model.signOutPressed,
+    isPending: model.$isPending,
   });
 
   return (
-    <ActionIcon w={50} variant="light" color="red" size="lg" loading={isLoading} onClick={clicked}>
+    <ActionIcon
+      w={50}
+      variant="light"
+      color="red"
+      size="lg"
+      loading={isPending}
+      onClick={signOutPressed}
+    >
       <IconLogout size="1.3rem" />
     </ActionIcon>
   );

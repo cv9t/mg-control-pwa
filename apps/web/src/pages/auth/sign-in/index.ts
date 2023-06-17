@@ -1,21 +1,21 @@
 import { createRouteView } from 'atomic-router-react';
 
-import { chainAnonymous } from '@mg-control/web/entities/session';
+import { sessionModel } from '@mg-control/web/entities/session';
 import { routes } from '@mg-control/web/shared/routing';
-import { AuthLoader } from '@mg-control/web/shared/ui';
+import { Loader } from '@mg-control/web/shared/ui';
 import { HomeLayout } from '@mg-control/web/widgets/layouts';
 
-import { SignInPage } from './ui';
+import { SignInPage } from './page';
 
-const signInRoute = routes.auth.signIn;
-const anonymousSignInRoute = chainAnonymous(signInRoute);
+const currentRoute = routes.auth.signIn;
+const anonymousRoute = sessionModel.chainAnonymous(currentRoute);
 
 export const SignInPageRoute = {
   view: createRouteView({
-    route: anonymousSignInRoute,
+    route: anonymousRoute,
     view: SignInPage,
-    otherwise: AuthLoader,
+    otherwise: Loader.Auth,
   }),
-  route: signInRoute,
+  route: currentRoute,
   layout: HomeLayout,
 };

@@ -17,7 +17,7 @@
     "paths": {
       "@mg-control/api/*": ["apps/api/src/*"],
       "@mg-control/shared/dtos": ["libs/shared/dtos/src/index.ts"],
-      "@mg-control/shared/typings": ["libs/shared/typings/src/index.ts"],
+      "@mg-control/shared/types": ["libs/shared/types/src/index.ts"],
       "@mg-control/web/*": ["apps/web/src/*"]
     }
   },

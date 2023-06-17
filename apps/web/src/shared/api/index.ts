@@ -1,2 +1,2 @@
 export * from './error';
-export * from './model';
+export * as api from './model';

@@ -1,9 +1,9 @@
 import { PasswordInput as MantinePasswordInput, PasswordInputProps } from '@mantine/core';
 import { IconLock } from '@tabler/icons-react';
 
-import { View } from '@mg-control/web/shared/types';
+import { Nullable } from '@mg-control/shared/types';
 
-export function PasswordInput(props: PasswordInputProps): View {
+export function PasswordInput(props: PasswordInputProps): Nullable<JSX.Element> {
   return (
     <MantinePasswordInput
       label="Password"

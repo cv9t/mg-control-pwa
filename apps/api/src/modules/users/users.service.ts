@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 
 import { Model } from 'mongoose';
 
-import { Nullable } from '@mg-control/shared/typings';
+import { Nullable } from '@mg-control/shared/types';
 
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';

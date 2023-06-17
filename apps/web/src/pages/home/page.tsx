@@ -1,15 +1,15 @@
 import { Button, Highlight, Image, Text } from '@mantine/core';
 import { Link } from 'atomic-router-react';
 
-import { APP_NAME } from '@mg-control/web/shared/config';
-import { useTitle } from '@mg-control/web/shared/lib';
+import { Nullable } from '@mg-control/shared/types';
+import { env } from '@mg-control/web/shared/config';
+import { dom } from '@mg-control/web/shared/lib';
 import { routes } from '@mg-control/web/shared/routing';
-import { View } from '@mg-control/web/shared/types';
 
 import heroUrl from './assets/hero.svg?url';
 
-export function HomePage(): View {
-  useTitle(`${APP_NAME} | Home`);
+export function HomePage(): Nullable<JSX.Element> {
+  dom.useTitle(`${env.APP_NAME} | Home`);
 
   return (
     <div>
@@ -32,7 +32,7 @@ export function HomePage(): View {
       >
         MicroGreen Control
       </Highlight>
-      <Text mt="xs" c="dimmed" weight={500} align="center">
+      <Text mt="xs" weight={500} c="dimmed" align="center">
         Keep your microgreens in comfort
       </Text>
       <Image src={heroUrl} />

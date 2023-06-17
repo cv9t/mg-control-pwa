@@ -60,5 +60,5 @@
     }
   },
   "tags": [],
-  "implicitDependencies": ["shared-dtos", "shared-typings"]
+  "implicitDependencies": ["shared-dtos", "shared-types"]
 }

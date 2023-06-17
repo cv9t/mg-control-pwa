@@ -6,16 +6,16 @@ import { Anchor, Box, Button, Card, CardSection, Space, Text, Title } from '@man
 import { IconCircleCheck } from '@tabler/icons-react';
 import { Link } from 'atomic-router-react';
 
-import { ActivationForm } from '@mg-control/web/features/auth/activation';
+import { Nullable } from '@mg-control/shared/types';
+import { Activation } from '@mg-control/web/features/auth/activation';
 import { routes } from '@mg-control/web/shared/routing';
-import { View } from '@mg-control/web/shared/types';
 
-import { $$activationPageModel } from './model';
+import * as model from './model';
 
-export function ActivationPage(): View {
+export function ActivationPage(): Nullable<JSX.Element> {
   const { mounted, isActivationCompleted } = useUnit({
-    mounted: $$activationPageModel.mounted,
-    isActivationCompleted: $$activationPageModel.$isActivationCompleted,
+    mounted: model.mounted,
+    isActivationCompleted: model.$isActivationCompleted,
   });
 
   useEffect(() => {
@@ -36,12 +36,12 @@ export function ActivationPage(): View {
         </Anchor>
       </Text>
       <Space h={30} />
-      <ActivationForm $$model={$$activationPageModel.$$activationFormModel} />
+      <Activation.Form model={model.activationFormModel} />
     </Box>
   );
 }
 
-function SuccessCard(): View {
+function SuccessCard(): Nullable<JSX.Element> {
   return (
     <Card withBorder shadow="md" w={300}>
       <CardSection
@@ -55,7 +55,7 @@ function SuccessCard(): View {
           backgroundColor: 'green',
         }}
       >
-        <IconCircleCheck size="3.5rem" />
+        <IconCircleCheck size="3.25rem" />
         <Title order={5}>Success!</Title>
       </CardSection>
       <Text mt="md" c="dimmed">

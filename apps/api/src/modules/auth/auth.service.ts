@@ -2,21 +2,21 @@ import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/
 import { JwtService } from '@nestjs/jwt';
 
 import { DeleteResult } from '@mg-control/api/common/types';
-import { Config } from '@mg-control/api/config';
+import { env } from '@mg-control/api/config';
 import { DevicesService } from '@mg-control/api/modules/devices/devices.service';
 import { TokensService } from '@mg-control/api/modules/tokens/tokens.service';
 import { UsersService } from '@mg-control/api/modules/users/users.service';
 import { ActivationDto, SignInDto } from '@mg-control/shared/dtos';
-import { ERROR_TYPE } from '@mg-control/shared/typings';
+import { ERROR_TYPE } from '@mg-control/shared/types';
 
 import { hashData, verifyHashedData } from './helpers/crypto.helpers';
+import { CreatedTokens } from './interfaces/created-tokens.interface';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
-import { CreatedTokens } from './types';
 
 @Injectable()
 export class AuthService {
   public constructor(
-    private readonly config: Config,
+    private readonly config: env.Config,
     private readonly jwtService: JwtService,
     private readonly usersService: UsersService,
     private readonly devicesService: DevicesService,

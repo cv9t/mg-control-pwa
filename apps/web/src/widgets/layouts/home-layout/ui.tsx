@@ -2,13 +2,13 @@ import { ReactNode } from 'react';
 
 import { Container } from '@mantine/core';
 
-import { View } from '@mg-control/web/shared/types';
+import { Nullable } from '@mg-control/shared/types';
 
 export type HomeLayoutProps = {
   children: ReactNode;
 };
 
-export function HomeLayout({ children }: HomeLayoutProps): View {
+export function HomeLayout({ children }: HomeLayoutProps): Nullable<JSX.Element> {
   return (
     <Container
       h="100svh"

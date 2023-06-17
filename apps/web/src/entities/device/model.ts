@@ -1,80 +1,68 @@
-import { attach, createEffect, createEvent, restore, sample, scopeBind } from 'effector';
-import { Model, modelFactory } from 'effector-factorio';
+import {
+  attach,
+  createEffect,
+  createEvent,
+  createStore,
+  restore,
+  sample,
+  scopeBind,
+} from 'effector';
 
 import { EventSourcePolyfill, MessageEvent } from 'event-source-polyfill';
 
 import { DeviceDataDto } from '@mg-control/shared/dtos';
-import { API_URL } from '@mg-control/web/shared/config';
-import { delay } from '@mg-control/web/shared/lib';
-import { $$tokenStorageModel, TokenStorageModel } from '@mg-control/web/shared/token-storage';
+import { Nullable } from '@mg-control/shared/types';
+import { env } from '@mg-control/web/shared/config';
+import * as tokenStorage from '@mg-control/web/shared/token-storage';
 
-type DeviceFactoryOptions = {
-  $$tokenStorageModel: TokenStorageModel;
-};
+export const setupConnection = createEvent();
+export const closeConnection = createEvent();
 
-const deviceFactory = modelFactory((options: DeviceFactoryOptions) => {
-  const setupConnection = createEvent();
-  const closeConnection = createEvent();
-  const connectionEstablished = createEvent<EventSourcePolyfill>();
-  const connectionFailed = createEvent();
+export const connectionEstablished = createEvent();
+export const connectionFailed = createEvent();
 
-  const dataReceived = createEvent<DeviceDataDto>();
-  const messageReceived = createEvent<MessageEvent['data']>();
+export const messageReceived = createEvent<MessageEvent['data']>();
+export const dataReceived = createEvent<DeviceDataDto>();
 
-  const setupConnectionFx = attach({
-    source: options.$$tokenStorageModel.$token,
-    effect: async (token) => {
-      const messageReceivedBound = scopeBind(messageReceived, { safe: true });
+const setupConnectionFx = attach({
+  source: tokenStorage.$token,
+  effect: (token) => {
+    const messageReceivedBound = scopeBind(messageReceived, { safe: true });
 
-      await delay(2000);
-
-      const eventSource = new EventSourcePolyfill(`${API_URL}/api/v1/device/data`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      eventSource.addEventListener('message', (event) => messageReceivedBound(event.data));
-      eventSource.addEventListener('error', () => {});
-      return eventSource;
-    },
-  });
-
-  const preprocessMessageFx = createEffect<MessageEvent['data'], DeviceDataDto>((message) => {
-    const data = JSON.parse(message) as DeviceDataDto;
-    return data;
-  });
-
-  const $connection = restore(connectionEstablished, null);
-  const $data = restore(dataReceived, null);
-
-  const closeConnectionFx = attach({
-    source: $connection,
-    effect: (connection) => {
-      connection?.close();
-    },
-  });
-
-  $connection.reset(closeConnectionFx.done);
-  $data.reset(closeConnectionFx.done);
-
-  sample({ clock: setupConnection, target: setupConnectionFx });
-  sample({ clock: closeConnection, target: closeConnectionFx });
-  sample({ clock: setupConnectionFx.doneData, target: connectionEstablished });
-  sample({ clock: setupConnectionFx.fail, target: connectionFailed });
-  sample({ clock: messageReceived, target: preprocessMessageFx });
-  sample({ clock: preprocessMessageFx.doneData, target: dataReceived });
-
-  return {
-    setupConnection,
-    closeConnection,
-    connectionEstablished,
-    connectionFailed,
-    dataReceived,
-    $connection,
-    $data,
-  };
+    const eventSource = new EventSourcePolyfill(`${env.BACKEND_URL}/api/v1/device/data`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    eventSource.addEventListener('message', (event) => messageReceivedBound(event.data));
+    return eventSource;
+  },
 });
 
-export type DeviceModel = Model<typeof deviceFactory>;
+const preprocessMessageFx = createEffect<MessageEvent['data'], DeviceDataDto>((message) => {
+  const data = JSON.parse(message) as DeviceDataDto;
+  return data;
+});
 
-export const $$deviceModel = deviceFactory.createModel({ $$tokenStorageModel });
+export const $connection = createStore<Nullable<EventSourcePolyfill>>(null).on(
+  setupConnectionFx.doneData,
+  (_, connection) => connection,
+);
+
+export const $data = restore(dataReceived, null);
+
+const closeConnectionFx = attach({
+  source: $connection,
+  effect: (connection) => {
+    connection?.close();
+  },
+});
+
+sample({ clock: setupConnection, target: setupConnectionFx });
+sample({ clock: setupConnectionFx.done, target: connectionEstablished });
+sample({ clock: setupConnectionFx.fail, target: connectionFailed });
+
+sample({ clock: closeConnection, target: closeConnectionFx });
+
+sample({ clock: messageReceived, target: preprocessMessageFx });
+sample({ clock: preprocessMessageFx.doneData, target: dataReceived });

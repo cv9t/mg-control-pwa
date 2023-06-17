@@ -4,7 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 import { DeleteResult } from '@mg-control/api/common/types';
-import { Nullable } from '@mg-control/shared/typings';
+import { Nullable } from '@mg-control/shared/types';
 
 import { SaveTokenDto } from './dtos/save-token.dto';
 import { Token, TokenDocument } from './schemas/token.schema';
