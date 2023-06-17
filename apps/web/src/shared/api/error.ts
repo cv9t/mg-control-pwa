@@ -1,6 +1,6 @@
-import { ERROR_TYPE } from '@mg-control/shared/typings';
+import { ERROR_TYPE } from '@mg-control/shared/types';
 
-export type ApiErrorType = keyof typeof ERROR_TYPE | 'unknown' | 'network_error';
+export type ApiErrorType = keyof typeof ERROR_TYPE | 'unknown';
 
 export type ApiError = {
   status: number;

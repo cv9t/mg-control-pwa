@@ -1,7 +1,7 @@
 import { ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
-import { ERROR_TYPE } from '@mg-control/shared/typings';
+import { ERROR_TYPE } from '@mg-control/shared/types';
 
 @Injectable()
 export class JwtRefreshGuard extends AuthGuard('jwt-refresh') {

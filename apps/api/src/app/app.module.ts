@@ -4,7 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { dotenvLoader, TypedConfigModule } from 'nest-typed-config';
 import { LoggerModule } from 'nestjs-pino';
 
-import { Config } from '../config';
+import { env } from '../config';
 import { AuthModule } from '../modules/auth/auth.module';
 import { DevicesModule } from '../modules/devices/devices.module';
 
@@ -21,7 +21,7 @@ import { AppService } from './app.service';
       },
     }),
     TypedConfigModule.forRoot({
-      schema: Config,
+      schema: env.Config,
       load: dotenvLoader({
         envFilePath: ['apps/api/.env', `apps/api/.env.${process.env.NODE_ENV}`],
         separator: '__',
@@ -34,8 +34,8 @@ import { AppService } from './app.service';
     }),
     MongooseModule.forRootAsync({
       imports: [TypedConfigModule],
-      inject: [Config],
-      useFactory: async (config: Config) => ({
+      inject: [env.Config],
+      useFactory: async (config: env.Config) => ({
         uri: `mongodb://${config.db.host}:${config.db.port}/${config.db.name}`,
         auth: {
           username: config.db.username,

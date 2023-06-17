@@ -1,36 +1,17 @@
 import { MouseEvent } from 'react';
 
-import { attach, createEvent, Effect, sample } from 'effector';
-import { Model, modelFactory } from 'effector-factorio';
+import { attach, createEvent, sample } from 'effector';
 
 import { redirect } from 'atomic-router';
 
-import { ApiError, RequestConfig } from '@mg-control/web/shared/api';
+import { sessionModel } from '@mg-control/web/entities/session';
 import { routes } from '@mg-control/web/shared/routing';
 
-type SignOutButtonFactoryOptions = {
-  signOutFx: Effect<RequestConfig<void>, void, ApiError>;
-};
+export const signOutPressed = createEvent<MouseEvent>();
 
-export const signOutButtonFactory = modelFactory((options: SignOutButtonFactoryOptions) => {
-  const clicked = createEvent<MouseEvent>();
+const signOutFx = attach({ effect: sessionModel.signOutFx });
 
-  const signOutFx = attach({
-    effect: options.signOutFx,
-    mapParams: (): RequestConfig<void> => ({
-      errorNotificationOptions: {
-        title: 'Sign out Error!',
-        message: 'Sign out failed.',
-      },
-    }),
-  });
+export const $isPending = signOutFx.pending;
 
-  const $isLoading = signOutFx.pending;
-
-  sample({ clock: clicked, target: signOutFx });
-  redirect({ clock: signOutFx.done, route: routes.home });
-
-  return { clicked, $isLoading };
-});
-
-export type SignOutButtonModel = Model<typeof signOutButtonFactory>;
+sample({ clock: signOutPressed, target: signOutFx });
+redirect({ clock: signOutFx.done, route: routes.auth.signIn });

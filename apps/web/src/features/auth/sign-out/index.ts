@@ -1,2 +1,5 @@
-export * from './model';
-export * from './ui';
+import { SignOutButton } from './ui';
+
+export const SignOut = {
+  Button: SignOutButton,
+};

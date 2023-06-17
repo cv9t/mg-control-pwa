@@ -1,9 +1,9 @@
 import { Rule } from 'effector-forms';
 
-export const validationRules = {
+export const rules = {
   required: (errorText?: string): Rule<string> => ({
     name: 'required',
-    validator: (value) => Boolean(value),
+    validator: (value) => !!value,
     errorText,
   }),
   email: (errorText?: string): Rule<string> => ({

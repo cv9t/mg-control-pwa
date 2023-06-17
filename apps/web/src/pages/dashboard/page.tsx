@@ -10,32 +10,37 @@ import {
   Group,
   LoadingOverlay,
   SimpleGrid,
+  Skeleton,
   Switch,
   Text,
   Title,
 } from '@mantine/core';
 
-import { APP_NAME } from '@mg-control/web/shared/config';
-import { useTitle } from '@mg-control/web/shared/lib';
-import { View } from '@mg-control/web/shared/types';
+import { Nullable } from '@mg-control/shared/types';
+import { env } from '@mg-control/web/shared/config';
+import { dom } from '@mg-control/web/shared/lib';
 
-import { $$dashboardPageModel } from './model';
+import * as model from './model';
 
-export function DashboardPage(): View {
-  useTitle(`${APP_NAME} | Dashboard`);
+export function DashboardPage(): Nullable<JSX.Element> {
+  dom.useTitle(`${env.APP_NAME} | Dashboard`);
 
   const {
     unmounted,
-    isDeviceConnectionFailed,
     toggleLightClicked,
-    deviceData,
-    isLightStateLoading,
+    isDeviceConnectionFailed,
+    isLightOnPending,
+    isLightOn,
+    airData,
+    soilData,
   } = useUnit({
-    unmounted: $$dashboardPageModel.unmounted,
-    isDeviceConnectionFailed: $$dashboardPageModel.$isDeviceConnectionFailed,
-    toggleLightClicked: $$dashboardPageModel.toggleLightClicked,
-    deviceData: $$dashboardPageModel.$deviceData,
-    isLightStateLoading: $$dashboardPageModel.$isLightStateLoading,
+    unmounted: model.unmounted,
+    toggleLightClicked: model.toggleLightClicked,
+    isDeviceConnectionFailed: model.$isDeviceConnectionFailed,
+    isLightOnPending: model.$isLightOnPending,
+    isLightOn: model.$isLightOn,
+    airData: model.$airData,
+    soilData: model.$soilData,
   });
 
   useEffect(
@@ -51,29 +56,28 @@ export function DashboardPage(): View {
 
   return (
     <Flex direction="column">
-      <SimpleGrid cols={2} spacing="md" breakpoints={[{ maxWidth: 'xs', cols: 1 }]}>
+      <SimpleGrid spacing="md">
         <Grid gutter="md">
-          <Grid.Col span={6}>
+          <Grid.Col sm={6} xs={12}>
             <DashboardCard title="Light">
               <Switch
-                checked={deviceData?.isLightOn}
+                checked={isLightOn}
                 size="xl"
                 onLabel="ON"
                 offLabel="OFF"
                 onClick={toggleLightClicked}
               />
-              <LoadingOverlay visible={isLightStateLoading} />
+              <LoadingOverlay visible={isLightOnPending} />
             </DashboardCard>
           </Grid.Col>
-
-          <Grid.Col span={6}>
-            <DashboardCard title="Air">
+          <Grid.Col sm={6} xs={12}>
+            <DashboardCard title="Air" isLoading={!airData}>
               <Group>
                 <Text c="dimmed" weight={500}>
                   Temp:
                 </Text>
                 <Title c="blue" order={4}>
-                  {deviceData?.air.temp}°
+                  {`${airData?.temp}°`}
                 </Title>
               </Group>
               <Group>
@@ -81,20 +85,19 @@ export function DashboardPage(): View {
                   Humidity:
                 </Text>
                 <Title c="blue" order={4}>
-                  {deviceData?.air.humidity}%
+                  {`${airData?.humidity}%`}
                 </Title>
               </Group>
             </DashboardCard>
           </Grid.Col>
-
           <Grid.Col>
-            <DashboardCard title="Soil">
+            <DashboardCard title="Soil" isLoading={!soilData}>
               <Group>
                 <Text c="dimmed" weight={500}>
                   Condition:
                 </Text>
                 <Title c="blue" order={4}>
-                  {deviceData?.soil.isDry ? 'Wet' : 'Dry'}
+                  {soilData?.isDry ? 'Dry' : 'Wet'}
                 </Title>
               </Group>
             </DashboardCard>
@@ -108,9 +111,14 @@ export function DashboardPage(): View {
 type DashboardCardProps = {
   title: string;
   children: ReactNode;
+  isLoading?: boolean;
 };
 
-function DashboardCard({ title, children }: DashboardCardProps): View {
+function DashboardCard({ title, children, isLoading }: DashboardCardProps): Nullable<JSX.Element> {
+  if (isLoading) {
+    return <Skeleton height={120} />;
+  }
+
   return (
     <Card pos="relative" shadow="xs">
       <CardSection withBorder inheritPadding py="xs">

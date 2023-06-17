@@ -1,17 +1,17 @@
 import { createRouteView } from 'atomic-router-react';
 
-import { AuthLoader } from '@mg-control/web/shared/ui';
+import { Loader } from '@mg-control/web/shared/ui';
 import { HomeLayout } from '@mg-control/web/widgets/layouts';
 
-import { activationRoute, anonymousActivationRoute } from './model';
-import { ActivationPage } from './ui';
+import * as model from './model';
+import { ActivationPage } from './page';
 
 export const ActivationRoute = {
   view: createRouteView({
-    route: anonymousActivationRoute,
+    route: model.anonymousRoute,
     view: ActivationPage,
-    otherwise: AuthLoader,
+    otherwise: Loader.Auth,
   }),
-  route: activationRoute,
+  route: model.currentRoute,
   layout: HomeLayout,
 };

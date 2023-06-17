@@ -1,9 +1,9 @@
 import { TextInput, TextInputProps } from '@mantine/core';
 import { IconAt } from '@tabler/icons-react';
 
-import { View } from '@mg-control/web/shared/types';
+import { Nullable } from '@mg-control/shared/types';
 
-export function EmailInput(props: TextInputProps): View {
+export function EmailInput(props: TextInputProps): Nullable<JSX.Element> {
   return (
     <TextInput
       label="Email"

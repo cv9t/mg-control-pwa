@@ -1,4 +1,4 @@
-export type CreatedTokens = {
+export interface CreatedTokens {
   accessToken: string;
   refreshToken: string;
-};
+}

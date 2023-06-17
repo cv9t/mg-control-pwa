@@ -2,28 +2,23 @@ import { ReactNode } from 'react';
 
 import { Container, Group, Header as MantineHeader, Highlight } from '@mantine/core';
 
-import { $$sessionModel } from '@mg-control/web/entities/session';
-import { SignOutButton, signOutButtonFactory } from '@mg-control/web/features/auth/sign-out';
-import { View } from '@mg-control/web/shared/types';
+import { Nullable } from '@mg-control/shared/types';
+import { SignOut } from '@mg-control/web/features/auth/sign-out';
 
 type DashboardLayoutProps = {
   children: ReactNode;
 };
 
-export function DashboardLayout({ children }: DashboardLayoutProps): View {
+export function DashboardLayout({ children }: DashboardLayoutProps): Nullable<JSX.Element> {
   return (
     <div>
-      <DashboardHeader />
+      <Header />
       <Container mt={100}>{children}</Container>
     </div>
   );
 }
 
-const $$signOutButtonModel = signOutButtonFactory.createModel({
-  signOutFx: $$sessionModel.signOutFx,
-});
-
-export function DashboardHeader(): View {
+export function Header(): Nullable<JSX.Element> {
   return (
     <MantineHeader height={60} fixed>
       <Container
@@ -36,14 +31,14 @@ export function DashboardHeader(): View {
       >
         <Logo />
         <Group>
-          <SignOutButton $$model={$$signOutButtonModel} />
+          <SignOut.Button />
         </Group>
       </Container>
     </MantineHeader>
   );
 }
 
-function Logo(): View {
+function Logo(): Nullable<JSX.Element> {
   return (
     <Highlight
       highlight={['MG | Control']}

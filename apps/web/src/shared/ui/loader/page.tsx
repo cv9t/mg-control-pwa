@@ -1,12 +1,12 @@
 import { Box, Loader, Text } from '@mantine/core';
 
-import { View } from '@mg-control/web/shared/types';
+import { Nullable } from '@mg-control/shared/types';
 
 type PageLoaderProps = {
   title?: string;
 };
 
-export function PageLoader({ title }: PageLoaderProps): View {
+export function PageLoader({ title }: PageLoaderProps): Nullable<JSX.Element> {
   return (
     <Box
       sx={{

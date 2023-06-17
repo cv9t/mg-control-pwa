@@ -1,20 +1,11 @@
-import { Model, modelFactory } from 'effector-factorio';
+import { createEffect } from 'effector';
 
-import { $$apiModel, ApiModel } from '@mg-control/web/shared/api';
+import { api, ApiError } from '@mg-control/web/shared/api';
 
-type DashboardPageApiFactoryOptions = {
-  $$apiModel: ApiModel;
-};
-
-const dashboardPageApiFactory = modelFactory((options: DashboardPageApiFactoryOptions) => {
-  const toggleLightFx = options.$$apiModel.createAuthorizedRequestFx<void, void>({
+export const toggleLightFx = createEffect<'on' | 'off', void, ApiError>((state) =>
+  api.authorizedRequestFx({
     url: 'device/toggle-light',
     method: 'POST',
-  });
-
-  return { toggleLightFx };
-});
-
-export type DashboardPageApiModel = Model<typeof dashboardPageApiFactory>;
-
-export const $$dashboardPageApiModel = dashboardPageApiFactory.createModel({ $$apiModel });
+    params: { state },
+  }),
+);

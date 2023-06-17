@@ -1,51 +1,54 @@
-import { attach, createEvent, createStore, Effect, sample } from 'effector';
-import { Model, modelFactory } from 'effector-factorio';
-import { createForm } from 'effector-forms';
+import { attach, createEvent, createStore, Effect, Event, sample, Store } from 'effector';
+import { createForm, Form } from 'effector-forms';
 
 import { ActivationDto } from '@mg-control/shared/dtos';
-import { Nullable } from '@mg-control/shared/typings';
-import { ApiError, RequestConfig } from '@mg-control/web/shared/api';
-import { excludeField, validationRules } from '@mg-control/web/shared/lib';
+import { Nullable } from '@mg-control/shared/types';
+import { ApiError, ApiErrorType } from '@mg-control/web/shared/api';
+import { notification, object, validation } from '@mg-control/web/shared/lib';
 
-export type ActivationFormFactoryOptions = {
-  activateFx: Effect<RequestConfig<ActivationDto>, void, ApiError>;
+type CreateActivationFormModelOptions = {
+  activateFx: Effect<ActivationDto, void, ApiError>;
 };
 
-export const activationFormFactory = modelFactory((options: ActivationFormFactoryOptions) => {
+const ERROR_TYPES: { [key: string]: ApiErrorType } = {
+  device_already_activated: 'device_already_activated',
+  invalid_activation_code: 'invalid_activation_code',
+  user_already_exists: 'user_already_exists',
+};
+
+export const createActivationFormModel = (
+  options: CreateActivationFormModelOptions,
+): {
+  mounted: Event<void>;
+  form: Form<{
+    activationCode: string;
+    email: string;
+    password: string;
+    confirmation: string;
+  }>;
+  $error: Store<Nullable<string>>;
+  $isPending: Store<boolean>;
+} => {
   const mounted = createEvent();
 
-  const activateFx = attach({
-    effect: options.activateFx,
-    mapParams: (data: ActivationDto): RequestConfig<ActivationDto> => ({
-      data,
-      errorNotificationOptions: {
-        title: 'Activation Error!',
-        message: 'Activation failed. Try again later.',
-      },
-      ignoreErrorTypes: [
-        'device_already_activated',
-        'invalid_activation_code',
-        'user_already_exists',
-      ],
-    }),
-  });
+  const activateFx = attach({ effect: options.activateFx });
 
-  const $$form = createForm({
+  const form = createForm({
     fields: {
       activationCode: {
         init: '',
-        rules: [validationRules.required('Activation code is required!')],
+        rules: [validation.rules.required('Activation code is required!')],
       },
       email: {
         init: '',
         rules: [
-          validationRules.required('Email is required!'),
-          validationRules.email('Enter valid email!'),
+          validation.rules.required('Email is required!'),
+          validation.rules.email('Enter valid email!'),
         ],
       },
       password: {
         init: '',
-        rules: [validationRules.required('Password is required!')],
+        rules: [validation.rules.required('Password is required!')],
       },
       confirmation: {
         init: '',
@@ -62,36 +65,39 @@ export const activationFormFactory = modelFactory((options: ActivationFormFactor
 
   const $error = createStore<Nullable<string>>(null)
     .on(activateFx.failData, (_, error) => {
-      if (error.type === 'device_already_activated') {
+      if (error.type === ERROR_TYPES.device_already_activated) {
         return 'Device already activated!';
       }
-      if (error.type === 'invalid_activation_code') {
+      if (error.type === ERROR_TYPES.invalid_activation_code) {
         return 'Invalid activation code!';
       }
-      if (error.type === 'user_already_exists') {
+      if (error.type === ERROR_TYPES.user_already_exists) {
         return 'User with this email already exists!';
       }
       return null;
     })
     .reset(mounted);
 
-  const $isLoading = activateFx.pending;
+  const $isPending = activateFx.pending;
 
-  sample({ clock: mounted, target: $$form.reset });
-  sample({ clock: activateFx, target: $$form.resetErrors });
-
+  sample({ clock: mounted, target: form.reset });
   sample({
-    clock: $$form.formValidated,
-    fn: (values) => excludeField(values, 'confirmation'),
+    clock: form.formValidated,
+    fn: (formValues) => object.excludeField(formValues, 'confirmation'),
     target: activateFx,
   });
+  sample({ clock: activateFx, target: form.resetErrors });
 
-  return {
-    mounted,
-    $$form,
-    $error,
-    $isLoading,
-  };
-});
+  sample({
+    clock: activateFx.failData,
+    filter: (error) => !Object.values(ERROR_TYPES).includes(error.type),
+    target: notification.showError.prepend(() => ({
+      title: 'Activation Error!',
+      message: 'Activation failed. Try again later.',
+    })),
+  });
 
-export type ActivationFormModel = Model<typeof activationFormFactory>;
+  return { mounted, form, $error, $isPending };
+};
+
+export type ActivationFormModel = ReturnType<typeof createActivationFormModel>;
