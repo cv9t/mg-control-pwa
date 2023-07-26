@@ -3,5 +3,6 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   },
-  "cSpell.words": ["Mantine"]
+  "cSpell.words": ["Mantine"],
+  "liveServer.settings.root": "dist/apps/web"
 }

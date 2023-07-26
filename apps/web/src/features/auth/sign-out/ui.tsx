@@ -14,14 +14,7 @@ export function SignOutButton(): Nullable<JSX.Element> {
   });
 
   return (
-    <ActionIcon
-      w={50}
-      variant="light"
-      color="red"
-      size="lg"
-      loading={isPending}
-      onClick={signOutPressed}
-    >
+    <ActionIcon w={50} variant="light" color="red" size="lg" loading={isPending} onClick={signOutPressed}>
       <IconLogout size="1.3rem" />
     </ActionIcon>
   );

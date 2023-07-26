@@ -24,9 +24,7 @@ export class AuthService {
   ) {}
 
   public async activate(activationDto: ActivationDto): Promise<void> {
-    const existingDevice = await this.devicesService.findByActivationCode(
-      activationDto.activationCode,
-    );
+    const existingDevice = await this.devicesService.findByActivationCode(activationDto.activationCode);
     if (!existingDevice) {
       throw new BadRequestException({ type: ERROR_TYPE.invalid_activation_code });
     }

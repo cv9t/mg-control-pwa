@@ -9,11 +9,7 @@ import { DeviceController } from './device.controller';
 import { DevicesService } from './devices.service';
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([{ name: Device.name, schema: DeviceSchema }]),
-    MqttModule,
-    SseModule,
-  ],
+  imports: [MongooseModule.forFeature([{ name: Device.name, schema: DeviceSchema }]), MqttModule, SseModule],
   controllers: [DeviceController],
   providers: [DevicesService],
   exports: [DevicesService],

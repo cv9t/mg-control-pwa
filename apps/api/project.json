@@ -12,10 +12,11 @@
         "target": "node",
         "compiler": "tsc",
         "outputPath": "dist/apps/api",
-        "main": "apps/api/src/main.ts",
+        "main": "apps/api/src/index.ts",
         "tsConfig": "apps/api/tsconfig.app.json",
         "isolatedConfig": true,
-        "webpackConfig": "apps/api/webpack.config.js"
+        "webpackConfig": "apps/api/webpack.config.js",
+        "generatePackageJson": true
       },
       "configurations": {
         "development": {},

@@ -15,10 +15,7 @@ import { AuthService } from './auth.service';
 
 @Controller('auth')
 export class AuthController {
-  public constructor(
-    private readonly config: env.Config,
-    private readonly authService: AuthService,
-  ) {}
+  public constructor(private readonly config: env.Config, private readonly authService: AuthService) {}
 
   @Post('activate')
   public async activate(@Body() activationDto: ActivationDto): Promise<void> {
@@ -26,10 +23,7 @@ export class AuthController {
   }
 
   @Post('sign-in')
-  public async signIn(
-    @Body() signInDto: SignInDto,
-    @Res({ passthrough: true }) res: Response,
-  ): Promise<AuthResponse> {
+  public async signIn(@Body() signInDto: SignInDto, @Res({ passthrough: true }) res: Response): Promise<AuthResponse> {
     const { accessToken, refreshToken } = await this.authService.signIn(signInDto);
     res.cookie('refreshToken', refreshToken, {
       maxAge: 7 * 24 * 60 * 60 * 1000,
@@ -41,10 +35,7 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Post('sign-out')
-  public async signOut(
-    @Cookies('refreshToken') refreshToken: string,
-    @Res({ passthrough: true }) res: Response,
-  ): Promise<DeleteResult> {
+  public async signOut(@Cookies('refreshToken') refreshToken: string, @Res({ passthrough: true }) res: Response): Promise<DeleteResult> {
     const result = await this.authService.signOut(refreshToken);
     res.clearCookie('refreshToken');
     return result;
@@ -57,10 +48,7 @@ export class AuthController {
     @Cookies('refreshToken') refreshToken: string,
     @Res({ passthrough: true }) res: Response,
   ): Promise<AuthResponse> {
-    const { accessToken, refreshToken: updatedRefreshToken } = await this.authService.refreshTokens(
-      userId,
-      refreshToken,
-    );
+    const { accessToken, refreshToken: updatedRefreshToken } = await this.authService.refreshTokens(userId, refreshToken);
     res.cookie('refreshToken', updatedRefreshToken, {
       maxAge: 7 * 24 * 60 * 60 * 1000,
       httpOnly: true,

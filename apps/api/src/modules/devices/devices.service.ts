@@ -86,10 +86,7 @@ export class DevicesService {
     return this.deviceModel.findOne({ activationCode });
   }
 
-  public async update(
-    id: string,
-    updateDeviceDto: UpdateDeviceDto,
-  ): Promise<Nullable<DeviceDocument>> {
+  public async update(id: string, updateDeviceDto: UpdateDeviceDto): Promise<Nullable<DeviceDocument>> {
     return this.deviceModel.findByIdAndUpdate(id, updateDeviceDto, { new: true });
   }
 }

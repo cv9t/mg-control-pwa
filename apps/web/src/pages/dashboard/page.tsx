@@ -2,19 +2,7 @@ import { ReactNode, useEffect } from 'react';
 
 import { useUnit } from 'effector-react';
 
-import {
-  Card,
-  CardSection,
-  Flex,
-  Grid,
-  Group,
-  LoadingOverlay,
-  SimpleGrid,
-  Skeleton,
-  Switch,
-  Text,
-  Title,
-} from '@mantine/core';
+import { Card, CardSection, Flex, Grid, Group, LoadingOverlay, SimpleGrid, Skeleton, Switch, Text, Title } from '@mantine/core';
 
 import { Nullable } from '@mg-control/shared/types';
 import { env } from '@mg-control/web/shared/config';
@@ -25,15 +13,7 @@ import * as model from './model';
 export function DashboardPage(): Nullable<JSX.Element> {
   dom.useTitle(`${env.APP_NAME} | Dashboard`);
 
-  const {
-    unmounted,
-    toggleLightClicked,
-    isDeviceConnectionFailed,
-    isLightOnPending,
-    isLightOn,
-    airData,
-    soilData,
-  } = useUnit({
+  const { unmounted, toggleLightClicked, isDeviceConnectionFailed, isLightOnPending, isLightOn, airData, soilData } = useUnit({
     unmounted: model.unmounted,
     toggleLightClicked: model.toggleLightClicked,
     isDeviceConnectionFailed: model.$isDeviceConnectionFailed,
@@ -60,13 +40,7 @@ export function DashboardPage(): Nullable<JSX.Element> {
         <Grid gutter="md">
           <Grid.Col sm={6} xs={12}>
             <DashboardCard title="Light">
-              <Switch
-                checked={isLightOn}
-                size="xl"
-                onLabel="ON"
-                offLabel="OFF"
-                onClick={toggleLightClicked}
-              />
+              <Switch checked={isLightOn} size="xl" onLabel="ON" offLabel="OFF" onClick={toggleLightClicked} />
               <LoadingOverlay visible={isLightOnPending} />
             </DashboardCard>
           </Grid.Col>

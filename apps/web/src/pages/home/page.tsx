@@ -17,11 +17,7 @@ export function HomePage(): Nullable<JSX.Element> {
         align="center"
         highlight={['MicroGreen']}
         highlightStyles={(theme) => ({
-          backgroundImage: theme.fn.linearGradient(
-            45,
-            theme.colors.cyan[5],
-            theme.colors.indigo[5],
-          ),
+          backgroundImage: theme.fn.linearGradient(45, theme.colors.cyan[5], theme.colors.indigo[5]),
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
         })}

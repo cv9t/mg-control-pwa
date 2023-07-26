@@ -41,10 +41,7 @@ export const createActivationFormModel = (
       },
       email: {
         init: '',
-        rules: [
-          validation.rules.required('Email is required!'),
-          validation.rules.email('Enter valid email!'),
-        ],
+        rules: [validation.rules.required('Email is required!'), validation.rules.email('Enter valid email!')],
       },
       password: {
         init: '',
@@ -81,11 +78,13 @@ export const createActivationFormModel = (
   const $isPending = activateFx.pending;
 
   sample({ clock: mounted, target: form.reset });
+
   sample({
     clock: form.formValidated,
     fn: (formValues) => object.excludeField(formValues, 'confirmation'),
     target: activateFx,
   });
+
   sample({ clock: activateFx, target: form.resetErrors });
 
   sample({

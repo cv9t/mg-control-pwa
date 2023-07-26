@@ -17,10 +17,7 @@ export const form = createForm({
   fields: {
     email: {
       init: '',
-      rules: [
-        validation.rules.required('Email is required!'),
-        validation.rules.email('Enter valid email!'),
-      ],
+      rules: [validation.rules.required('Email is required!'), validation.rules.email('Enter valid email!')],
     },
     password: {
       init: '',

@@ -23,12 +23,12 @@ export function ActivationPage(): Nullable<JSX.Element> {
   }, [mounted]);
 
   if (isActivationCompleted) {
-    return <SuccessCard />;
+    return <ActivationCompleted />;
   }
 
   return (
     <Box w="100%">
-      <Title align="center">Activation</Title>
+      <Title align="center">Activate account!</Title>
       <Text mt="xs" c="dimmed" align="center">
         Already have an activated account?{' '}
         <Anchor component={Link} to={routes.auth.signIn}>
@@ -41,7 +41,7 @@ export function ActivationPage(): Nullable<JSX.Element> {
   );
 }
 
-function SuccessCard(): Nullable<JSX.Element> {
+function ActivationCompleted(): Nullable<JSX.Element> {
   return (
     <Card withBorder shadow="md" w={300}>
       <CardSection
@@ -56,7 +56,7 @@ function SuccessCard(): Nullable<JSX.Element> {
         }}
       >
         <IconCircleCheck size="3.25rem" />
-        <Title order={5}>Success!</Title>
+        <Title order={5}>Congratulations!</Title>
       </CardSection>
       <Text mt="md" c="dimmed">
         Congratulations, your account has been successfully activated.

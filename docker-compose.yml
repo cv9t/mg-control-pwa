@@ -1,0 +1,23 @@
+version: '3'
+services:
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+      args:
+        - PORT=${API_PORT}
+    ports:
+      - ${API_PORT}:${API_PORT}
+    env_file:
+      - .env
+
+  # web:
+  #   build:
+  #     context: .
+  #     dockerfile: apps/web/Dockerfile
+  #   ports:
+  #     - ${WEB_PORT}:${WEB_PORT}
+  #   env_file:
+  #     - .env
+  #   environment:
+  #     NGINX_ENVSUBST_OUTPUT_DIR: /etc/nginx

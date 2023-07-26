@@ -9,7 +9,7 @@
     },
     {
       "files": ["*.ts", "*.tsx"],
-      "extends": ["airbnb", "airbnb-typescript", "plugin:effector/react"],
+      "extends": ["airbnb", "airbnb-typescript", "plugin:effector/react", "plugin:prettier/recommended"],
       "parserOptions": {
         "project": ["apps/web/tsconfig.*?.json"]
       },

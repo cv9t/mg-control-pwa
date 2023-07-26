@@ -2,7 +2,7 @@ import { createEffect, createEvent, createStore, sample, scopeBind } from 'effec
 
 import { Nullable } from '@mg-control/shared/types';
 
-import { env } from '../config';
+import { env } from './config';
 
 export const saveToken = createEvent<string>();
 export const deleteToken = createEvent();
@@ -19,9 +19,7 @@ const deleteTokenFx = createEffect(() => {
   localStorage.removeItem(env.LS_ACCESS_TOKEN);
 });
 
-const loadTokenFx = createEffect<void, Nullable<string>>(() =>
-  localStorage.getItem(env.LS_ACCESS_TOKEN),
-);
+const loadTokenFx = createEffect<void, Nullable<string>>(() => localStorage.getItem(env.LS_ACCESS_TOKEN));
 
 const syncTokenFx = createEffect(() => {
   const saveTokenBound = scopeBind(saveToken);
