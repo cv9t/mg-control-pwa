@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
-import { DeleteResult } from '@mg-control/api/common/types';
+import { DeleteResult } from '@mg-control/api/common/types/mongoose.types';
 import { env } from '@mg-control/api/config';
 import { DevicesService } from '@mg-control/api/modules/devices/devices.service';
 import { TokensService } from '@mg-control/api/modules/tokens/tokens.service';
@@ -24,9 +24,7 @@ export class AuthService {
   ) {}
 
   public async activate(activationDto: ActivationDto): Promise<void> {
-    const existingDevice = await this.devicesService.findByActivationCode(
-      activationDto.activationCode,
-    );
+    const existingDevice = await this.devicesService.findByActivationCode(activationDto.activationCode);
     if (!existingDevice) {
       throw new BadRequestException({ type: ERROR_TYPE.invalid_activation_code });
     }

@@ -14,18 +14,12 @@ export class DeviceController {
   public constructor(private readonly devicesService: DevicesService) {}
 
   @Sse('data')
-  public sendData(
-    @User('deviceId') deviceId: string,
-    @Res() res: Response,
-  ): Observable<MessageEvent> {
+  public sendData(@User('deviceId') deviceId: string, @Res() res: Response): Observable<MessageEvent> {
     return this.devicesService.sendData(res, deviceId);
   }
 
   @Post('toggle-light')
-  public toggleLight(
-    @Query('state') state: 'on' | 'off',
-    @User('deviceId') deviceId: string,
-  ): void {
+  public toggleLight(@Query('state') state: 'on' | 'off', @User('deviceId') deviceId: string): void {
     this.devicesService.toggleLight(deviceId, state);
   }
 }

@@ -1,2 +1,2 @@
-export * from './lib/auth-dtos';
-export * from './lib/device-dtos';
+export * from './lib/auth';
+export * from './lib/device';

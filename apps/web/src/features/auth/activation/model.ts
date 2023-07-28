@@ -10,25 +10,27 @@ type CreateActivationFormModelOptions = {
   activateFx: Effect<ActivationDto, void, ApiError>;
 };
 
+type ActivationFormData = {
+  activationCode: string;
+  email: string;
+  password: string;
+  confirmation: string;
+};
+
+export type ActivationFormModel = {
+  mounted: Event<void>;
+  form: Form<ActivationFormData>;
+  $error: Store<Nullable<string>>;
+  $isPending: Store<boolean>;
+};
+
 const ERROR_TYPES: { [key: string]: ApiErrorType } = {
   device_already_activated: 'device_already_activated',
   invalid_activation_code: 'invalid_activation_code',
   user_already_exists: 'user_already_exists',
 };
 
-export const createActivationFormModel = (
-  options: CreateActivationFormModelOptions,
-): {
-  mounted: Event<void>;
-  form: Form<{
-    activationCode: string;
-    email: string;
-    password: string;
-    confirmation: string;
-  }>;
-  $error: Store<Nullable<string>>;
-  $isPending: Store<boolean>;
-} => {
+export const createActivationFormModel = (options: CreateActivationFormModelOptions): ActivationFormModel => {
   const mounted = createEvent();
 
   const activateFx = attach({ effect: options.activateFx });
@@ -41,10 +43,7 @@ export const createActivationFormModel = (
       },
       email: {
         init: '',
-        rules: [
-          validation.rules.required('Email is required!'),
-          validation.rules.email('Enter valid email!'),
-        ],
+        rules: [validation.rules.required('Email is required!'), validation.rules.email('Enter valid email!')],
       },
       password: {
         init: '',
@@ -81,13 +80,14 @@ export const createActivationFormModel = (
   const $isPending = activateFx.pending;
 
   sample({ clock: mounted, target: form.reset });
+
   sample({
     clock: form.formValidated,
     fn: (formValues) => object.excludeField(formValues, 'confirmation'),
     target: activateFx,
   });
-  sample({ clock: activateFx, target: form.resetErrors });
 
+  sample({ clock: activateFx, target: form.resetErrors });
   sample({
     clock: activateFx.failData,
     filter: (error) => !Object.values(ERROR_TYPES).includes(error.type),
@@ -99,5 +99,3 @@ export const createActivationFormModel = (
 
   return { mounted, form, $error, $isPending };
 };
-
-export type ActivationFormModel = ReturnType<typeof createActivationFormModel>;

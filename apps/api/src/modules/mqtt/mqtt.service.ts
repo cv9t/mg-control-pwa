@@ -13,10 +13,7 @@ export class MqttService implements OnModuleInit {
 
   private readonly subscriptions: MqttSubscription[] = [];
 
-  public constructor(
-    @InjectPinoLogger(MqttService.name) private readonly logger: PinoLogger,
-    private readonly config: env.Config,
-  ) {}
+  public constructor(@InjectPinoLogger(MqttService.name) private readonly logger: PinoLogger, private readonly config: env.Config) {}
 
   public onModuleInit(): void {
     this.client = mqtt.connect(this.config.mqtt.broker_url);
@@ -47,19 +44,14 @@ export class MqttService implements OnModuleInit {
     });
   }
 
-  public subscribe(
-    topic: MqttSubscription['topic'],
-    onMessage: MqttSubscription['onMessage'],
-  ): void {
+  public subscribe(topic: MqttSubscription['topic'], onMessage: MqttSubscription['onMessage']): void {
     const fullTopic = this._createFullTopicTopic(topic);
     this.client.subscribe(fullTopic);
     this.subscriptions.push({ topic, onMessage });
   }
 
   public unsubscribe(topic: string): void {
-    const matchingSubscriptionIndex = this.subscriptions.findIndex(
-      (subscription) => subscription.topic === topic,
-    );
+    const matchingSubscriptionIndex = this.subscriptions.findIndex((subscription) => subscription.topic === topic);
     if (matchingSubscriptionIndex >= 0) {
       const fullTopic = this._createFullTopicTopic(topic);
       this.client.unsubscribe(fullTopic);

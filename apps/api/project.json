@@ -8,11 +8,12 @@
       "executor": "@nx/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
+      "externalDependencies": "none",
       "options": {
         "target": "node",
         "compiler": "tsc",
         "outputPath": "dist/apps/api",
-        "main": "apps/api/src/main.ts",
+        "main": "apps/api/src/index.ts",
         "tsConfig": "apps/api/tsconfig.app.json",
         "isolatedConfig": true,
         "webpackConfig": "apps/api/webpack.config.js"

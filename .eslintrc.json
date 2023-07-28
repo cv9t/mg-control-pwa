@@ -24,7 +24,7 @@
     },
     {
       "files": ["*.ts", "*.tsx"],
-      "extends": ["plugin:@nx/typescript", "airbnb-base", "airbnb-typescript/base"],
+      "extends": ["plugin:@nx/typescript", "airbnb-base", "airbnb-typescript/base", "plugin:prettier/recommended"],
       "rules": {
         "import/prefer-default-export": "off",
         "simple-import-sort/exports": "error",

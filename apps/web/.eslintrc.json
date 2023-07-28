@@ -9,7 +9,7 @@
     },
     {
       "files": ["*.ts", "*.tsx"],
-      "extends": ["airbnb", "airbnb-typescript", "plugin:effector/react"],
+      "extends": ["airbnb", "airbnb-typescript", "plugin:effector/react", "plugin:prettier/recommended"],
       "parserOptions": {
         "project": ["apps/web/tsconfig.*?.json"]
       },
@@ -43,17 +43,7 @@
         "@typescript-eslint/no-use-before-define": "off",
         "@typescript-eslint/indent": "off",
         "@typescript-eslint/ban-types": "off",
-        "@typescript-eslint/naming-convention": [
-          "error",
-          {
-            "selector": "variable",
-            "format": ["camelCase", "UPPER_CASE", "PascalCase"]
-          },
-          {
-            "selector": "typeLike",
-            "format": ["PascalCase", "UPPER_CASE"]
-          }
-        ],
+        "@typescript-eslint/naming-convention": "off",
 
         "linebreak-style": "off",
         "object-curly-newline": "off",

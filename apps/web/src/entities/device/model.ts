@@ -1,12 +1,4 @@
-import {
-  attach,
-  createEffect,
-  createEvent,
-  createStore,
-  restore,
-  sample,
-  scopeBind,
-} from 'effector';
+import { attach, createEffect, createEvent, createStore, restore, sample, scopeBind } from 'effector';
 
 import { EventSourcePolyfill, MessageEvent } from 'event-source-polyfill';
 
@@ -44,10 +36,7 @@ const preprocessMessageFx = createEffect<MessageEvent['data'], DeviceDataDto>((m
   return data;
 });
 
-export const $connection = createStore<Nullable<EventSourcePolyfill>>(null).on(
-  setupConnectionFx.doneData,
-  (_, connection) => connection,
-);
+export const $connection = createStore<Nullable<EventSourcePolyfill>>(null).on(setupConnectionFx.doneData, (_, connection) => connection);
 
 export const $data = restore(dataReceived, null);
 
