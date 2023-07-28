@@ -25,7 +25,7 @@ export function PageLoader({ title }: PageLoaderProps): Nullable<JSX.Element> {
     >
       <Loader variant="dots" />
       {title && (
-        <Text mt="md" c="blue" weight={500}>
+        <Text mt="md" c="blue">
           {title}
         </Text>
       )}

@@ -8,7 +8,7 @@ import { dom } from '@mg-control/web/shared/lib';
 import { routes } from '@mg-control/web/shared/routing';
 
 export function SignInPage(): Nullable<JSX.Element> {
-  dom.useTitle(`${env.APP_NAME} | Sign In`);
+  dom.useTitle(`${env.SHORT_APP_NAME} | Sign In`);
 
   return (
     <Box w="100%">

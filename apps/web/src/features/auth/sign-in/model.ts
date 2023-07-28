@@ -43,9 +43,10 @@ export const $error = createStore<Nullable<string>>(null)
 export const $isPending = signInFx.pending;
 
 sample({ clock: mounted, target: form.reset });
-sample({ clock: form.formValidated, target: signInFx });
-sample({ clock: signInFx, target: form.resetErrors });
 
+sample({ clock: form.formValidated, target: signInFx });
+
+sample({ clock: signInFx, target: form.resetErrors });
 sample({
   clock: signInFx.failData,
   filter: (error) => !Object.values(ERROR_TYPES).includes(error.type),
@@ -54,5 +55,4 @@ sample({
     message: 'Sign In failed. Try again later.',
   })),
 });
-
 redirect({ clock: signInFx.done, route: routes.dashboard });

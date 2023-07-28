@@ -2,7 +2,7 @@ import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
 
 import { type Response } from 'express';
 
-import { DeleteResult } from '@mg-control/api/common/types';
+import { DeleteResult } from '@mg-control/api/common/types/mongoose.types';
 import { env } from '@mg-control/api/config';
 import { ActivationDto, SignInDto } from '@mg-control/shared/dtos';
 import { AuthResponse } from '@mg-control/shared/types';

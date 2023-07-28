@@ -23,7 +23,7 @@ import { AppService } from './app.service';
     TypedConfigModule.forRoot({
       schema: env.Config,
       load: dotenvLoader({
-        envFilePath: ['apps/api/.env', `apps/api/.env.${process.env.NODE_ENV}`],
+        envFilePath: ['apps/api/.env'],
         separator: '__',
       }),
       normalize(config) {

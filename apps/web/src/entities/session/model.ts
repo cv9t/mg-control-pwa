@@ -34,14 +34,6 @@ const $authStatus = createStore<AuthStatus>(AuthStatus.Initial)
   .on(syncedWithToken, (_, syncedStatus) => syncedStatus);
 
 sample({
-  clock: sessionEstablished,
-  fn: ({ accessToken }) => accessToken,
-  target: tokenStorage.saveToken,
-});
-
-sample({ clock: sessionFailed, target: tokenStorage.deleteToken });
-
-sample({
   clock: tokenStorage.initialized,
   source: tokenStorage.$token,
   fn: (token) => (token ? AuthStatus.Initial : AuthStatus.Anonymous),
@@ -55,6 +47,13 @@ sample({
     message: 'Failed to check authorization.',
   })),
 });
+
+sample({
+  clock: sessionEstablished,
+  fn: ({ accessToken }) => accessToken,
+  target: tokenStorage.saveToken,
+});
+sample({ clock: sessionFailed, target: tokenStorage.deleteToken });
 
 type ChainParams = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

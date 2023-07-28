@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-import { Container, Group, Header as MantineHeader, Highlight } from '@mantine/core';
+import { Container, Header as MantineHeader, Highlight } from '@mantine/core';
 
 import { Nullable } from '@mg-control/shared/types';
 import { SignOut } from '@mg-control/web/features/auth/sign-out';
@@ -18,7 +18,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps): Nullable<JS
   );
 }
 
-export function Header(): Nullable<JSX.Element> {
+function Header(): Nullable<JSX.Element> {
   return (
     <MantineHeader height={60} fixed>
       <Container
@@ -30,9 +30,7 @@ export function Header(): Nullable<JSX.Element> {
         }}
       >
         <Logo />
-        <Group>
-          <SignOut.Button />
-        </Group>
+        <SignOut.Button />
       </Container>
     </MantineHeader>
   );

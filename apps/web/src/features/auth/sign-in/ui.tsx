@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { useForm } from 'effector-forms';
 import { useUnit } from 'effector-react';
 
-import { Button } from '@mantine/core';
+import { Button, Stack } from '@mantine/core';
 
 import { Nullable } from '@mg-control/shared/types';
 import { Alert, Form, Input } from '@mg-control/web/shared/ui';
@@ -31,19 +31,20 @@ export function SignInForm(): Nullable<JSX.Element> {
     >
       <Form.Content>
         {error && <Alert.Error mb="md" text={error} />}
-        <Input.Email
-          value={fields.email.value}
-          onChange={(e) => fields.email.onChange(e.target.value)}
-          error={fields.email.firstError?.errorText}
-          disabled={isPending}
-        />
-        <Input.Password
-          mt="md"
-          value={fields.password.value}
-          onChange={(e) => fields.password.onChange(e.target.value)}
-          error={fields.password.firstError?.errorText}
-          disabled={isPending}
-        />
+        <Stack>
+          <Input.Email
+            value={fields.email.value}
+            onChange={(e) => fields.email.onChange(e.target.value)}
+            error={fields.email.firstError?.errorText}
+            disabled={isPending}
+          />
+          <Input.Password
+            value={fields.password.value}
+            onChange={(e) => fields.password.onChange(e.target.value)}
+            error={fields.password.firstError?.errorText}
+            disabled={isPending}
+          />
+        </Stack>
         <Button mt="xl" type="submit" loading={isPending}>
           Sign In
         </Button>

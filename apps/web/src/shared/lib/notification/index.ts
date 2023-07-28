@@ -31,4 +31,5 @@ const showSuccessFx = attach({
 });
 
 sample({ clock: showError, target: showErrorFx });
+
 sample({ clock: showSuccess, target: showSuccessFx });

@@ -9,13 +9,13 @@ import { routes } from '@mg-control/web/shared/routing';
 import heroUrl from './assets/hero.svg?url';
 
 export function HomePage(): Nullable<JSX.Element> {
-  dom.useTitle(`${env.APP_NAME} | Home`);
+  dom.useTitle(`${env.SHORT_APP_NAME} | Home`);
 
   return (
     <div>
       <Highlight
         align="center"
-        highlight={['MicroGreen']}
+        highlight={[env.FULL_APP_NAME.split(' ')?.[0] ?? '']}
         highlightStyles={(theme) => ({
           backgroundImage: theme.fn.linearGradient(45, theme.colors.cyan[5], theme.colors.indigo[5]),
           WebkitBackgroundClip: 'text',
@@ -26,16 +26,16 @@ export function HomePage(): Nullable<JSX.Element> {
           fontWeight: 'bold',
         })}
       >
-        MicroGreen Control
+        {env.FULL_APP_NAME}
       </Highlight>
-      <Text mt="xs" weight={500} c="dimmed" align="center">
+      <Text mt="xs" c="dimmed" align="center">
         Keep your microgreens in comfort
       </Text>
       <Image src={heroUrl} />
       <Button mt="xl" component={Link} to={routes.auth.signIn}>
         Sign In
       </Button>
-      <Button mt="xs" variant="white" component={Link} to={routes.auth.signIn}>
+      <Button mt="xs" variant="white" component={Link} to={routes.auth.activation}>
         Activate account
       </Button>
     </div>

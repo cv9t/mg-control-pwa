@@ -5,10 +5,13 @@
   "scripts": {
     "prepare": "husky install",
     "ci": "yarn install --immutable --immutable-cache --check-cache",
-    "build": "yarn build:web && yarn build:api",
-    "build:web": "nx build web",
-    "build:api": "nx build api"
+    "start": "run-p start:device start:nx",
+    "start:nx": "nx run-many -t serve -p api web --parallel=5",
+    "start:device": "python scripts/device.py",
+    "lint": "nx lint --fix",
+    "format": "nx format:write"
   },
+  "private": true,
   "dependencies": {
     "@emotion/react": "11.10.6",
     "@emotion/styled": "11.10.6",
@@ -103,6 +106,7 @@
     "jest-environment-node": "^29.4.1",
     "jsdom": "~20.0.3",
     "lint-staged": "^13.2.2",
+    "npm-run-all": "^4.1.5",
     "nx": "16.3.2",
     "nx-cloud": "latest",
     "prettier": "2.8.8",

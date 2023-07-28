@@ -4,7 +4,7 @@ import { Container } from '@mantine/core';
 
 import { Nullable } from '@mg-control/shared/types';
 
-export type HomeLayoutProps = {
+type HomeLayoutProps = {
   children: ReactNode;
 };
 

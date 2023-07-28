@@ -38,6 +38,12 @@ const theme: MantineThemeOverride = {
     Text: {
       defaultProps: {
         size: 'md',
+        weight: 500,
+      },
+    },
+    Group: {
+      defaultProps: {
+        spacing: 'xs',
       },
     },
   },
