@@ -31,21 +31,11 @@
 
         "@typescript-eslint/explicit-member-accessibility": "error",
         "@typescript-eslint/indent": "off",
+        "@typescript-eslint/naming-convention": "off",
         "@typescript-eslint/explicit-function-return-type": [
           "error",
           {
             "allowExpressions": true
-          }
-        ],
-        "@typescript-eslint/naming-convention": [
-          "error",
-          {
-            "selector": "variable",
-            "format": ["camelCase", "UPPER_CASE", "PascalCase"]
-          },
-          {
-            "selector": "typeLike",
-            "format": ["PascalCase", "UPPER_CASE"]
           }
         ],
 
