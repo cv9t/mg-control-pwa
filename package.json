@@ -8,7 +8,7 @@
     "start": "run-p start:device start:nx",
     "start:nx": "nx run-many -t serve -p api web --parallel=5",
     "start:device": "python scripts/device.py",
-    "lint": "nx lint --fix",
+    "lint": "nx run-many -t lint --fix -p api web --parallel=5",
     "format": "nx format:write"
   },
   "private": true,
